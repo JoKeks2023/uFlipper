@@ -59,8 +59,7 @@ jobs:
         run: |
           brew install pkg-config autoconf automake libtool
           bash scripts/ci/macos_dependencies.sh "$RUNNER_TEMP/uflipper-deps"
-          printf 'PKG_CONFIG_PATH=%s/universal/lib/pkgconfig
-' "$RUNNER_TEMP/uflipper-deps" >> "$GITHUB_ENV"
+          printf 'PKG_CONFIG_PATH=%s/universal/lib/pkgconfig\n' "$RUNNER_TEMP/uflipper-deps" >> "$GITHUB_ENV"
       - name: Install prebuilt Qt 6.8.3
         run: |
           python3 -m venv "$RUNNER_TEMP/aqt"
