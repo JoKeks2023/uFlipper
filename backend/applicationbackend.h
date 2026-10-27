@@ -6,6 +6,8 @@
 #include "backenderror.h"
 #include "flipperupdates.h"
 
+class DeviceTelemetry;
+
 namespace Flipper {
 class FlipperZero;
 class DeviceRegistry;
@@ -19,6 +21,7 @@ class VirtualDisplay;
 }}
 
 #if QT_VERSION >= 0x060000
+Q_MOC_INCLUDE("workbench/devicetelemetry.h")
 Q_MOC_INCLUDE("flipperzero/devicestate.h")
 Q_MOC_INCLUDE("flipperzero/screenstreamer.h")
 Q_MOC_INCLUDE("flipperzero/virtualdisplay.h")
@@ -28,6 +31,7 @@ Q_MOC_INCLUDE("flipperzero/filemanager.h")
 class ApplicationBackend : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(DeviceTelemetry* telemetry READ telemetry CONSTANT)
     Q_PROPERTY(BackendState backendState READ backendState NOTIFY backendStateChanged)
     Q_PROPERTY(Flipper::Zero::DeviceState* deviceState READ deviceState NOTIFY currentDeviceChanged)
     Q_PROPERTY(Flipper::Zero::ScreenStreamer* screenStreamer READ screenStreamer CONSTANT)
@@ -72,6 +76,7 @@ public:
 
     ApplicationBackend(QObject *parent = nullptr);
 
+    DeviceTelemetry* telemetry() const { return m_telemetry; }
     BackendState backendState() const;
     BackendError::ErrorType errorType() const;
 
@@ -112,6 +117,7 @@ public:
     Q_INVOKABLE void finalizeOperation();
 
 signals:
+    void operationBlocked(const QString& reason);
     void errorTypeChanged();
     void currentDeviceChanged();
     void backendStateChanged();
@@ -133,6 +139,7 @@ private:
     static void registerComparators();
 #endif
 
+    bool requireFullBackupPreflight();
     void initConnections();
     void beginUpdate();
     void beginRepair();
@@ -141,6 +148,7 @@ private:
     void setErrorType(BackendError::ErrorType newErrorType);
 
     Flipper::DeviceRegistry *m_deviceRegistry;
+    DeviceTelemetry* m_telemetry;
     Flipper::UpdateRegistry *m_firmwareUpdateRegistry;
 
     Flipper::Zero::ScreenStreamer *m_screenStreamer;

@@ -1,4 +1,5 @@
 ﻿#include "applicationbackend.h"
+#include "workbench/devicetelemetry.h"
 
 #include <QDebug>
 #include <QLoggingCategory>
@@ -34,6 +35,7 @@ using namespace Zero;
 ApplicationBackend::ApplicationBackend(QObject *parent):
     QObject(parent),
     m_deviceRegistry(new DeviceRegistry(this)),
+    m_telemetry(new DeviceTelemetry(m_deviceRegistry, this)),
     m_firmwareUpdateRegistry(new FirmwareUpdateRegistry("https://update.flipperzero.one/firmware/directory.json", this)),
     m_screenStreamer(new ScreenStreamer(this)),
     m_virtualDisplay(new VirtualDisplay(this)),
@@ -48,6 +50,9 @@ ApplicationBackend::ApplicationBackend(QObject *parent):
 
     initLibraryPaths();
     initConnections();
+    connect(this, &ApplicationBackend::backendStateChanged, this, [this] {
+        m_telemetry->setPollingEnabled(m_backendState == BackendState::Ready || m_backendState == BackendState::ScreenStreaming);
+    });
 }
 
 ApplicationBackend::BackendState ApplicationBackend::backendState() const
@@ -134,6 +139,7 @@ bool ApplicationBackend::isQueryInProgress() const
 
 void ApplicationBackend::mainAction()
 {
+    if(!requireFullBackupPreflight()) return;
     AbstractOperationHelper *helper;
 
        if(device()->deviceState()->isRecoveryMode()) {
@@ -156,6 +162,7 @@ void ApplicationBackend::createBackup(const QUrl &backupUrl)
 
 void ApplicationBackend::restoreBackup(const QUrl &backupUrl)
 {
+    if(!requireFullBackupPreflight()) return;
     setBackendState(BackendState::RestoringBackup);
     device()->restoreBackup(backupUrl);
 }
@@ -168,18 +175,21 @@ void ApplicationBackend::factoryReset()
 
 void ApplicationBackend::installFirmware(const QUrl &fileUrl)
 {
+    if(!requireFullBackupPreflight()) return;
     setBackendState(BackendState::InstallingFirmware);
     device()->installFirmware(fileUrl);
 }
 
 void ApplicationBackend::installWirelessStack(const QUrl &fileUrl)
 {
+    if(!requireFullBackupPreflight()) return;
     setBackendState(BackendState::InstallingWirelessStack);
     device()->installWirelessStack(fileUrl);
 }
 
 void ApplicationBackend::installFUS(const QUrl &fileUrl, uint32_t address)
 {
+    if(!requireFullBackupPreflight()) return;
     setBackendState(BackendState::InstallingFUS);
     device()->installFUS(fileUrl, address);
 }
@@ -363,6 +373,7 @@ void ApplicationBackend::initConnections()
 
 void ApplicationBackend::beginUpdate()
 {
+    if(!requireFullBackupPreflight()) return;
     setBackendState(BackendState::UpdatingDevice);
     auto *helper = new UpdateTopLevelHelper(m_firmwareUpdateRegistry, device(), this);
     connect(helper, &AbstractOperationHelper::finished, helper, &QObject::deleteLater);
@@ -370,6 +381,7 @@ void ApplicationBackend::beginUpdate()
 
 void ApplicationBackend::beginRepair()
 {
+    if(!requireFullBackupPreflight()) return;
     setBackendState(BackendState::RepairingDevice);
     auto *helper = new RepairTopLevelHelper(m_firmwareUpdateRegistry, device(), this);
     connect(helper, &AbstractOperationHelper::finished, helper, &QObject::deleteLater);
@@ -408,6 +420,7 @@ void ApplicationBackend::registerMetaTypes()
     qRegisterMetaType<Flipper::Zero::StorageInfo>("Flipper::Zero::StorageInfo");
 
     qRegisterMetaType<Flipper::FlipperZero*>("Flipper::FlipperZero*");
+    qRegisterMetaType<DeviceTelemetry*>("DeviceTelemetry*");
     qRegisterMetaType<Flipper::Zero::DeviceState*>("Flipper::Zero::DeviceState*");
     qRegisterMetaType<Flipper::Zero::ScreenStreamer*>("Flipper::Zero::ScreenStreamer*");
     qRegisterMetaType<Flipper::Zero::VirtualDisplay*>("Flipper::Zero::VirtualDisplay*");
@@ -428,3 +441,11 @@ void ApplicationBackend::registerComparators()
     QMetaType::registerComparators<Flipper::Zero::AssetManifest::FileInfo>();
 }
 #endif
+
+bool ApplicationBackend::requireFullBackupPreflight()
+{
+    // Development gate. The inherited internal-memory backup does not satisfy the
+    // agreed full-device backup requirement. Replace only with the verified full backup pipeline.
+    emit operationBlocked(tr("Verified backups of internal storage and the entire SD card are not yet available in this development build. Firmware changes and restores remain paused until this check is implemented."));
+    return false;
+}

@@ -3,6 +3,21 @@
 #include <cstring>
 #include <vector>
 namespace UFlipper {
+namespace {
+class WipeOnExit {
+  public:
+    WipeOnExit(void *bytes, size_t size) : bytes_(bytes), size_(size) {}
+    ~WipeOnExit() {
+        sodium_memzero(bytes_, size_);
+    }
+    WipeOnExit(const WipeOnExit &) = delete;
+    WipeOnExit &operator=(const WipeOnExit &) = delete;
+
+  private:
+    void *bytes_;
+    size_t size_;
+};
+} // namespace
 static constexpr size_t ChunkSize = 65536;
 static constexpr unsigned char Magic[8] = {'U', 'F', 'E', 'N', 'C', 0, 0, 1};
 SecretKey FileCrypto::randomKey() {
@@ -68,12 +83,14 @@ void FileCrypto::encrypt(const std::filesystem::path &source, const std::filesys
     if (!input)
         throw std::runtime_error("Cannot read source file");
     AtomicOutput output(target);
-    crypto_secretstream_xchacha20poly1305_state state;
+    crypto_secretstream_xchacha20poly1305_state state{};
+    WipeOnExit wipeState(&state, sizeof state);
     unsigned char header[crypto_secretstream_xchacha20poly1305_HEADERBYTES];
     crypto_secretstream_xchacha20poly1305_init_push(&state, header, key.data());
     writeAll(output.fd(), Magic, sizeof Magic);
     writeAll(output.fd(), header, sizeof header);
     unsigned char buffer[ChunkSize];
+    WipeOnExit wipeBuffer(buffer, sizeof buffer);
     while (input) {
         input.read(reinterpret_cast<char *>(buffer), sizeof buffer);
         auto size = input.gcount();
@@ -83,7 +100,6 @@ void FileCrypto::encrypt(const std::filesystem::path &source, const std::filesys
     if (input.bad())
         throw std::runtime_error("Cannot read source file");
     encryptChunk(output.fd(), state, nullptr, 0, crypto_secretstream_xchacha20poly1305_TAG_FINAL);
-    sodium_memzero(&state, sizeof state);
     output.publish();
 }
 void FileCrypto::decrypt(const std::filesystem::path &source, const std::filesystem::path &target,
@@ -97,7 +113,8 @@ void FileCrypto::decrypt(const std::filesystem::path &source, const std::filesys
         std::memcmp(magic, Magic, sizeof magic) != 0 ||
         !input.read(reinterpret_cast<char *>(header), sizeof header))
         throw std::runtime_error("Unsupported or truncated encrypted file");
-    crypto_secretstream_xchacha20poly1305_state state;
+    crypto_secretstream_xchacha20poly1305_state state{};
+    WipeOnExit wipeState(&state, sizeof state);
     if (crypto_secretstream_xchacha20poly1305_init_pull(&state, header, key.data()) != 0)
         throw std::runtime_error("Invalid encryption header");
     AtomicOutput output(target);
@@ -112,6 +129,7 @@ void FileCrypto::decrypt(const std::filesystem::path &source, const std::filesys
             size > ChunkSize + crypto_secretstream_xchacha20poly1305_ABYTES)
             throw std::runtime_error("Invalid encrypted chunk length");
         std::vector<unsigned char> cipher(size), plain(size);
+        WipeOnExit wipePlain(plain.data(), plain.size());
         if (!input.read(reinterpret_cast<char *>(cipher.data()), size))
             throw std::runtime_error("Truncated encrypted chunk");
         unsigned long long written = 0;
@@ -120,12 +138,10 @@ void FileCrypto::decrypt(const std::filesystem::path &source, const std::filesys
                                                        size, nullptr, 0) != 0)
             throw std::runtime_error("Wrong key or modified encrypted file");
         writeAll(output.fd(), plain.data(), written);
-        sodium_memzero(plain.data(), plain.size());
         final = tag == crypto_secretstream_xchacha20poly1305_TAG_FINAL;
     }
     if (input.peek() != std::char_traits<char>::eof())
         throw std::runtime_error("Unexpected data after encrypted stream");
-    sodium_memzero(&state, sizeof state);
     output.publish();
 }
 } // namespace UFlipper

@@ -15,6 +15,7 @@ class PropertyGetOperation : public AbstractProtobufOperation
 public:
     PropertyGetOperation(uint32_t id, const QByteArray &key, QObject *parent = nullptr);
     const QString description() const override;
+    const QHash<QByteArray,QByteArray>& values() const { return m_data; }
     const QByteArray value(const QByteArray &key) const;
 
     const QByteArray encodeRequest(ProtobufPluginInterface *encoder) override;

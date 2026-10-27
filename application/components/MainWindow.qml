@@ -89,6 +89,22 @@ Item {
         onFinished: mainWindow.collapseFinished()
     }
 
+    MessageDialog {
+        id: backupPreflightDialog
+        parent: bg
+        radius: bg.radius
+    }
+
+    Connections {
+        target: Backend
+        function onOperationBlocked(reason) {
+            backupPreflightDialog.openWithMessage(null, {
+                title: qsTr("Full backup required"),
+                message: reason
+            });
+        }
+    }
+
     ConfirmationDialog {
         id: confirmationDialog
         radius: bg.radius

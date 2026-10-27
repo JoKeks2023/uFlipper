@@ -36,5 +36,6 @@ bool PropertyGetOperation::processResponse(QObject *response)
         return true;
     }
 
-    return qobject_cast<EmptyResponseInterface*>(response);
+    auto* empty = qobject_cast<MainResponseInterface*>(response);
+    return empty && empty->type()==MainResponseInterface::Empty && empty->isOk();
 }

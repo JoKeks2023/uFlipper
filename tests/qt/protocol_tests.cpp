@@ -1,7 +1,9 @@
 #include "appresponseinterface.h"
+#include "applicationbackend.h"
 #include "flipperzero/rpc/appoperation.h"
 #include "mainresponseinterface.h"
 #include "protobufplugininterface.h"
+#include "workbench/powersnapshot.h"
 #include <QCoreApplication>
 #include <QDebug>
 #include <QPluginLoader>
@@ -16,6 +18,27 @@ int main(int argc, char **argv) {
     if (argc != 2)
         return 2;
     try {
+        ApplicationBackend guarded;
+        int blocked=0;
+        QObject::connect(&guarded,&ApplicationBackend::operationBlocked,[&](const QString& why) {
+            require(!why.isEmpty(), "backup preflight did not explain the block"); ++blocked;
+        });
+        guarded.mainAction();
+        guarded.restoreBackup(QUrl::fromLocalFile("/nonexistent/fixture.tar.gz"));
+        guarded.installFirmware(QUrl::fromLocalFile("/nonexistent/fixture.dfu"));
+        require(blocked==3 && guarded.backendState()==ApplicationBackend::BackendState::WaitingForDevices,
+                "firmware or restore bypassed full backup preflight");
+        auto missing = UFlipper::powerSnapshot(
+            {{"format.major", "2"}, {"battery.current", "-128"}, {"charge.level", "999"}});
+        auto metrics = missing.value("metrics").toMap();
+        require(metrics.value("battery.current").toMap().value("value").toDouble() == -128,
+                "signed current lost");
+        require(!metrics.value("battery.voltage").toMap().value("available").toBool(),
+                "missing voltage became zero");
+        require(!metrics.value("charge.level").toMap().value("available").toBool(),
+                "invalid battery level accepted");
+        auto future = UFlipper::powerSnapshot({{"format.major", "3"}, {"charge.level", "50"}});
+        require(!future.value("formatSupported").toBool(), "unknown power format interpreted");
         QPluginLoader loader(QString::fromLocal8Bit(argv[1]));
         auto *encoder = qobject_cast<ProtobufPluginInterface *>(loader.instance());
         if (!encoder)

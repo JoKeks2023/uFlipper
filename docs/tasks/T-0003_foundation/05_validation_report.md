@@ -31,3 +31,10 @@ Qt-App-Build/Start, gemeinsame Nutzung der echten Verbindung, Live-Aufnahmen aus
 - Katalogregression: zunächst roter Test `Cannot create output file` nach entferntem Aufnahmeordner; nach Korrektur beide CTest-Suiten grün. Intakte Aufnahme bleibt lesbar, fehlende Aufnahme bleibt sichtbar und unverifiziert.
 - NFC-Helfer lokal erfolgreich gebaut, SDK-Ziel f7 / API 87.1. Dies ist ausschließlich Build-Nachweis; Installation, dauerhafte Kartensitzung und PC/SC bleiben offen.
 - Qt-App-RPC-Vertragstests ergänzt und für nächsten CI-Lauf vorgesehen; lokal fehlt Qt. Noch kein Ausführungsergebnis für diese Tests.
+
+## CI-Abschluss und weitere lokale Kernprüfungen
+
+- **Run 40533899143, Commit 8626b3c: alle vier Jobs erfolgreich.** Ubuntu- und Intel-macOS-Core, kompletter Linux-Desktop sowie macOS-Universal-Paketbau, jeweils einschließlich App-RPC-Vertragstests. Mac-Deployment-Ziel weiterhin 13; keine Zertifizierung eines gestarteten Pakets aus diesem Ergebnis abgeleitet.
+- Backup-Kern lokal tatsächlich mit Dateien/SQLite ausgeführt: Vollgerät-Abschluss ohne beide Inventare blockiert; Änderung nach Inventarbestätigung verwirft Freigabe; leere Verzeichnisse erhalten; Traversal abgewiesen; Testsicherungen separat markiert; zu kurze Datei abgewiesen; Payload- und Katalogpfadkorruption erkannt.
+- Echter Prozessabbruch während eines Backup-Dateitransfers: nach Wiederöffnen unterbrochen, nicht geprüft; Aufnahme-/Seriell-Vertragstests weiterhin bestanden. Letzter kleiner lokaler Build: 2/2 CTest-Suiten grün.
+- Neu angeschlossene Qt-Telemetrie, Geräteprobe, temporäre Vollbackup-Sperre und native Paket-Starttests noch nicht ausgeführt; nächster CI-Lauf prüft diese Änderungen.

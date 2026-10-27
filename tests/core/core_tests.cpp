@@ -1,11 +1,13 @@
-#include "capture_store.h"
 #include "../../helpers/nfc_bridge/bridge_protocol.h"
+#include "backup_store.h"
+#include "capture_store.h"
 #include "file_crypto.h"
 #include "operation_coordinator.h"
 #include "receive_status.h"
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <sqlite3.h>
 #include <stdexcept>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -155,20 +157,101 @@ static void missingCaptureRecovery(const fs::path &root) {
     require(verified == 1, "damaged recording blocked or corrupted intact recording");
 }
 static void helperProtocol() {
-    uint8_t request[UF_NFC_HEADER + UF_NFC_MAX_APDU] = {'U','F',1,UfNfcInfo,42,0,0,0};
+    uint8_t request[UF_NFC_HEADER + UF_NFC_MAX_APDU] = {'U', 'F', 1, UfNfcInfo, 42, 0, 0, 0};
     require(uf_nfc_valid_request(request, 8), "valid helper info rejected");
-    require(!uf_nfc_valid_request(nullptr,8) && !uf_nfc_valid_request(request,7), "truncated helper request accepted");
-    request[3]=UfNfcTransceive; request[6]=1; request[8]=0;
-    require(uf_nfc_valid_request(request,9), "binary APDU rejected");
-    require(!uf_nfc_valid_request(request,8), "length mismatch accepted");
-    request[6]=241;
-    require(!uf_nfc_valid_request(request,sizeof(request)), "oversize APDU accepted");
-    request[6]=1; request[5]=1;
-    require(!uf_nfc_valid_request(request,9), "response status accepted as request");
+    require(!uf_nfc_valid_request(nullptr, 8) && !uf_nfc_valid_request(request, 7),
+            "truncated helper request accepted");
+    request[3] = UfNfcTransceive;
+    request[6] = 1;
+    request[8] = 0;
+    require(uf_nfc_valid_request(request, 9), "binary APDU rejected");
+    require(!uf_nfc_valid_request(request, 8), "length mismatch accepted");
+    request[6] = 241;
+    require(!uf_nfc_valid_request(request, sizeof(request)), "oversize APDU accepted");
+    request[6] = 1;
+    request[5] = 1;
+    require(!uf_nfc_valid_request(request, 9), "response status accepted as request");
     uint8_t response[8];
-    uf_nfc_response_header(response,UfNfcTransceive,42,UfNfcIo,256);
-    require(response[3]==(UfNfcTransceive|0x80) && response[4]==42 && uf_nfc_payload_size(response)==256,
+    uf_nfc_response_header(response, UfNfcTransceive, 42, UfNfcIo, 256);
+    require(response[3] == (UfNfcTransceive | 0x80) && response[4] == 42 &&
+                uf_nfc_payload_size(response) == 256,
             "helper response correlation or length wrong");
+}
+static void backups(const fs::path &root) {
+    BackupStore store(root);
+    rejects([&] { BackupStore other(root); }, "second backup catalog owner allowed");
+    auto id = store.begin(BackupScope::FullDevice, "firmware fixture");
+    store.addDirectory(id, "/int");
+    store.addDirectory(id, "/ext");
+    store.addDirectory(id, "/ext/empty");
+    rejects([&] { store.beginFile(id, "/ext/../escape", 1); }, "backup traversal accepted");
+    store.beginFile(id, "/int/settings", 5);
+    store.appendFile(id, "hello", 5);
+    store.finishFile(id);
+    rejects([&] { store.finish(id); }, "unconfirmed inventory accepted as full backup");
+    store.confirmInventory(id, "/int");
+    rejects([&] { store.finish(id); }, "missing SD inventory accepted as full backup");
+    store.confirmInventory(id, "/ext");
+    store.beginFile(id, "/ext/late", 0);
+    store.finishFile(id);
+    rejects([&] { store.finish(id); }, "inventory confirmation survived a changed file list");
+    store.confirmInventory(id, "/ext");
+    store.finish(id);
+    require(store.verify(id), "verified backup could not reopen payloads");
+    auto entries = store.entries(id);
+    require(entries.size() == 5, "backup omitted empty directories or hidden content");
+    require(store.get(id).scope == BackupScope::FullDevice, "backup scope lost");
+    // Altering catalog paths must not permit restore under a different device path.
+    sqlite3 *db = nullptr;
+    require(sqlite3_open((root / "backups/catalog.sqlite").c_str(), &db) == SQLITE_OK,
+            "cannot open corruption fixture");
+    auto rc = sqlite3_exec(db, "UPDATE entries SET path='/ext/moved' WHERE path='/int/settings'", nullptr,
+                           nullptr, nullptr);
+    sqlite3_close(db);
+    require(rc == SQLITE_OK, "cannot mutate corruption fixture");
+    require(!store.verify(id), "catalog path change was not bound to the backup manifest");
+    auto subset = store.begin(BackupScope::TestSubset, "isolated fixture");
+    store.beginFile(subset, "/ext/uflipper-test/one", 3);
+    store.appendFile(subset, "ab", 2);
+    rejects([&] { store.finishFile(subset); }, "short backup file accepted");
+    store.appendFile(subset, "c", 1);
+    store.finishFile(subset);
+    store.finish(subset);
+    require(store.verify(subset) && store.get(subset).scope == BackupScope::TestSubset,
+            "subset lost its distinct scope");
+    auto file = store.entries(subset)[0];
+    std::ofstream(store.payloadPath(subset, file), std::ios::app) << 'x';
+    require(!store.verify(subset), "damaged backup accepted");
+    auto interrupted = store.begin(BackupScope::FullDevice, "partial");
+    store.beginFile(interrupted, "/ext/partial", 100);
+    store.appendFile(interrupted, "partial", 7);
+    store.interrupt(interrupted, "fixture unplug");
+    require(!store.verify(interrupted) && store.get(interrupted).state == BackupState::Interrupted,
+            "interrupted backup looked verified");
+}
+static void backupCrashRecovery(const fs::path &root) {
+    auto pid = fork();
+    require(pid >= 0, "cannot start backup crash fixture");
+    if (pid == 0) {
+        try {
+            BackupStore store(root);
+            auto id = store.begin(BackupScope::FullDevice, "crash fixture");
+            store.beginFile(id, "/int/partial", 100);
+            store.appendFile(id, "raw", 3);
+            _exit(0);
+        } catch (...) {
+            _exit(1);
+        }
+    }
+    int status = 0;
+    waitpid(pid, &status, 0);
+    require(WIFEXITED(status) && WEXITSTATUS(status) == 0, "backup crash fixture failed");
+    BackupStore reopened(root);
+    auto items = reopened.list();
+    require(items.size() == 1 && items[0].state == BackupState::Interrupted &&
+                items[0].endedMs >= items[0].startedMs - 999,
+            "crashed backup was not recovered as interrupted");
+    require(!reopened.verify(items[0].id), "crashed backup was treated as verified");
 }
 static void receiveStatus() {
     ReceiveStatus ir("ir.raw");
@@ -231,6 +314,8 @@ int main() {
         ownership();
         receiveStatus();
         helperProtocol();
+        backups(root / "backups");
+        backupCrashRecovery(root / "backup-crash");
         captures(root / "captures");
         crashRecovery(root / "crash");
         missingCaptureRecovery(root / "missing");

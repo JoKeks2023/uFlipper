@@ -8,7 +8,7 @@ cd "$source_dir/build_mac"
 qmake "$source_dir/qFlipper.pro" -spec macx-clang CONFIG+=release QMAKE_APPLE_DEVICE_ARCHS="x86_64 arm64" QMAKE_MACOSX_DEPLOYMENT_TARGET=13.0
 make -j"${BUILD_JOBS:-2}"
 make install
-macdeployqt uFlipper.app -executable=uFlipper.app/Contents/MacOS/uFlipper-cli
+macdeployqt uFlipper.app -qmldir="$source_dir/application" -qmlimport="$source_dir/application/imports" -qmlimport="$source_dir/application/styles" -executable=uFlipper.app/Contents/MacOS/uFlipper-cli -executable=uFlipper.app/Contents/MacOS/uFlipper-probe
 lipo -archs uFlipper.app/Contents/MacOS/uFlipper
 /usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' uFlipper.app/Contents/Info.plist
 /usr/bin/ditto -c -k --keepParent uFlipper.app uFlipper.app.zip

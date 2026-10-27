@@ -82,6 +82,29 @@ jobs:
           make -j2
           plugin=$(python3 -c 'import pathlib,sys; print(next(p for p in pathlib.Path(sys.argv[1]).glob("*flipperproto0*") if p.suffix in (".so", ".dylib")))' "$desktop_build/plugins")
           ./uflipper_protocol_tests "$plugin"
+      - name: Native application startup on Linux
+        if: runner.os == 'Linux'
+        env:
+          QT_QPA_PLATFORM: offscreen
+          QT_QUICK_BACKEND: software
+        run: timeout 15 build/uFlipper --smoke-test
+      - name: Native bundled application startup on macOS
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          python3 - <<'PYCODE'
+          import os, pathlib, subprocess
+          sdk = pathlib.Path(os.environ["RUNNER_TEMP"]) / "Qt"
+          hidden = sdk.with_name("Qt-hidden-during-runtime-test")
+          sdk.rename(hidden)
+          try:
+              env = os.environ.copy()
+              for key in ("QT_PLUGIN_PATH", "QML_IMPORT_PATH", "QML2_IMPORT_PATH", "DYLD_FRAMEWORK_PATH", "DYLD_LIBRARY_PATH"):
+                  env.pop(key, None)
+              subprocess.run(["build_mac/uFlipper.app/Contents/MacOS/uFlipper", "--smoke-test"], env=env, timeout=20, check=True)
+          finally:
+              hidden.rename(sdk)
+          PYCODE
       - uses: actions/upload-artifact@v4
         with:
           name: uFlipper-${{ matrix.os }}-test-build

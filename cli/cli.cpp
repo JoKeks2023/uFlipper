@@ -83,6 +83,10 @@ void Cli::onUpdateStateChanged()
 void Cli::initConnections()
 {
     connect(&m_backend, &ApplicationBackend::backendStateChanged, this, &Cli::onBackendStateChanged);
+    connect(&m_backend, &ApplicationBackend::operationBlocked, this, [this](const QString& reason) {
+        qCCritical(LOG_CLI).noquote() << reason;
+        exit(2);
+    });
 }
 
 void Cli::initLogger()
@@ -126,7 +130,7 @@ void Cli::processArguments()
     const auto args = m_parser.positionalArguments();
 
     if(args.isEmpty()) {
-        beginDefaultAction();
+        m_parser.showHelp(0);
     } else if(args.startsWith(QStringLiteral("backup"))) {
         beginBackup();
     } else if(args.startsWith(QStringLiteral("restore"))) {

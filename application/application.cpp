@@ -1,4 +1,5 @@
 #include "application.h"
+#include "workbench/devicetelemetry.h"
 
 #include <QDebug>
 #include <QTimer>
@@ -128,11 +129,14 @@ void Application::initCommandOptions()
 
     parser.addOption(developerModeOption);
     parser.addOption(usbLogLevelOption);
+    const QCommandLineOption smokeTest(QStringLiteral("smoke-test"), QStringLiteral("Exit after a native startup test."));
+    parser.addOption(smokeTest);
     parser.addVersionOption();
     parser.addHelpOption();
 
     parser.process(*this);
 
+    if(parser.isSet(smokeTest)) QTimer::singleShot(3000, this, [] { QCoreApplication::quit(); });
     m_isDeveloperMode |= parser.isSet(developerModeOption);
 
     if(parser.isSet(usbLogLevelOption)) {
@@ -186,6 +190,7 @@ void Application::initQmlTypes()
 
     qmlRegisterUncreatableType<BackendError>("QFlipper", 1, 0, "BackendError", QStringLiteral("This class is only a enum container"));
     qmlRegisterUncreatableType<InputEvent>("QFlipper", 1, 0, "InputEvent", QStringLiteral("This class is only a enum container"));
+    qmlRegisterUncreatableType<DeviceTelemetry>("QFlipper", 1, 0, "DeviceTelemetry", QStringLiteral("Device telemetry is owned by the backend"));
     qmlRegisterUncreatableType<ApplicationBackend>("QFlipper", 1, 0, "ApplicationBackend", QStringLiteral("This class is meant to be created from c++"));
     qmlRegisterUncreatableType<ApplicationUpdater>("QFlipper", 1, 0, "ApplicationUpdater", QStringLiteral("This class is meant to be created from c++"));
 
