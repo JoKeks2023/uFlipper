@@ -8,6 +8,12 @@
   "artifact_sha256": "ab0bcae111b085a8cf79ef9c5dd423331f0ae86519228cb0ed79624470e0d632",
   "artifact_bytes": 6080,
   "proposed_device_path": "/ext/apps/Tools/uf_nfc_bridge.fap",
-  "installed": false,
-  "runtime_verified": false
+  "installed": true,
+  "runtime_verified": false,
+  "installation_readback_verified": true,
+  "start_info_stop_verified": true,
+  "rpc_return_to_cli_verified": true,
+  "lifecycle_recording_id": "a437c80e5fac071fa4f281c9fee75f54",
+  "persistent_card_session_verified": false,
+  "pcsc_integration_verified": false
 }

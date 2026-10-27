@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(uFlipperCore LANGUAGES CXX)
+project(uFlipperCore LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(PkgConfig REQUIRED)
@@ -33,4 +33,21 @@ if(BUILD_TESTING)
  endif()
  add_test(NAME serial_contract COMMAND uflipper_serial_tests)
  set_tests_properties(serial_contract PROPERTIES TIMEOUT 10)
+endif()
+
+# This small development probe reuses the exact generated protobuf and pinned nanopb.
+# The production Qt connection remains the application owner.
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/nanopb/pb_encode.c")
+ set(PROTO_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../plugins/flipperproto0/messages)
+ set(NANOPB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/nanopb)
+ add_library(uflipper_probe_protobuf STATIC
+   ${NANOPB_DIR}/pb_common.c ${NANOPB_DIR}/pb_encode.c ${NANOPB_DIR}/pb_decode.c
+   ${PROTO_DIR}/flipper.pb.c ${PROTO_DIR}/application.pb.c ${PROTO_DIR}/gpio.pb.c
+   ${PROTO_DIR}/gui.pb.c ${PROTO_DIR}/property.pb.c ${PROTO_DIR}/status.pb.c
+   ${PROTO_DIR}/storage.pb.c ${PROTO_DIR}/system.pb.c)
+ target_include_directories(uflipper_probe_protobuf PUBLIC ${PROTO_DIR} ${NANOPB_DIR})
+ target_compile_definitions(uflipper_probe_protobuf PUBLIC PB_ENABLE_MALLOC)
+ add_executable(uflipper_helper_lifecycle_probe tools/helper_lifecycle_probe.cpp)
+ target_include_directories(uflipper_helper_lifecycle_probe PRIVATE ../helpers/nfc_bridge)
+ target_link_libraries(uflipper_helper_lifecycle_probe PRIVATE uflipper_core uflipper_probe_protobuf)
 endif()

@@ -42,3 +42,6 @@ Befund: bisheriger DMG-Dekorationspfad verweist auf einen nicht vorhandenen Back
 - Dateiinhalt, Pfade, Größen, Scope und Metadaten sind an das kanonische Manifest gebunden. Unterbrochene/zu kurze Dateien, veränderte Katalogpfade und beschädigte Payloads ergeben keine gültige Sicherung.
 - Shared SQLite-Hilfstypen aus dem Aufnahme-Modul herausgezogen; bestehende Aufnahmeprüfungen bleiben grün. Secretstream-Zustand und Klartextpuffer werden auch auf Fehlerpfaden aus dem Arbeitsspeicher gelöscht.
 - Dies ist der lokale Speicherbaustein. Remote-Inventarvergleich, vollständiger Geräte-Download und selektiver Restore sind noch nicht angeschlossen; die Wartungssperre bleibt deshalb wirksam.
+
+- Helfer 0.1.0 nach konkreter Nutzerfreigabe installiert, Hash zurückgelesen und Start/Info/Stop am Gerät geprüft. Protokollabschluss im nativen Entwicklungsprüfer gegen die tatsächliche Momentum-Transportlogik korrigiert. Keine Kartenaktivierung, keine Firmwareänderung.
+- Design weiter **nicht freigegeben**: Nutzer konnte die neue Vorschau noch nicht ansehen. Drei Vorschau-Tabs wurden in Codex vorgemerkt; größere Produkt-UI bleibt unverändert.

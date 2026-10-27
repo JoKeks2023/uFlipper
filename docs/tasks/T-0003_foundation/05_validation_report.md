@@ -48,3 +48,12 @@ Qt-App-Build/Start, gemeinsame Nutzung der echten Verbindung, Live-Aufnahmen aus
 
 - Nach lokaler Ad-hoc-Signierung startet das alte Mac-Paket bis zur QML-Ladeprüfung und endet mit `module "QtQuick.Window" is not installed`. Damit ist die fehlende QML-Paketierung tatsächlich beobachtet, nicht nur vermutet. Die QML-Deploymentkorrektur ist bereits im nächsten Buildpfad enthalten.
 - CI `b955e82`, Run `40538788021`: beide Core-Jobs erfolgreich, Desktop-Builds scheitern am fehlenden DFU-Header-Suchpfad des neu hinzugefügten Geräteprüfprogramms. Suchpfad ergänzt; frühe isolierte Compilerprüfung für Probe/Telemetrie vor dem kompletten App-Build hinzugefügt. Kein neuer grüner Gesamtstand behauptet.
+
+## Freigegebener Helfer: tatsächlicher Gerätetest
+
+- Nutzer hat genau Helfer **0.1.0 / ab0bcae1…70e0d632** unter `/ext/apps/Tools/uf_nfc_bridge.fap` zur Installation und Start/Versions-/Stopprüfung freigegeben. Keine Freigabe eines Kartentests daraus abgeleitet.
+- Datei mit Momentum-SDK-Storage übertragen, vollständig zurückgelesen und SHA-256 verglichen: identisch; keine vorhandene Helferdatei überschrieben. Installationsprotokoll dauerhaft in der lokalen App-Ablage.
+- Kleinen nativen Prüfer mit der gepinnten nanopb-Version und den vorhandenen generierten Protobuf-Definitionen gebaut; kein lokaler Qt-Build. StartRequest, AppStarted-Broadcast, DataExchange-Info und AppExit samt AppClosed-Broadcast real ausgeführt.
+- Erster Lauf: Helfer korrekt gestoppt; Rückkehr zu CLI zunächst nicht bestätigt. Aufnahme `2dae9a886485b0abfa91a155e7d33d3b` als unterbrochen erhalten. Momentum `rpc_cli.c` wartet nach dem Stop-Callback auf das nächste Transportbyte; Client nach bestätigtem RPC-Abschluss entsprechend angepasst. Quelle: https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/services/rpc/rpc_cli.c
+- Zweiter Lauf: **Start, Info `uf-nfc/0.1.0;iso14443-4a;short-apdu;max=240`, Stop und RPC-Abschluss bestätigt.** Aufnahme `a437c80e5fac071fa4f281c9fee75f54` abgeschlossen und Integrität geprüft. Keine Kartenaktivierung durchgeführt.
+- CI `f3727c6`: frühe Linux-Compilerprüfung erkennt mehrdeutige Qt-Kommandozeilenoptions-Initialisierung; durch explizite Konstruktoren korrigiert. Nächster CI-Lauf steht noch aus.

@@ -5,7 +5,7 @@
 - [ ] Gemeinsamer Kern an vorhandenes Qt-Gerätebackend angebunden und App gestartet.
 - [x] Fork-eigene Mac-/Linux-CI mit Testartefakten erfolgreich gelaufen (8626b3c; Paket-Startprüfung separat noch offen).
 - [ ] Live-Empfang, Stop und gespeicherte Originaldaten am echten Flipper nachgewiesen.
-- [ ] Konkreten Helfer gebaut, zur Freigabe vorgelegt und erst danach installiert/geprüft.
+- [x] Konkreten Helfer gebaut, ausdrücklich freigegeben, danach installiert und Start/Version/Stop geprüft. Kartenfunktion noch offen.
 - [ ] Mac-Systemreader mit unabhängigem PC/SC-Client und dauerhafter Kartensitzung nachgewiesen.
 - [ ] Vollständige Sicherung und selektiver Restore mit abgegrenzten Testdaten geprüft.
 - [ ] Dashboard-/Werkzeug-/Settings-Entwürfe gezeigt und gemeinsam abgestimmt.
