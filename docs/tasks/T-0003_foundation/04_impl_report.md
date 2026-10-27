@@ -45,3 +45,10 @@ Befund: bisheriger DMG-Dekorationspfad verweist auf einen nicht vorhandenen Back
 
 - Helfer 0.1.0 nach konkreter Nutzerfreigabe installiert, Hash zurückgelesen und Start/Info/Stop am Gerät geprüft. Protokollabschluss im nativen Entwicklungsprüfer gegen die tatsächliche Momentum-Transportlogik korrigiert. Keine Kartenaktivierung, keine Firmwareänderung.
 - Design weiter **nicht freigegeben**: Nutzer konnte die neue Vorschau noch nicht ansehen. Drei Vorschau-Tabs wurden in Codex vorgemerkt; größere Produkt-UI bleibt unverändert.
+
+## Begrenzter Backup-/Restore-Gerätenachweis
+
+- Nativer Entwicklungsprüfer mit zufälligem, neu angelegtem SD-Testordner; Dateigröße auf 4 KiB begrenzt, keine frei wählbaren Zielpfade. Der getestete RPC-Transport wird zwischen Helfer- und Backup-Prüfer geteilt.
+- Originalbackup, geänderter Stand, geprüftes Backup vor Restore, Rückschreiben und anschließender vollständiger Bytevergleich am echten Flipper ausgeführt. Testdaten nach Erfolg gezielt entfernt; bei einem Fehler bleibt nur der Testordner für Diagnose erhalten.
+- Testsicherungen bleiben `TestSubset` und können die Vollbackup-Voraussetzung für Firmware/Restore nicht erfüllen. Vollständiger Geräteadapter und Produktansicht bleiben offen.
+- Abgebrochene Power-Anfragen geben den Wartestatus wieder frei; fehlgeschlagene Abfragen kennzeichnen vorhandene Werte als veraltet. Keine Power-Einstellung wird geschrieben.

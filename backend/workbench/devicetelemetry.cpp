@@ -65,7 +65,7 @@ QVariantMap DeviceTelemetry::snapshot() const {
     }
     QVariantMap power = power_;
     power.insert("available", !observedAt_.isNull());
-    power.insert("stale", !connected_ || observedAt_.isNull() ||
+    power.insert("stale", !connected_ || !error_.isEmpty() || observedAt_.isNull() ||
                               observedAt_.msecsTo(QDateTime::currentDateTimeUtc()) > 30000);
     if (!observedAt_.isNull())
         power.insert("observedAt", observedAt_.toString(Qt::ISODateWithMs));
@@ -78,12 +78,13 @@ void DeviceTelemetry::refresh() {
     if (!pollingEnabled_ || !connected_ || pending_ || !device_)
         return;
     auto generation = generation_;
+    auto sequence = ++requestSequence_;
     auto expected = device_;
     pending_ = true;
     auto *operation = device_->rpc()->propertyGet("pwrinfo");
     operation->setTimeout(3000);
-    connect(operation, &AbstractOperation::finished, this, [this, operation, generation, expected] {
-        if (generation != generation_ || expected != device_)
+    connect(operation, &AbstractOperation::finished, this, [this, operation, generation, sequence, expected] {
+        if (generation != generation_ || sequence != requestSequence_ || expected != device_)
             return;
         pending_ = false;
         if (operation->isError())
@@ -98,6 +99,13 @@ void DeviceTelemetry::refresh() {
                 error_ = tr("Power information has an unsupported or missing format");
         }
         emit snapshotChanged();
+    });
+    connect(operation, &QObject::destroyed, this, [this, generation, sequence] {
+        if (generation == generation_ && sequence == requestSequence_ && pending_) {
+            pending_ = false;
+            error_ = tr("Power query canceled before completion");
+            emit snapshotChanged();
+        }
     });
     emit snapshotChanged();
 }

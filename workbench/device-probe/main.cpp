@@ -210,6 +210,12 @@ class Probe : public QObject {
         if (finished_)
             return;
         failure_ = error;
+        if (!helper_) {
+            std::cerr << "Power query failed: " << error.toStdString() << '\n';
+            finished_ = true;
+            QCoreApplication::exit(1);
+            return;
+        }
         if (started_ && device_)
             stopHelper();
         else
@@ -276,9 +282,14 @@ int main(int argc, char **argv) {
     parser.setApplicationDescription(
         "Development probe: power info or already approved NFC helper. No installation or firmware actions.");
     parser.addHelpOption();
-    parser.addOption(QCommandLineOption(QStringLiteral("helper"), QStringLiteral("Start installed uf_nfc_bridge 0.1.0 and verify Info/Exit")));
-    parser.addOption(QCommandLineOption(QStringLiteral("card-test"), QStringLiteral("Read NDEF Type 4A test card with three dependent APDUs; requires --helper")));
-    parser.addOption(QCommandLineOption(QStringLiteral("plugins"), QStringLiteral("Protobuf plugin directory"), QStringLiteral("path")));
+    parser.addOption(
+        QCommandLineOption(QStringLiteral("helper"),
+                           QStringLiteral("Start installed uf_nfc_bridge 0.1.0 and verify Info/Exit")));
+    parser.addOption(QCommandLineOption(
+        QStringLiteral("card-test"),
+        QStringLiteral("Read NDEF Type 4A test card with three dependent APDUs; requires --helper")));
+    parser.addOption(QCommandLineOption(QStringLiteral("plugins"),
+                                        QStringLiteral("Protobuf plugin directory"), QStringLiteral("path")));
     parser.process(app);
     if (parser.isSet("card-test") && !parser.isSet("helper"))
         parser.showHelp(2);

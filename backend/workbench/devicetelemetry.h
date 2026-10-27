@@ -29,6 +29,6 @@ class DeviceTelemetry : public QObject {
     QVariantMap power_;
     QDateTime observedAt_;
     QString error_;
-    quint64 generation_ = 0;
+    quint64 generation_ = 0, requestSequence_ = 0;
     bool connected_ = false, pending_ = false, pollingEnabled_ = false;
 };

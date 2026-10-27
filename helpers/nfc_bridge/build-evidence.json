@@ -9,11 +9,12 @@
   "artifact_bytes": 6080,
   "proposed_device_path": "/ext/apps/Tools/uf_nfc_bridge.fap",
   "installed": true,
-  "runtime_verified": false,
   "installation_readback_verified": true,
   "start_info_stop_verified": true,
   "rpc_return_to_cli_verified": true,
   "lifecycle_recording_id": "a437c80e5fac071fa4f281c9fee75f54",
   "persistent_card_session_verified": false,
-  "pcsc_integration_verified": false
+  "pcsc_integration_verified": false,
+  "verification_scope": "installation-and-app-lifecycle-only",
+  "card_test_prerequisite": "User currently has no ISO-DEP Type 4A NDEF test card"
 }

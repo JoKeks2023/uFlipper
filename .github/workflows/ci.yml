@@ -24,9 +24,11 @@ jobs:
       - name: Dependencies on macOS
         if: runner.os == 'macOS'
         run: brew install libsodium pkg-config
+      - name: Pinned nanopb for native development probes
+        run: git submodule update --init 3rdparty/nanopb
       - run: cmake -S workbench -B build-core -DCMAKE_BUILD_TYPE=Debug
       - run: cmake --build build-core --parallel 2
-      - run: ctest --test-dir build-core --output-on-failure --output-junit core-results.xml
+      - run: ctest --test-dir build-core --output-on-failure --no-tests=error --output-junit core-results.xml
       - uses: actions/upload-artifact@v4
         if: always()
         with:

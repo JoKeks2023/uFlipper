@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "observed_date": "2026-10-27",
+  "kind": "backup-fixture-roundtrip",
+  "firmware": {
+    "version": "mntm-012",
+    "commit": "e1784e74",
+    "rpc": "0.25"
+  },
+  "scope": "test-subset",
+  "fixture_root": "/ext/uflipper-tests/c602b5862a9a4e8863830f568427117f",
+  "original_backup": "471033dc4d7638738addfdc33415b26e",
+  "pre_restore_backup": "ebffac75238c52629dd5db4501df4e71",
+  "restored_files": 2,
+  "comparison_verified": true,
+  "fixtures_removed": true,
+  "recording_id": "9883e2f9ff5962ef4bc8eab3522b50d1",
+  "recording_verified": true,
+  "rpc_closed": true,
+  "full_device_backup_verified": false,
+  "product_restore_workflow_verified": false,
+  "verified_catalog_entries": [
+    {
+      "id": "471033dc4d7638738addfdc33415b26e",
+      "scope": "test-subset",
+      "state": "verified",
+      "manifest_sha256": "cc145ed34972d82eb31828db74d4cb3512c6290b5c6ade472cc200555ddf6ea1",
+      "files": [
+        {
+          "name": "bytes.bin",
+          "bytes": 3072,
+          "sha256": "a0c1e151b7ef9cac938131ef793ce8528b83fdf25b11f9dc60fc2d72be22f796"
+        },
+        {
+          "name": "notes.txt",
+          "bytes": 87,
+          "sha256": "80ac9924063eacfa6683e562b0fbe8aeae123bd571dfe61abb70f6de6da7fbf4"
+        }
+      ]
+    },
+    {
+      "id": "ebffac75238c52629dd5db4501df4e71",
+      "scope": "test-subset",
+      "state": "verified",
+      "manifest_sha256": "c20890cb35631d798ecd97a512749688321274fc6abbc3e05ce3f4025ffa691b",
+      "files": [
+        {
+          "name": "bytes.bin",
+          "bytes": 86,
+          "sha256": "34acfd6fe1ab72688cbfc1eba6486e60016b35b345f2166d52efa3c4a3edac1f"
+        },
+        {
+          "name": "notes.txt",
+          "bytes": 86,
+          "sha256": "47b68fb82cd897381f9fc1b7e247fabf4442251729a083cdc69fbbd152c968d4"
+        }
+      ]
+    }
+  ]
+}

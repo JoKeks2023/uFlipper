@@ -12,7 +12,7 @@ Datum: 27.10.2026. Dies ist ein Zwischenstand, keine Fertigmeldung.
 
 ## Noch offen
 
-Qt-App-Build/Start, gemeinsame Nutzung der echten Verbindung, Live-Aufnahmen aus der App, Restore, Helferinstallation, NFC-Systemreader, Cloud-Anmeldung/-Synchronisierung und MCP-Clienttest sind noch nicht nachgewiesen. CI-Ergebnisse werden nach dem tatsächlichen Lauf ergänzt. Kein öffentlicher Release erfolgt.
+Aktueller Stand siehe die datierten Nachweise weiter unten. Noch offen sind insbesondere der eigenständige Mac-Paketstart, gemeinsame Nutzung der echten Verbindung durch UI/MCP/Reader, Live-Aufnahmen aus der App, vollständiges Gerätebackup und Produkt-Restore, NFC-Kartensitzung/Systemreader, Cloud-Anmeldung/-Synchronisierung und MCP-Clienttest. Kein öffentlicher Release erfolgt.
 
 ## Zusätzliche beobachtete Ergebnisse
 
@@ -57,3 +57,21 @@ Qt-App-Build/Start, gemeinsame Nutzung der echten Verbindung, Live-Aufnahmen aus
 - Erster Lauf: Helfer korrekt gestoppt; Rückkehr zu CLI zunächst nicht bestätigt. Aufnahme `2dae9a886485b0abfa91a155e7d33d3b` als unterbrochen erhalten. Momentum `rpc_cli.c` wartet nach dem Stop-Callback auf das nächste Transportbyte; Client nach bestätigtem RPC-Abschluss entsprechend angepasst. Quelle: https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/services/rpc/rpc_cli.c
 - Zweiter Lauf: **Start, Info `uf-nfc/0.1.0;iso14443-4a;short-apdu;max=240`, Stop und RPC-Abschluss bestätigt.** Aufnahme `a437c80e5fac071fa4f281c9fee75f54` abgeschlossen und Integrität geprüft. Keine Kartenaktivierung durchgeführt.
 - CI `f3727c6`: frühe Linux-Compilerprüfung erkennt mehrdeutige Qt-Kommandozeilenoptions-Initialisierung; durch explizite Konstruktoren korrigiert. Nächster CI-Lauf steht noch aus.
+
+## Backup-/Restore-Test am angeschlossenen Flipper
+
+- Kleines natives Testprogramm `uflipper_backup_fixture_probe` mit bestehendem RPC-Transport und `BackupStore` gebaut; beide lokalen CTest-Suiten bestanden. Der Test erlaubt nur einen frisch angelegten zufälligen Ordner unter `/ext/uflipper-tests/`.
+- Tatsächlich ausgeführt: zwei neue Dateien (Text und 3.072 Binärbytes einschließlich NUL) plus leeres Verzeichnis angelegt; Inhalte über Storage-RPC zurückgelesen und als **TestSubset** lokal gesichert, Manifest/Payloads geprüft. Originalbackup: `471033dc4d7638738addfdc33415b26e`.
+- Beide Gerätedateien verändert; vor Restore den geänderten Stand erneut gelesen und als zweite geprüfte Testsicherung gespeichert: `ebffac75238c52629dd5db4501df4e71`.
+- Originale aus den gesicherten Payloads zurückgeschrieben; beide Dateien erneut vom Flipper gelesen und **bytegenau mit den Originaldaten verglichen**. Anschließend ausschließlich den eigenen Testordner entfernt, Nichtvorhandensein per Storage-Stat bestätigt und RPC sauber zur CLI geschlossen.
+- Gerätepfad: `/ext/uflipper-tests/c602b5862a9a4e8863830f568427117f`; dauerhafte Ablaufaufnahme `9883e2f9ff5962ef4bc8eab3522b50d1`, Integrität geprüft. Keine bestehenden Nutzerdateien verändert.
+- Dies belegt den begrenzten Geräte-Rundlauf. **Kein Nachweis eines vollständigen Gerätesicherungs- oder Produkt-Restore-Workflows**; die temporäre Wartungssperre bleibt bestehen.
+
+## Verfügbare Testmittel und aktueller Build
+
+- Nutzer: derzeit keine passende ISO-DEP/Typ-4A-NDEF-Testkarte. Dauerhafte NFC-Kartensitzung und unabhängiger Mac-PC/SC-Test bleiben an dieser Voraussetzung offen. Release-Umfang bleibt erhalten; keine Firmwareänderung und kein anderer Kartentest als Ersatz.
+- Nutzer hat IR-Signaltest auf später verschoben; kein erneuter Empfangslauf gestartet.
+- Designentwürfe weiterhin nicht zur Umsetzung freigegeben: Nutzer konnte sie nicht ansehen. Große UI-Änderungen bleiben ausgesetzt.
+- CI `290f6ce`, Run `40561302551`: beide Core-Jobs sowie kompletter Linux-Desktop, Qt-Vertragstests und nativer Linux-App-Start erfolgreich. Mac-Universal-Paket noch im Bau; Ergebnis folgt nach tatsächlichem Abschluss.
+
+- Abschluss CI `290f6ce` / Run `40561302551`: **alle vier Jobs erfolgreich**, einschließlich macOS-Universal-Build, Qt-App-RPC-Verträgen und gebündeltem Mac-App-Start bei verborgenem Entwickler-Qt. Eigenständiger Start dieses Pakets auf dem lokalen Apple-Silicon-Mac und Power-Abfrage folgen separat.
