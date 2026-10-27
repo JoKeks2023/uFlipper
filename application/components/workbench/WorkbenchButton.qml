@@ -9,6 +9,9 @@ Button {
     implicitWidth: Math.max(80, label.implicitWidth + 26)
     leftPadding: 12; rightPadding: 12
     Accessible.name: text
+    ToolTip.visible: hovered && label.truncated
+    ToolTip.text: text
+    ToolTip.delay: Theme.timing.toolTipDelay
     background: Rectangle {
         radius: 5
         color: control.primary && control.enabled ? Theme.color.lightorange1 :

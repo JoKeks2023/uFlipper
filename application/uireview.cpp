@@ -46,6 +46,9 @@ class Review : public QObject {
                   {"nav-infrared", "infrared", "02_infrared"},
                   {"tool-easy-mode", "infrared", ""},
                   {"tool-easy-mode", "infrared", ""},
+                  {"tool-tab-1", "infrared", "11_ir_controls"},
+                  {"tool-tab-2", "infrared", "12_ir_library"},
+                  {"tool-tab-0", "infrared", ""},
                   {"nav-settings", "settings", "03_settings"},
                   {"settings-tab-1", "settings", "04_storage"},
                   {"settings-tab-2", "settings", "05_cloud"},
@@ -104,9 +107,15 @@ class Review : public QObject {
                 throw std::runtime_error("Easy Mode click did not update preference");
             if (index_ == 3 && globalPrefs->easyMode() != originalEasyMode_)
                 throw std::runtime_error("Easy Mode preference did not restore");
-            if (index_ >= 5 && index_ <= 8) {
+            const auto buttonName = QString::fromLatin1(step.button);
+            if (buttonName.startsWith("tool-tab-")) {
+                auto *tool = findItem(window_->contentItem(), "toolPage");
+                if (!tool || tool->property("currentTab").toInt() != buttonName.mid(9).toInt())
+                    throw std::runtime_error("Tool tab click did not reach expected tab");
+            }
+            if (buttonName.startsWith("settings-tab-")) {
                 auto *settings = findItem(window_->contentItem(), "settingsPage");
-                if (!settings || settings->property("tab").toInt() != int(index_ - 4))
+                if (!settings || settings->property("tab").toInt() != buttonName.mid(13).toInt())
                     throw std::runtime_error("Settings tab click did not reach expected tab");
             }
             if (*step.image) {
@@ -136,9 +145,13 @@ class Review : public QObject {
             fail("Cannot save UI result");
             return;
         }
+        int screenshots = 0;
+        for (const auto &step : steps_)
+            if (*step.image)
+                ++screenshots;
         result.write(QJsonDocument(QJsonObject{{"navigationClicks", int(steps_.size())},
                                                {"easyModeRoundtrip", true},
-                                               {"screenshots", 10},
+                                               {"screenshots", screenshots},
                                                {"compactWidth", 1060},
                                                {"compactHeight", 680},
                                                {"qmlErrors", 0},

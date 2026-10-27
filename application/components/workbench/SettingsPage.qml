@@ -13,7 +13,7 @@ WorkbenchSplit {
         Layout.fillWidth: true; spacing: 12
         Repeater {
             model: [qsTr("Allgemein"), qsTr("Speicher"), qsTr("Cloud"), qsTr("Integrationen"), qsTr("Über uFlipper")]
-            WorkbenchButton {
+            WorkbenchTab {
                 required property string modelData
                 required property int index
                 objectName: "settings-tab-" + index
@@ -29,13 +29,13 @@ WorkbenchSplit {
         RowLayout {
             Layout.fillWidth: true
             WorkbenchFact { label: qsTr("Design"); value: qsTr("qFlipper · Dunkel, Orange und Raster") }
-            ComboBox { Layout.preferredWidth: 280; model: ["qFlipper"]; font.family: "Share Tech"; font.pixelSize: 17 }
+            WorkbenchComboBox { Layout.preferredWidth: 280; model: ["qFlipper"]; font.family: "Share Tech"; font.pixelSize: 17 }
         }
         WorkbenchRule {}
         RowLayout {
             Layout.fillWidth: true
             WorkbenchFact { label: qsTr("Arbeitsfläche"); value: qsTr("Workbench und separate Werkzeugfenster folgen.") }
-            ComboBox {
+            WorkbenchComboBox {
                 Layout.preferredWidth: 280
                 model: [qsTr("Seitenleiste und Detailbereich"), qsTr("Workbench · in Arbeit"), qsTr("Werkzeugfenster · in Arbeit")]
                 currentIndex: 0; font.family: "Share Tech"; font.pixelSize: 17
@@ -47,7 +47,7 @@ WorkbenchSplit {
         RowLayout {
             Layout.fillWidth: true
             WorkbenchFact { label: qsTr("Easy Mode"); value: qsTr("Geführte Hinweise in denselben Werkzeugen") }
-            ComboBox {
+            WorkbenchComboBox {
                 objectName: "easy-mode-preference"
                 Layout.preferredWidth: 280; model: [qsTr("Hinweise einblenden"), qsTr("Nur auf Wunsch einblenden")]
                 currentIndex: Preferences.easyMode ? 0 : 1

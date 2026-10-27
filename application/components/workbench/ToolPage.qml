@@ -30,7 +30,8 @@ WorkbenchSplit {
         Layout.fillWidth: true; spacing: 16
         Repeater {
             model: [qsTr("Empfang"), qsTr("Bedienung"), qsTr("Bibliothek")]
-            WorkbenchButton {
+            WorkbenchTab {
+                objectName: "tool-tab-" + index
                 required property string modelData
                 required property int index
                 text: modelData; checked: tool.currentTab === index
@@ -88,7 +89,7 @@ WorkbenchSplit {
     details: [
         WorkbenchLabel { text: qsTr("Empfang"); font.pixelSize: 21 },
         WorkbenchLabel { text: qsTr("Modus"); font.pixelSize: 14; opacity: 0.65 },
-        ComboBox { Layout.fillWidth: true; model: tool.infrared ? [qsTr("RAW-Pulszeiten"), qsTr("Protokoll-Dekodierung")] : [qsTr("Geräteabhängig")]; enabled: tool.infrared; font.family: "Share Tech"; font.pixelSize: 16 },
+        WorkbenchComboBox { Layout.fillWidth: true; model: tool.infrared ? [qsTr("RAW-Pulszeiten"), qsTr("Protokoll-Dekodierung")] : [qsTr("Geräteabhängig")]; enabled: tool.infrared; font.family: "Share Tech"; font.pixelSize: 16 },
         WorkbenchFact { label: qsTr("Empfänger"); value: qsTr("Flipper intern") },
         WorkbenchRule {},
         WorkbenchFact { label: qsTr("Sitzung"); value: qsTr("Nicht gestartet") },

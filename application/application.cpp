@@ -1,5 +1,6 @@
 #include "uireview.h"
 #include <QQmlError>
+#include <QFileInfo>
 #include "workbench/workbenchdata.h"
 #include "application.h"
 #include "workbench/devicetelemetry.h"
@@ -137,6 +138,8 @@ void Application::initCommandOptions()
     parser.addOption(smokeTest);
     const QCommandLineOption uiReview(QStringLiteral("review-ui"), QStringLiteral("Exercise native UI navigation and save screenshots"), QStringLiteral("directory"));
     parser.addOption(uiReview);
+    const QCommandLineOption uiSource(QStringLiteral("ui-source"), QStringLiteral("Load a local development QML entry file"), QStringLiteral("file"));
+    parser.addOption(uiSource);
     parser.addVersionOption();
     parser.addHelpOption();
 
@@ -144,6 +147,10 @@ void Application::initCommandOptions()
 
     if(parser.isSet(smokeTest)) QTimer::singleShot(3000, this, [] { QCoreApplication::quit(); });
     m_uiReviewDirectory = parser.value(uiReview);
+    if (parser.isSet(uiSource)) {
+        m_uiSourceFile = QFileInfo(parser.value(uiSource)).canonicalFilePath();
+        if(m_uiSourceFile.isEmpty() || !QFileInfo(m_uiSourceFile).isFile()) parser.showHelp(2);
+    }
     if(parser.isSet(smokeTest) && !m_uiReviewDirectory.isEmpty()) parser.showHelp(2);
     m_isDeveloperMode |= parser.isSet(developerModeOption);
 
@@ -228,7 +235,12 @@ void Application::initFonts()
 
 void Application::initGUI()
 {
-    const QUrl url(QStringLiteral("qrc:/main.qml"));
+    const QUrl url = m_uiSourceFile.isEmpty() ? QUrl(QStringLiteral("qrc:/main.qml")) : QUrl::fromLocalFile(m_uiSourceFile);
+    if (!m_uiSourceFile.isEmpty()) {
+        const auto folder = QFileInfo(m_uiSourceFile).absolutePath();
+        m_engine.addImportPath(folder + "/imports");
+        m_engine.addImportPath(folder + "/styles");
+    }
 
     const auto onObjectCreated = [url](QObject *obj, const QUrl &objUrl) {
         if (!obj && url == objUrl) {

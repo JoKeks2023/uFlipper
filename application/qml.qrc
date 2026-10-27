@@ -1,6 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>components/workbench/WorkbenchComboBox.qml</file>
+        <file>components/workbench/WorkbenchTab.qml</file>
         <file>components/workbench/CatalogPage.qml</file>
         <file>components/workbench/DashboardPage.qml</file>
         <file>components/workbench/FilesPage.qml</file>

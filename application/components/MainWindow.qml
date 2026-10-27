@@ -45,9 +45,9 @@ Item {
             WorkbenchLabel { text: "uFlipper"; font.pixelSize: 26 }
             WorkbenchLabel { text: qsTr("ENTWICKLUNGSVERSION"); font.pixelSize: 12; opacity: 0.5 }
             Item { Layout.fillWidth: true }
-            WorkbenchButton { text: "_"; implicitWidth: 36; navigation: true; Accessible.name: qsTr("Minimieren"); onClicked: shell.Window.window.showMinimized() }
-            WorkbenchButton { text: "[ ]"; implicitWidth: 36; navigation: true; Accessible.name: qsTr("Fenstergröße ändern"); onClicked: shell.Window.window.visibility === Window.Maximized ? shell.Window.window.showNormal() : shell.Window.window.showMaximized() }
-            WorkbenchButton { text: "X"; implicitWidth: 36; navigation: true; enabled: !shell.busy; Accessible.name: qsTr("Beenden"); onClicked: shell.Window.window.close() }
+            WorkbenchButton { text: "_"; implicitWidth: 36; navigation: true; leftPadding: 0; rightPadding: 0; Accessible.name: qsTr("Minimieren"); onClicked: shell.Window.window.showMinimized() }
+            WorkbenchButton { text: "[ ]"; implicitWidth: 36; navigation: true; leftPadding: 0; rightPadding: 0; Accessible.name: qsTr("Fenstergröße ändern"); onClicked: shell.Window.window.visibility === Window.Maximized ? shell.Window.window.showNormal() : shell.Window.window.showMaximized() }
+            WorkbenchButton { text: "X"; implicitWidth: 36; navigation: true; leftPadding: 0; rightPadding: 0; enabled: !shell.busy; Accessible.name: qsTr("Beenden"); onClicked: shell.Window.window.close() }
         }
     }
     Rectangle {
