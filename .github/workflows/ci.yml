@@ -72,13 +72,16 @@ jobs:
       - name: Compile new integration paths before the full build
         shell: bash
         run: |
-          mkdir -p "$RUNNER_TEMP/probe-compile" "$RUNNER_TEMP/telemetry-compile"
+          mkdir -p "$RUNNER_TEMP/probe-compile" "$RUNNER_TEMP/telemetry-compile" "$RUNNER_TEMP/ui-compile"
           cd "$RUNNER_TEMP/probe-compile"
           qmake "$GITHUB_WORKSPACE/workbench/device-probe/device-probe.pro"
           make -j2 main.o
           cd "$RUNNER_TEMP/telemetry-compile"
           qmake "$GITHUB_WORKSPACE/backend/backend.pro"
-          make -j2 devicetelemetry.o powersnapshot.o workbenchdata.o
+          make -j2 devicetelemetry.o powersnapshot.o workbenchdata.o applicationbackend.o preferences.o logger.o
+          cd "$RUNNER_TEMP/ui-compile"
+          qmake "$GITHUB_WORKSPACE/application/application.pro"
+          make -j2 application.o uireview.o
       - name: Build macOS Universal
         if: runner.os == 'macOS'
         run: bash build_mac.sh

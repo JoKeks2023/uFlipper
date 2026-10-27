@@ -13,15 +13,17 @@ WorkbenchSplit {
     RowLayout {
         Layout.fillWidth: true; spacing: 32
         Rectangle {
-            Layout.fillWidth: true; implicitHeight: canvas.height + 32
+            Layout.fillWidth: true; implicitHeight: canvas.visible ? canvas.height + 32 : 288
             radius: 6; color: "#120900"; border.color: Theme.color.mediumorange2
             ScreenCanvas {
                 id: canvas
+                visible: !!Backend.deviceState && !Backend.deviceState.isRecoveryMode
                 anchors.centerIn: parent
                 foregroundColor: "black"; backgroundColor: Theme.color.lightorange2
                 zoomFactor: Math.max(1, Math.min(5, Math.floor((parent.width - 32) / 128)))
                 frame: Backend.screenStreamer.screenFrame
             }
+            WorkbenchLabel { anchors.centerIn: parent; visible: !canvas.visible; text: qsTr("Keine Bildschirmverbindung") }
         }
         DirectionalKeypad {
             enabled: Backend.backendState === ApplicationBackend.Ready

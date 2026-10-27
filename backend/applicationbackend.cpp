@@ -1,5 +1,5 @@
 #include "workbench/workbenchdata.h"
-﻿#include "applicationbackend.h"
+#include "applicationbackend.h"
 #include "workbench/devicetelemetry.h"
 
 #include <QDebug>
