@@ -91,6 +91,7 @@ void Cli::initConnections()
 
 void Cli::initLogger()
 {
+    Logger::instance(); // Establish the logger and its timer on the application thread.
     qInstallMessageHandler(Logger::messageOutput);
     globalLogger->setLogLevel(Logger::Terse);
 }

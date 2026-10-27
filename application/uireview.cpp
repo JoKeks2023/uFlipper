@@ -123,6 +123,12 @@ class Review : public QObject {
         }
     }
     void complete() {
+        for (const auto &text : parent()->property("uiReviewErrors").toStringList()) {
+            if (text.contains("TypeError") || text.contains("ReferenceError") ||
+                text.contains("Binding loop") || text.contains("Cannot assign") ||
+                text.contains("Unable to assign"))
+                errors_.append(text);
+        }
         if (!errors_.isEmpty()) {
             fail(errors_.join("\n"));
             return;

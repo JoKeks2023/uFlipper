@@ -7,6 +7,7 @@ WorkbenchSplit {
     id: screen
     objectName: "screenPage"
     showDetails: false
+    Component.onCompleted: if (Backend.backendState === ApplicationBackend.Ready) Backend.screenStreamer.isEnabled = true
     WorkbenchTitle { title: qsTr("Gerätebildschirm"); subtitle: qsTr("Den Flipper über die bestehende USB-Fernsteuerung bedienen.") }
     WorkbenchHint { visible: !Backend.deviceState || Backend.deviceState.isRecoveryMode; text: qsTr("Einen Flipper im normalen Betrieb per USB verbinden.") }
     RowLayout {

@@ -8,7 +8,7 @@ equals(QT_MAJOR_VERSION, 6): QT += core5compat
 unix:!macx {
     DEFINES += USB_BACKEND_LIBUSB
     CONFIG += link_pkgconfig
-    PKGCONFIG += libusb-1.0 zlib
+    PKGCONFIG += libusb-1.0 zlib sqlite3
 
     isEmpty(PREFIX): PREFIX = /usr
 
@@ -24,7 +24,7 @@ unix:!macx {
     DEFINES += USB_BACKEND_LIBUSB
     PKG_CONFIG = pkg-config
     CONFIG += link_pkgconfig
-    PKGCONFIG += libusb-1.0 zlib
+    PKGCONFIG += libusb-1.0 zlib sqlite3
     LIBS += $$system(pkg-config --libs --static libusb-1.0)
 
 } else {

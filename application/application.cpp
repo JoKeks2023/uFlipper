@@ -1,4 +1,5 @@
 #include "uireview.h"
+#include <QQmlError>
 #include "workbench/workbenchdata.h"
 #include "application.h"
 #include "workbench/devicetelemetry.h"
@@ -159,6 +160,7 @@ void Application::initCommandOptions()
 
 void Application::initLogger()
 {
+    Logger::instance(); // Establish the logger and its timer on the application thread.
     qInstallMessageHandler(Logger::messageOutput);
 }
 
@@ -238,6 +240,13 @@ void Application::initGUI()
     m_engine.rootContext()->setContextProperty("qVersionMajor", QT_VERSION_MAJOR);
     m_engine.rootContext()->setContextProperty("qVersionMinor", QT_VERSION_MINOR);
     m_engine.rootContext()->setContextProperty("qVersionPatch", QT_VERSION_PATCH);
+    if (!m_uiReviewDirectory.isEmpty()) {
+        connect(&m_engine, &QQmlApplicationEngine::warnings, this, [this](const QList<QQmlError> &warnings) {
+            auto errors = m_engine.property("uiReviewErrors").toStringList();
+            for (const auto &warning : warnings) errors.append(warning.toString());
+            m_engine.setProperty("uiReviewErrors", errors);
+        });
+    }
     m_engine.load(url);
 }
 

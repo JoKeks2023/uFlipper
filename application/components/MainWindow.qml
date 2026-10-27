@@ -12,6 +12,7 @@ Item {
     property string currentPage: "dashboard"
     property bool showLogs: false
     readonly property bool maintenance: Backend.backendState > ApplicationBackend.ScreenStreaming && Backend.backendState < ApplicationBackend.Finished
+    readonly property bool busy: maintenance || Backend.fileManager.isBusy
     readonly property bool resultVisible: Backend.backendState >= ApplicationBackend.Finished
     readonly property var device: Backend.deviceState ? Backend.deviceState.info : null
     readonly property var navigation: [
@@ -46,7 +47,7 @@ Item {
             Item { Layout.fillWidth: true }
             WorkbenchButton { text: "_"; implicitWidth: 36; navigation: true; Accessible.name: qsTr("Minimieren"); onClicked: shell.Window.window.showMinimized() }
             WorkbenchButton { text: "[ ]"; implicitWidth: 36; navigation: true; Accessible.name: qsTr("Fenstergröße ändern"); onClicked: shell.Window.window.visibility === Window.Maximized ? shell.Window.window.showNormal() : shell.Window.window.showMaximized() }
-            WorkbenchButton { text: "X"; implicitWidth: 36; navigation: true; enabled: !shell.maintenance; Accessible.name: qsTr("Beenden"); onClicked: shell.Window.window.close() }
+            WorkbenchButton { text: "X"; implicitWidth: 36; navigation: true; enabled: !shell.busy; Accessible.name: qsTr("Beenden"); onClicked: shell.Window.window.close() }
         }
     }
     Rectangle {
@@ -73,7 +74,7 @@ Item {
                             WorkbenchButton {
                                 objectName: "nav-" + modelData.key
                                 text: modelData.title; navigation: true; checked: shell.currentPage === modelData.key
-                                enabled: !shell.maintenance; Layout.fillWidth: true
+                                enabled: !shell.busy; Layout.fillWidth: true
                                 onClicked: shell.currentPage = modelData.key
                             }
                         }
@@ -81,7 +82,7 @@ Item {
                 }
             }
             WorkbenchRule {}
-            WorkbenchButton { objectName: "nav-settings"; text: qsTr("Einstellungen"); navigation: true; checked: shell.currentPage === "settings"; Layout.fillWidth: true; enabled: !shell.maintenance; onClicked: shell.currentPage = "settings" }
+            WorkbenchButton { objectName: "nav-settings"; text: qsTr("Einstellungen"); navigation: true; checked: shell.currentPage === "settings"; Layout.fillWidth: true; enabled: !shell.busy; onClicked: shell.currentPage = "settings" }
         }
     }
     Rectangle {
@@ -95,7 +96,7 @@ Item {
             Rectangle { width: 7; height: 7; radius: 4; color: Backend.deviceState && Backend.deviceState.isOnline ? Theme.color.lightgreen : Theme.color.mediumorange1 }
             WorkbenchLabel { text: Backend.deviceState && Backend.deviceState.isOnline ? Backend.deviceState.isRecoveryMode ? qsTr("Wiederherstellungsmodus") : qsTr("USB verbunden") : Backend.isQueryInProgress ? qsTr("Gerät wird gelesen …") : qsTr("Nicht verbunden"); color: Backend.deviceState && Backend.deviceState.isOnline ? Theme.color.lightgreen : Theme.color.lightorange2; font.pixelSize: 15 }
             Item { Layout.fillWidth: true }
-            WorkbenchButton { text: qsTr("Aktualisieren"); enabled: !shell.maintenance; onClicked: { Backend.telemetry.refresh(); Backend.workbench.refresh() } }
+            WorkbenchButton { text: qsTr("Aktualisieren"); enabled: !shell.busy; onClicked: { Backend.telemetry.refresh(); Backend.workbench.refresh() } }
         }
     }
     Item {

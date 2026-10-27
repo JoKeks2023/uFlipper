@@ -1,5 +1,8 @@
 #include "appresponseinterface.h"
 #include "applicationbackend.h"
+#include "logger.h"
+#include <QThread>
+#include <thread>
 #include "flipperzero/rpc/appoperation.h"
 #include "mainresponseinterface.h"
 #include "protobufplugininterface.h"
@@ -18,6 +21,22 @@ int main(int argc, char **argv) {
     if (argc != 2)
         return 2;
     try {
+        auto *logger = Logger::instance();
+        const auto before = logger->errorCount();
+        bool wrongThread = false;
+        auto listener = QObject::connect(logger, &Logger::errorCountChanged, logger, [&] {
+            wrongThread |= QThread::currentThread() != logger->thread();
+        }, Qt::DirectConnection);
+        std::thread worker([] {
+            Logger::messageOutput(QtCriticalMsg, QMessageLogContext(nullptr, 0, nullptr, "test.worker"),
+                                  "worker log fixture");
+        });
+        worker.join();
+        QCoreApplication::processEvents();
+        QObject::disconnect(listener);
+        require(!wrongThread && logger->errorCount() == before + 1 &&
+                    logger->logText().contains("worker log fixture"),
+                "worker logging touched UI state or dropped the queued message");
         ApplicationBackend guarded;
         int blocked=0;
         QObject::connect(&guarded,&ApplicationBackend::operationBlocked,[&](const QString& why) {

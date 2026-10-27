@@ -13,7 +13,7 @@ Window {
     height: Math.max(minimumHeight, Math.min(850, Screen.desktopAvailableHeight - 80))
     color: "#000000"
     MainWindow { id: mainWindow }
-    onClosing: function(close) { if (mainWindow.maintenance) close.accepted = false }
+    onClosing: function(close) { if (mainWindow.busy) close.accepted = false }
     Component.onCompleted: App.messageReceived.connect(root.alert)
     Repeater {
         model: [Qt.LeftEdge, Qt.RightEdge, Qt.TopEdge, Qt.BottomEdge, Qt.LeftEdge | Qt.TopEdge, Qt.RightEdge | Qt.TopEdge, Qt.LeftEdge | Qt.BottomEdge, Qt.RightEdge | Qt.BottomEdge]

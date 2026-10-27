@@ -5,6 +5,7 @@ import ".."
 Item {
     objectName: "filesPage"
     readonly property bool ready: Backend.backendState === ApplicationBackend.Ready
+    onReadyChanged: if (ready) Backend.fileManager.refresh()
     Component.onCompleted: if (ready) Backend.fileManager.refresh()
     Component.onDestruction: if (Backend.backendState === ApplicationBackend.Ready) Backend.screenStreamer.isEnabled = true
     ColumnLayout {

@@ -1,8 +1,10 @@
-﻿#include "logger.h"
+#include "logger.h"
 
 #include <QFile>
 #include <QDebug>
 #include <QTimer>
+#include <QThread>
+#include <QMetaObject>
 #include <QDateTime>
 #include <QTextStream>
 #include <QStandardPaths>
@@ -59,6 +61,15 @@ Logger *Logger::instance()
 
 void Logger::messageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
+    auto *logger = globalLogger;
+    if (QThread::currentThread() != logger->thread()) {
+        const QByteArray category(context.category ? context.category : "default");
+        QMetaObject::invokeMethod(logger, [type, category, msg] {
+            const QMessageLogContext forwarded(nullptr, 0, nullptr, category.constData());
+            Logger::messageOutput(type, forwarded, msg);
+        }, Qt::QueuedConnection);
+        return;
+    }
     const auto text = QStringLiteral("[%1] %2").arg(context.category, msg);
     const auto criticalText = QStringLiteral("<font color=\"#ff1f00\">%1</font>");
     const auto timestamp = QString::number(globalLogger->m_startTime.msecsTo(QDateTime::currentDateTime()));

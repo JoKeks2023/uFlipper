@@ -17,12 +17,13 @@ CustomDialog {
     property alias message: messageLabel.text
 
     function openWithMessage(onAcceptedFunc, messageObj = {}) {
+        let onDialogAccepted;
         const onDialogRejected = function() {
             control.rejected.disconnect(onDialogRejected);
             control.accepted.disconnect(onDialogAccepted);
         }
 
-        const onDialogAccepted = function() {
+        onDialogAccepted = function() {
             onDialogRejected();
             onAcceptedFunc();
         }
