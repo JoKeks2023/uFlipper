@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-10-27T18:58:33.789Z",
+  "commit": "290f6ce454f882ea6c617661619c939fe5178868",
+  "ci_run": 40561302551,
+  "host_arch": "arm64",
+  "host_os": "macOS 27.0",
+  "bundle_id": "com.jorisconrad.flipperzeroutil",
+  "binary_architectures": [
+    "x86_64",
+    "arm64"
+  ],
+  "bundle_signature": "ad-hoc; codesign --verify --deep --strict passed",
+  "archive_sha256": "986eedd4981aa4e010967bb185b4a38d906933e3d4f5854360186db90462455f",
+  "native_start_exit": 0,
+  "power_probe_exit": 0,
+  "power_snapshot": {
+    "connected": true,
+    "device": {
+      "firmwareBranch": "mntm-012",
+      "firmwareCommit": "e1784e74",
+      "firmwareVersion": "mntm-012",
+      "hardwareTarget": "f7",
+      "model": "",
+      "rpcMajor": 0,
+      "rpcMinor": 25
+    },
+    "power": {
+      "available": true,
+      "error": "",
+      "formatSupported": true,
+      "metrics": {
+        "battery.current": {
+          "available": true,
+          "unit": "mA",
+          "value": 0
+        },
+        "battery.health": {
+          "available": true,
+          "unit": "%",
+          "value": 100
+        },
+        "battery.temp": {
+          "available": true,
+          "unit": "°C",
+          "value": 21
+        },
+        "battery.voltage": {
+          "available": true,
+          "unit": "mV",
+          "value": 3916
+        },
+        "capacity.design": {
+          "available": true,
+          "unit": "mAh",
+          "value": 2100
+        },
+        "capacity.full": {
+          "available": true,
+          "unit": "mAh",
+          "value": 2100
+        },
+        "capacity.remain": {
+          "available": true,
+          "unit": "mAh",
+          "value": 2061
+        },
+        "charge.level": {
+          "available": true,
+          "unit": "%",
+          "value": 99
+        },
+        "charge.state": {
+          "available": true,
+          "value": "discharging"
+        },
+        "charge.voltage.limit": {
+          "available": true,
+          "unit": "mV",
+          "value": 4208
+        }
+      },
+      "observedAt": "2026-10-27T18:58:33.789Z",
+      "pending": false,
+      "raw": {
+        "battery.current": "0",
+        "battery.health": "100",
+        "battery.temp": "21",
+        "battery.voltage": "3916",
+        "capacity.design": "2100",
+        "capacity.full": "2100",
+        "capacity.remain": "2061",
+        "charge.level": "99",
+        "charge.state": "discharging",
+        "charge.voltage.limit": "4208",
+        "format.major": "2",
+        "format.minor": "1"
+      },
+      "stale": false
+    }
+  },
+  "helper_probe_exit": 0,
+  "helper_lifecycle": {
+    "dependentApdus": 0,
+    "error": "",
+    "helperVersion": "0.1.0",
+    "stopConfirmed": true,
+    "success": true
+  },
+  "card_activated": false,
+  "inherited_initialization_side_effects": [
+    "qFlipper device initialization synchronizes the device clock"
+  ],
+  "observed_warnings": [
+    "QObject::startTimer: Timers cannot be started from another thread",
+    "QML ConfirmationDialog: onDialogAccepted used before declaration",
+    "Qt SVG use elements in wrong context",
+    "pending QML creation at smoke-test shutdown"
+  ],
+  "persistent_card_session_verified": false,
+  "pcsc_client_verified": false,
+  "macos_13_runtime_tested": false
+}

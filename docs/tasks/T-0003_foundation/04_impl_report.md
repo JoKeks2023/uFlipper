@@ -52,3 +52,9 @@ Befund: bisheriger DMG-Dekorationspfad verweist auf einen nicht vorhandenen Back
 - Originalbackup, geänderter Stand, geprüftes Backup vor Restore, Rückschreiben und anschließender vollständiger Bytevergleich am echten Flipper ausgeführt. Testdaten nach Erfolg gezielt entfernt; bei einem Fehler bleibt nur der Testordner für Diagnose erhalten.
 - Testsicherungen bleiben `TestSubset` und können die Vollbackup-Voraussetzung für Firmware/Restore nicht erfüllen. Vollständiger Geräteadapter und Produktansicht bleiben offen.
 - Abgebrochene Power-Anfragen geben den Wartestatus wieder frei; fehlgeschlagene Abfragen kennzeichnen vorhandene Werte als veraltet. Keine Power-Einstellung wird geschrieben.
+
+## Mac-Paket tatsächlich gestartet
+
+- QML-Paketierung und vollständige Ad-hoc-Signatur praktisch auf Apple Silicon bestätigt; Intel-Paketstart außerdem in CI. Gebündelte Qt-Probe liest reale Powerwerte und bestätigt Helfer Start/Info/Stop ohne Karte.
+- Größerer Produkt-UI-Umbau bleibt bis zur sichtbaren Nutzerprüfung ausgesetzt. Keine Abnahme, keine Veröffentlichung. NFC-Kartensitzung/Systemreader warten auf die fehlende geeignete Testkarte.
+- Geerbten automatischen Uhrabgleich sowie verbleibende Qt/QML-Startwarnungen im Prüfbericht offengelegt. Diese Warnungen bleiben offene Entwicklungsbefunde.
