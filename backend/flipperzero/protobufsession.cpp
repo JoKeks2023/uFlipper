@@ -1,3 +1,4 @@
+#include "rpc/appoperation.h"
 #include "protobufsession.h"
 
 #include <QDir>
@@ -606,4 +607,17 @@ T *ProtobufSession::enqueueOperation(T *operation)
     }
 
     return operation;
+}
+
+AppOperation *ProtobufSession::appStart(const QByteArray &path)
+{
+    return enqueueOperation(new AppOperation(getAndIncrementCounter(), AppOperation::Start, path, this));
+}
+AppOperation *ProtobufSession::appExit()
+{
+    return enqueueOperation(new AppOperation(getAndIncrementCounter(), AppOperation::Exit, {}, this));
+}
+AppOperation *ProtobufSession::appExchange(const QByteArray &data)
+{
+    return enqueueOperation(new AppOperation(getAndIncrementCounter(), AppOperation::Exchange, data, this));
 }

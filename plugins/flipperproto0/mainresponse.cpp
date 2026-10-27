@@ -1,3 +1,4 @@
+#include "appresponse.h"
 #include "mainresponse.h"
 
 #include <QHash>
@@ -41,6 +42,11 @@ bool MainResponse::isError() const
     default:
         return false;
     }
+}
+
+bool MainResponse::isOk() const
+{
+    return message().command_status == PB_CommandStatus_OK;
 }
 
 const QString MainResponse::errorString() const
@@ -98,6 +104,8 @@ QObject *MainResponse::create(MessageWrapper &wrapper, QObject *parent)
     case StorageMd5Sum: return new StorageMd5SumResponse(wrapper, parent);
     case GuiScreenFrame: return new GuiScreenFrameResponse(wrapper, parent);
     case PropertyGet: return new PropertyGetResponse(wrapper, parent);
+    case AppState: return new AppStateResponse(wrapper, parent);
+    case AppData: return new AppDataResponse(wrapper, parent);
     case Unknown:
     default: return nullptr;
     }
@@ -128,6 +136,8 @@ MainResponseInterface::ResponseType MainResponse::tagToResponseType(pb_size_t ta
     case PB_Main_gui_screen_frame_tag: return GuiScreenFrame;
 
     case PB_Main_property_get_response_tag: return PropertyGet;
+    case PB_Main_app_state_response_tag: return AppState;
+    case PB_Main_app_data_exchange_request_tag: return AppData;
     default: return Unknown;
     }
 }

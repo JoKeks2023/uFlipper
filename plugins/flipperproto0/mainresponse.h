@@ -20,6 +20,7 @@ public:
 
     bool hasNext() const override;
     bool isError() const override;
+    bool isOk() const override;
 
     const QString errorString() const override;
 

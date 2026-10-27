@@ -8,7 +8,7 @@ CONFIG += c++17
 
 include(../qflipper_common.pri)
 
-SOURCES += \
+SOURCES += flipperzero/rpc/appoperation.cpp \
     abstractoperation.cpp \
     abstractoperationhelper.cpp \
     abstractoperationrunner.cpp \
@@ -111,7 +111,7 @@ SOURCES += \
     updateregistry.cpp \
     versioninfo.cpp
 
-HEADERS += \
+HEADERS += flipperzero/rpc/appoperation.h \
     abstractoperation.h \
     abstractoperationhelper.h \
     abstractoperationrunner.h \

@@ -1,3 +1,5 @@
+> **Abgelehnt am 27.10.2026:** Nutzer verlangt qFlipper-Design für die gesamte App. Diese hellen Entwürfe dienen nur als historische Dokumentation und sind keine freigegebene Implementierungsvorlage.
+
 # Visuelle Entwürfe zur gemeinsamen Prüfung
 
 27.10.2026. Alle drei Bilder sind Gestaltungsentwürfe mit ausdrücklich markierten Beispieldaten, keine Screenshots einer bereits funktionierenden App. Die bisherige App-Oberfläche wurde noch nicht ersetzt.

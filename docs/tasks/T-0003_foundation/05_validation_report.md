@@ -20,3 +20,14 @@ Qt-App-Build/Start, gemeinsame Nutzung der echten Verbindung, Live-Aufnahmen aus
 - Echter Flipper: fünf Sekunden `ir rx raw` ausgeführt; 66 empfangene Bytes, Stop durch CLI-Prompt bestätigt. Aufnahme `86e91731e855237eb67d54f634c53080` dauerhaft in der lokalen App-Ablage gespeichert und Integrität geprüft. **0 IR-Frames empfangen**; dies belegt Start/Stop/Ablage, noch keinen echten Pulsdatenempfang.
 - GitHub CI Commit `6605ddf`: Ubuntu-Coreprüfung erfolgreich; Desktop-Build noch fehlgeschlagen und macOS-Jobs wartend. Fehlerursache beim Qt-Pfad korrigiert; neuer Lauf folgt. Kein grüner Gesamtbuild behauptet.
 - Visuelle Entwürfe lokal gerendert und betrachtet; verbleibende Nutzerfreigabe dokumentiert. Kein öffentlicher Release.
+
+## Nächste beobachtete Prüfungen
+
+- CI `c3b0d03`, Run `40530798550`: kompletter Linux-Desktop-Build und Core auf Ubuntu 22.04 sowie Intel-macOS erfolgreich. ARM-macOS-Jobs wartend; kein macOS-Desktop-Erfolg behauptet.
+- Echter IR-Empfang mit neuer Startprüfung: Aufnahme `4cc4595a480883148b26de95acb3aabe`, 66 Bytes, 0 Signalframes; Start und Stop bestätigt, Integrität geprüft.
+- Echter Sub-GHz-Protokollempfang, intern, 433,92 MHz: Aufnahme `7ac8f577d39a176e7bc429246e9a88c7`, 214 Bytes; Start/Stop und Integrität bestätigt. Kein Protokolldekodier-Nachweis abgeleitet.
+- Echter Sub-GHz-Pulsempfang, 433,92 MHz: Aufnahme `00f3ffa8d6db2d558df4a784e6a90313`, 99 Bytes; Start/Stop und Integrität bestätigt. Keine gezielten externen Pulse als nachgewiesen markiert.
+- Mit Nutzer abgestimmter 20-Sekunden-IR-Test: Aufnahme `3f9b9f32aedf3652020ee0679e0a0b06`, erneut 0 Signalframes. Nutzer wünscht erneuten Signaltest später. Keine Aussage über tatsächliche Pulsauswertung möglich.
+- Katalogregression: zunächst roter Test `Cannot create output file` nach entferntem Aufnahmeordner; nach Korrektur beide CTest-Suiten grün. Intakte Aufnahme bleibt lesbar, fehlende Aufnahme bleibt sichtbar und unverifiziert.
+- NFC-Helfer lokal erfolgreich gebaut, SDK-Ziel f7 / API 87.1. Dies ist ausschließlich Build-Nachweis; Installation, dauerhafte Kartensitzung und PC/SC bleiben offen.
+- Qt-App-RPC-Vertragstests ergänzt und für nächsten CI-Lauf vorgesehen; lokal fehlt Qt. Noch kein Ausführungsergebnis für diese Tests.

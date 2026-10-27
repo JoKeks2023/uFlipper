@@ -7,3 +7,6 @@ x64
 Win32
 .vs
 .DS_Store
+
+/helpers/*/dist/
+/helpers/*/.vscode/

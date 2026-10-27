@@ -47,12 +47,14 @@ Die Funktionslandkarte muss unter anderem Sub-GHz, IR, NFC, 125-kHz-RFID, iButto
 | 26 | Systemreader | Im ersten Release für andere Mac-Programme; Linux erhält die NFC-Werkzeuge innerhalb von uFlipper. |
 | 27 | Hintergrundbetrieb | Optional mit sichtbarem Menüleisten-/Tray-Status; ohne Tray bleibt ein Statusfenster. Vollständiges Beenden stoppt Geräteaufgaben und sichert Aufnahmen. |
 
+| 28 | Verbindliche Designsprache (27.10.2026) | Die gesamte App soll im Design von qFlipper bleiben. Die hellen Entwürfe wurden abgelehnt; vorhandenes Theme und Komponenten weiterverwenden. Vor größerem Umbau erneut sichtbar prüfen. |
+
 ## Weitere bestehende Vorgaben
 
 - macOS und Linux; qFlipper als bestehende C++-/Qt-/QML-Basis.
 - Erste Version mit unveränderter Momentum-Firmware. Freigegebene Hilfsprogramme/Skripte auf SD sind zulässig; Änderungen der Firmware selbst sind nicht vereinbart.
 - Gestaltung: kompakt, sachlich und dicht. Die drei Layoutmodi verändern die Anordnung, nicht diese Gestaltungsrichtung.
-- Zuletzt gewünschte macOS-Bundle-ID: `com.jorisconrad.flipperzeroutil`. Im Fork noch nicht umgesetzt.
+- Zuletzt gewünschte macOS-Bundle-ID: `com.jorisconrad.flipperzeroutil`. Im Umsetzungsbranch gesetzt; Paket-/Laufzeitprüfung steht noch aus.
 - Der qFlipper-Fork unterliegt der vorhandenen GPLv3-Lizenz; die MIT-Auswahl für den früheren, eigenständigen Prototyp ersetzt diese Lizenz nicht.
 
 ## Noch nicht entschieden oder nachgewiesen

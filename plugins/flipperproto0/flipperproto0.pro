@@ -15,7 +15,7 @@ VERSION = 0.0.0
 INCLUDEPATH += $$PWD/../protobufinterface \
     $$PWD/../../3rdparty/nanopb
 
-HEADERS += \
+HEADERS += apprequest.h appresponse.h \
     guirequest.h \
     guiresponse.h \
     mainrequest.h \
@@ -39,7 +39,7 @@ HEADERS += \
     systemrequest.h \
     systemresponse.h
 
-SOURCES += \
+SOURCES += apprequest.cpp appresponse.cpp \
     guirequest.cpp \
     guiresponse.cpp \
     mainrequest.cpp \

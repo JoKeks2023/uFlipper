@@ -41,6 +41,7 @@ class GuiStartVirtualDisplayOperation;
 class GuiStopVirtualDisplayOperation;
 
 class PropertyGetOperation;
+class AppOperation;
 
 class ProtobufSession : public QObject, public Failable
 {
@@ -93,6 +94,10 @@ public:
     GuiStopVirtualDisplayOperation *guiStopVirtualDisplay();
     GuiSendInputOperation *guiSendInput(int key, int type);
     GuiScreenFrameOperation *guiSendScreenFrame(const QByteArray &screenData);
+
+    AppOperation *appStart(const QByteArray &path);
+    AppOperation *appExit();
+    AppOperation *appExchange(const QByteArray &data);
 
     PropertyGetOperation *propertyGet(const QByteArray &key);
 

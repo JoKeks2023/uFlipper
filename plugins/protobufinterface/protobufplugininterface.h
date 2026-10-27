@@ -49,9 +49,13 @@ public:
 
     virtual const QByteArray regionBands(const QByteArray &countryCode, const BandInfoList &bands) const = 0;
 
+    virtual const QByteArray appStart(uint32_t id, const QByteArray &path) const = 0;
+    virtual const QByteArray appExit(uint32_t id) const = 0;
+    virtual const QByteArray appExchange(uint32_t id, const QByteArray &data) const = 0;
+
     virtual QObject *decode(const QByteArray &buffer, QObject *parent = nullptr) const = 0;
 };
 
 QT_BEGIN_NAMESPACE
-Q_DECLARE_INTERFACE(ProtobufPluginInterface, "com.flipperdevices.ProtobufPluginInterface/1.0")
+Q_DECLARE_INTERFACE(ProtobufPluginInterface, "com.jorisconrad.uFlipper.ProtobufPluginInterface/2.0")
 QT_END_NAMESPACE

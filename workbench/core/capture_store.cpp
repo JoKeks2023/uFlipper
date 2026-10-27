@@ -189,9 +189,22 @@ CaptureStore::CaptureStore(const fs::path &root) : impl_(new Impl(root)) {
     std::vector<std::string> interrupted;
     while (query.next())
         interrupted.push_back(query.text(0));
-    for (const auto &id : interrupted)
-        impl_->finalize(id, CaptureState::Interrupted,
-                        "Recovered after an interrupted process; trailing records may be incomplete");
+    for (const auto &id : interrupted) {
+        try {
+            impl_->finalize(id, CaptureState::Interrupted,
+                            "Recovered after an interrupted process; trailing records may be incomplete");
+        } catch (const std::exception &error) {
+            // A missing or unreadable recording must not hide unrelated recordings.
+            // The catalog preserves the damaged entry even when its manifest cannot be written.
+            Statement update(
+                impl_->database.value,
+                "UPDATE recordings SET state='interrupted',bytes=0,sha256='',reason=?,ended_ms=? WHERE id=?");
+            update.bind(1, std::string("Recovery incomplete: ") + error.what());
+            update.number(2, utcMilliseconds());
+            update.bind(3, id);
+            update.next();
+        }
+    }
 }
 CaptureStore::~CaptureStore() {
     std::vector<std::string> ids;

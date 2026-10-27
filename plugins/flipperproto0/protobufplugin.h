@@ -8,7 +8,7 @@
 class ProtobufPlugin : public QObject, public ProtobufPluginInterface
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "com.flipperdevices.ProtobufPluginInterface" FILE "protobufplugin.json")
+    Q_PLUGIN_METADATA(IID "com.jorisconrad.uFlipper.ProtobufPluginInterface/2.0" FILE "protobufplugin.json")
     Q_INTERFACES(ProtobufPluginInterface)
 
 public:
@@ -47,6 +47,10 @@ public:
     const QByteArray propertyGet(uint32_t id, const QByteArray &key) const override;
 
     const QByteArray regionBands(const QByteArray &countryCode, const BandInfoList &bands) const override;
+
+    const QByteArray appStart(uint32_t id, const QByteArray &path) const override;
+    const QByteArray appExit(uint32_t id) const override;
+    const QByteArray appExchange(uint32_t id, const QByteArray &data) const override;
 
     QObject *decode(const QByteArray &buffer, QObject *parent = nullptr) const override;
 

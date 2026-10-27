@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, macos-15, macos-15-intel]
+        os: [ubuntu-22.04, macos-15-intel]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -41,7 +41,7 @@ jobs:
           - os: ubuntu-22.04
             qt_host: linux
             qt_arch: linux_gcc_64
-          - os: macos-15
+          - os: macos-15-intel
             qt_host: mac
             qt_arch: clang_64
     runs-on: ${{ matrix.os }}
@@ -72,6 +72,16 @@ jobs:
       - name: Build Linux application
         if: runner.os == 'Linux'
         run: bash build_linux.sh
+      - name: App-RPC contract tests
+        shell: bash
+        run: |
+          if [[ "$RUNNER_OS" == "macOS" ]]; then desktop_build="$GITHUB_WORKSPACE/build_mac"; else desktop_build="$GITHUB_WORKSPACE/build"; fi
+          mkdir -p "$RUNNER_TEMP/protocol-tests"
+          cd "$RUNNER_TEMP/protocol-tests"
+          qmake "$GITHUB_WORKSPACE/tests/qt/protocol_tests.pro" "BACKEND_BUILD=$desktop_build/backend"
+          make -j2
+          plugin=$(python3 -c 'import pathlib,sys; print(next(p for p in pathlib.Path(sys.argv[1]).glob("*flipperproto0*") if p.suffix in (".so", ".dylib")))' "$desktop_build/plugins")
+          ./uflipper_protocol_tests "$plugin"
       - uses: actions/upload-artifact@v4
         with:
           name: uFlipper-${{ matrix.os }}-test-build

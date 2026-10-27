@@ -25,6 +25,8 @@ public:
         GuiScreenFrame,
 
         PropertyGet,
+        AppState,
+        AppData,
     };
 
     virtual ~MainResponseInterface() {}
@@ -35,6 +37,7 @@ public:
 
     virtual bool hasNext() const = 0;
     virtual bool isError() const = 0;
+    virtual bool isOk() const = 0;
 
     virtual const QString errorString() const = 0;
 };
@@ -42,5 +45,5 @@ public:
 using EmptyResponseInterface = MainResponseInterface;
 
 QT_BEGIN_NAMESPACE
-Q_DECLARE_INTERFACE(MainResponseInterface, "com.flipperdevices.MainResponseInterface/1.0")
+Q_DECLARE_INTERFACE(MainResponseInterface, "com.jorisconrad.uFlipper.MainResponseInterface/2.0")
 QT_END_NAMESPACE

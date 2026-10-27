@@ -1,0 +1,13 @@
+{
+  "helper": "uf_nfc_bridge",
+  "version": "0.1.0",
+  "firmware": "mntm-012",
+  "firmware_api": "87.1",
+  "hardware_target": 7,
+  "sdk_sha256": "c90530c3e0aa7bc4356b8521df20d23d7b4a5435ab58a2530ffb696200408cc2",
+  "artifact_sha256": "ab0bcae111b085a8cf79ef9c5dd423331f0ae86519228cb0ed79624470e0d632",
+  "artifact_bytes": 6080,
+  "proposed_device_path": "/ext/apps/Tools/uf_nfc_bridge.fap",
+  "installed": false,
+  "runtime_verified": false
+}

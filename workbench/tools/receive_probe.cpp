@@ -1,6 +1,7 @@
 #include "capture_store.h"
 #include "io_utils.h"
 #include "operation_coordinator.h"
+#include "receive_status.h"
 #include "serial_console.h"
 #include <chrono>
 #include <iostream>
@@ -40,6 +41,8 @@ int main(int argc, char **argv) {
                 throw std::invalid_argument("Unsupported receive frequency");
             command = kind == "subghz.raw" ? "subghz rx_raw " : "subghz rx ";
             command += std::to_string(hz);
+            if (kind == "subghz.decoded")
+                command += " 0"; // Momentum requires the internal radio index.
         }
         CaptureStore store(args.at("--store"));
         SerialConsole console(args.at("--port"));
@@ -59,8 +62,7 @@ int main(int argc, char **argv) {
         jobs.connectDevice(args.at("--port"));
         auto job = jobs.request(kind, Control | (radio ? Radio : Infrared), Origin::Ui, true, true);
         uint64_t total = 0;
-        std::string lastLines;
-        size_t signals = 0;
+        ReceiveStatus status(kind);
         bool stopped = false;
         auto append = [&](const std::string &bytes) {
             auto now = std::chrono::duration_cast<std::chrono::nanoseconds>(
@@ -68,25 +70,28 @@ int main(int argc, char **argv) {
                            .count();
             store.append(id, bytes.data(), bytes.size(), now);
             total += bytes.size();
-            lastLines += bytes;
-            size_t lineEnd;
-            while ((lineEnd = lastLines.find('\n')) != std::string::npos) {
-                auto line = lastLines.substr(0, lineEnd);
-                lastLines.erase(0, lineEnd + 1);
-                if (line.rfind("RAW, ", 0) == 0 || line.find(", A:0x") != std::string::npos)
-                    ++signals;
-            }
-            if (lastLines.size() > 8192)
-                lastLines.erase(0, lastLines.size() - 8192);
+            status.feed(bytes);
         };
         try {
             console.send(command + "\r");
+            auto startDeadline = std::chrono::steady_clock::now() + std::chrono::seconds(3);
+            while (!status.started() && !status.returnedToPrompt() &&
+                   std::chrono::steady_clock::now() < startDeadline) {
+                auto data = console.read(std::chrono::milliseconds(100));
+                if (!data.empty())
+                    append(data);
+            }
+            if (status.returnedToPrompt() || !status.started())
+                throw std::runtime_error(
+                    "Firmware did not acknowledge receiver startup; inspect interrupted recording");
             jobs.markRunning(job.id);
             auto until = std::chrono::steady_clock::now() + std::chrono::seconds(seconds);
             while (std::chrono::steady_clock::now() < until) {
                 auto data = console.read(std::chrono::milliseconds(100));
                 if (!data.empty())
                     append(data);
+                if (status.returnedToPrompt())
+                    throw std::runtime_error("Receiver returned unexpectedly to CLI");
             }
             jobs.requestStop(job.id);
             stopped = console.stop(std::chrono::seconds(3), append);
@@ -108,7 +113,8 @@ int main(int argc, char **argv) {
             throw;
         }
         std::cout << "{\"recording_id\":" << jsonQuote(id) << ",\"kind\":" << jsonQuote(kind)
-                  << ",\"received_bytes\":" << total << ",\"ir_frames\":" << signals
+                  << ",\"received_bytes\":" << total << ",\"ir_frames\":" << status.irFrames()
+                  << ",\"start_confirmed\":" << (status.started() ? "true" : "false")
                   << ",\"stop_confirmed\":" << (stopped ? "true" : "false")
                   << ",\"recording_verified\":" << (store.verify(id) ? "true" : "false") << "}\n";
         return stopped ? 0 : 2;

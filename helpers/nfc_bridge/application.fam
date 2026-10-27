@@ -1,0 +1,12 @@
+App(
+    appid="uf_nfc_bridge",
+    name="uFlipper NFC Bridge",
+    apptype=FlipperAppType.EXTERNAL,
+    entry_point="uf_nfc_bridge_main",
+    requires=["gui", "nfc", "rpc"],
+    stack_size=4096,
+    fap_category="Tools",
+    fap_version=(0, 1, 0),
+    fap_author="Joris Conrad; uFlipper contributors",
+    fap_description="Experimental persistent ISO-DEP A card session over App-RPC",
+)

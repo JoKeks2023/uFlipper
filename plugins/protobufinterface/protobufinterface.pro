@@ -5,7 +5,7 @@ CONFIG += staticlib c++11
 
 requires(false)
 
-HEADERS += \
+HEADERS += appresponseinterface.h \
     bandinfo.h \
     guiresponseinterface.h \
     mainresponseinterface.h \

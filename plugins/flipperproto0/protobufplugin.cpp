@@ -9,6 +9,7 @@
 #include "systemrequest.h"
 #include "storagerequest.h"
 #include "propertyrequest.h"
+#include "apprequest.h"
 
 #include "regiondata.h"
 
@@ -162,6 +163,21 @@ const QByteArray ProtobufPlugin::propertyGet(uint32_t id, const QByteArray &key)
 const QByteArray ProtobufPlugin::regionBands(const QByteArray &countryCode, const BandInfoList &bands) const
 {
     return RegionData(countryCode, bands).encode();
+}
+
+const QByteArray ProtobufPlugin::appStart(uint32_t id, const QByteArray &path) const
+{
+    if(path.isEmpty() || path.size() > 512 || path.contains('\0')) return {};
+    return AppStartRequest(id, path).encode();
+}
+const QByteArray ProtobufPlugin::appExit(uint32_t id) const
+{
+    return AppExitRequest(id).encode();
+}
+const QByteArray ProtobufPlugin::appExchange(uint32_t id, const QByteArray &data) const
+{
+    if(data.size() > 4096) return {};
+    return AppExchangeRequest(id, data).encode();
 }
 
 QObject *ProtobufPlugin::decode(const QByteArray &buffer, QObject *parent) const

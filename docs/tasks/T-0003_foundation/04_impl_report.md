@@ -16,3 +16,12 @@ Befund: bisheriger DMG-Dekorationspfad verweist auf einen nicht vorhandenen Back
 - CI-Kernprüfung unter Ubuntu bestanden. Erster Workflow hatte einen YAML-Escapingfehler; korrigiert. Linux-Desktoplauf zeigte eine fehlende Suchwerkzeug-Abhängigkeit beim Setzen des Qt-Pfads; auf Python-Standardsuche geändert.
 - macOS-Runner auf 15 umgestellt, da GitHub macOS 14 bis 02.11.2026 außer Betrieb nimmt; Deployment-Ziel bleibt macOS 13. Intel-Coreprüfung zusätzlich eingeplant. Quelle: https://github.com/actions/runner-images/issues/13518
 - Drei visuelle Entwürfe vorbereitet und ausdrücklich als Beispieldaten gekennzeichnet; Produkt-UI noch nicht ersetzt.
+
+## Empfang, App-RPC und geänderte Gestaltung
+
+- Firmware-bestätigten Empfangsstart ergänzt. Momentum `subghz rx` braucht bei expliziter Frequenz zusätzlich den internen Geräteindex `0`; korrigiert. Früher CLI-Rücksprung beendet den Versuch als Fehler, statt einen erfolgreichen Empfang vorzutäuschen.
+- Fehlerhafte/fehlende Aufnahme darf beim Wiederöffnen nicht den übrigen Katalog blockieren. Mit echtem Prozessabbruch und entferntem Sitzungsordner reproduziert und behoben; beschädigten Eintrag als unterbrochen ohne gültige Integritätsprüfung erhalten.
+- App-RPC Start/Exit/DataExchange und Broadcast-Decodierung im bestehenden Qt-Gerätepfad ergänzt. Neue App-Operationen prüfen jede Fehlerantwort. Plugin-Interface-Version angehoben, damit alte Upstream-Plugins nicht mit verändertem Interface geladen werden.
+- NFC-FAP 0.1.0 für das exakte Momentum-SDK gebaut. Quelle, Protokollgrenzen und Artifact-Hash unter `helpers/nfc_bridge/`; keine Installation oder Firmwareänderung.
+- macOS-Desktop- und Core-CI auf verfügbaren Intel-Runner gelegt; Universal-Ziel bleibt Intel + Apple Silicon, lokaler ARM-Kerntest bestanden. ARM-GitHub-Runner warteten wiederholt; keine Plattform gestrichen.
+- Neue Produktentscheidung 28: **gesamte App im qFlipper-Design**. Nutzer hat die drei hellen Entwürfe gesehen und abgelehnt. Neue Dashboard-/Werkzeugansichten nutzen das vorhandene Theme; größerer UI-Umbau weiterhin erst nach sichtbarer Prüfung.
