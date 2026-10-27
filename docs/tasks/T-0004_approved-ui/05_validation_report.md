@@ -1,6 +1,6 @@
 # Prüfung
 
-Noch kein Laufzeitnachweis der neuen Oberfläche. Vorheriger Paketstand `290f6ce` startet auf Intel und Apple Silicon; dies wird nicht als Nachweis des neuen UI-Stands verwendet.
+Aktuell: Linux-Build und native Klick-/Renderprüfung für Code `2cadf1f` bestanden; Universal-Mac-Paket und lokaler Gerätenachweis noch in Prüfung. Vorheriger Paketstand `290f6ce` wird nicht als Nachweis dieses UI-Stands verwendet. Ergebnisse unten nach tatsächlich geprüftem Commit getrennt.
 
 - CI `b9b0f96` / Run `40569613446`: Core auf beiden Plattformen bestanden. Linux-App-Build scheitert an einer durch das Voranstellen eines Includes in Zeile 2 verschobenen UTF-8-BOM in `applicationbackend.cpp`. BOM entfernt; frühe Compilerprüfung auf alle geänderten Integrationsdateien erweitert. Noch keine grüne neue Oberfläche behauptet.
 
@@ -9,3 +9,19 @@ Noch kein Laufzeitnachweis der neuen Oberfläche. Vorheriger Paketstand `290f6ce
 
 - CI `4b0025b` / Run `40571723174`: kompletter Linux-App-Build, Qt-Vertragstests und nativer UI-Lauf erfolgreich. **12 echte QtTest-Mausklicks**, Easy-Mode-Einstellung geändert und wiederhergestellt, alle fünf Settings-Tabs erreicht, zehn native Screenshots gespeichert, 1060×680 geprüft, keine erfassten QML-Laufzeitfehler. Der vorherige Fehllauf lag am manuellen Eingabetreiber, nicht an der Navigationsbindung.
 - Dashboard, IR, allgemeine Settings und kompakte Ansicht selbst visuell angesehen. Letzte Nacharbeit: Tabs mit Unterstrich wie freigegeben, zurückhaltende Dropdowns, vollständig lesbares Maximieren-Symbol, Tooltips bei langen Navigationstiteln. Neuer Paket-/Sichttest nach diesen Änderungen erforderlich.
+
+- CI `62f92e7` / Run `40573215932`: Linux-App, Qt-Verträge und erweiterte native UI-Prüfung einschließlich der drei IR-Tabs erfolgreich. Die letzte Dropdown-Kontrastkorrektur und Auswahlprüfung befinden sich in `2cadf1f`, Run `40574014695`. Keine vollständige A18- oder Kernabnahme aus diesen Teilnachweisen abgeleitet.
+
+- CI `2cadf1f` / Run `40574014695`: kompletter Linux-App-Build und Qt-Verträge erfolgreich. **17 QtTest-Mausklicks**, Tastaturauswahl im geöffneten Easy-Mode-Dropdown, zwei Einstellungsrundläufe mit Wiederherstellung des ursprünglichen Werts, alle Settings- und IR-Tabs, **13 Screenshots**, 1060×680 und 0 erfasste QML-Laufzeitfehler.
+- Finale IR-Ansicht, allgemeine Settings und geöffnetes Dropdown selbst visuell geprüft: Tabs/Dropdowns/Fenstersymbole stimmen mit der freigegebenen Richtung überein; Schrift im geöffneten Dropdown lesbar. Linux-CI hat kein angeschlossenes Gerät; dies ist kein Linux-Hardwarenachweis. Maschinenlesbar: `evidence/linux-ui-2cadf1f.json`.
+
+## Erster Mac-Paketlauf und Speicherbefund
+
+- CI `2cadf1f` / Run `40574014695`: alle vier Jobs einschließlich Universal-Mac-Build und nativem gebündelten Paketstart erfolgreich. Paket lokal im ignorierten `build_mac/` gespeichert; Signatur strikt geprüft, Intel/ARM und Bundle-ID bestätigt.
+- Gebündelte App auf Apple Silicon / macOS 27.0 mit realem Flipper gestartet: 17 QtTest-Klicks, Tastaturauswahl und 13 native Screenshots erfolgreich; keine erfassten QML-Fehler. Gerätebildschirm zeigt tatsächlich das Flipper-Display, Dateiverwaltung ist erreichbar. Keine IR-/NFC-Aufnahme gestartet.
+- Visuell entdeckt: `/int` und `/ext` liefern beide die SD-Dateisystemkapazität (58,2 GiB). Das wäre mit der Beschriftung „Interner Speicher“ irreführend. Clientpfade und Decoder geprüft; Ursache in gepinntem Momentum belegt: `storage_process_alias()` ersetzt `/int` durch einen Bereich unter `/ext`; auch `StorageCommandCommonFSInfo` führt diese Aliasauflösung durch. Quelle: https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/services/storage/storage_processing.c#L607
+- Anzeige für exakt diese bekannte Firmware korrigiert: „Interne Daten (/int) · Auf SD-Karte“, keine zweite Kapazitätsleiste; bei anderer Firmware Dateisystembereich benennen und keine gesamte physische Flashkapazität behaupten. Rohwerte bleiben erhalten. Neue lokale Sicht-/Paketprüfung erforderlich. Firmware bleibt unverändert.
+- Daraus folgt für den späteren Vollbackup-Adapter: logische Pfade und physische Speicherzuordnung getrennt behandeln; gleiche Daten nicht versehentlich zweimal als unabhängige Speicherstände zählen. Noch kein Vollbackup-/Restore-Nachweis.
+
+- Korrektur sofort lokal mit dem gebauten Backend `2cadf1f` und explizitem `--ui-source application/main.qml` gegen den echten Flipper geprüft: erneut 17 Klicks, zwei Einstellungsrundläufe, 13 Screenshots, Exit 0 und keine erfassten QML-Fehler. Dashboard selbst angesehen: SD-Kapazität nur einmal; `/int` eindeutig „Auf SD-Karte“. Dies ist ein Quellansichts-Nachweis, noch kein Nachweis des neu gepackten Bundles. Lokale Dateien: `build_mac/ui-review-storage-fix/`.
+- Für den erforderlichen erneuten Paketbau verwendet ausschließlich der Cloud-Mac-Job vier Compilerprozesse. Lokale Build-Defaults bleiben bei zwei; kein lokaler Qt-Komplettbuild und kein Simulator.

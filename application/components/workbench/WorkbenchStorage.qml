@@ -3,6 +3,9 @@ import QtQuick.Layouts 1.15
 import Theme 1.0
 ColumnLayout {
     id: storage
+    property bool showCapacity: true
+    property string capacityText
+    property string note
     property string title
     property var info: ({})
     function bytes(value) {
@@ -16,16 +19,22 @@ ColumnLayout {
         WorkbenchLabel { text: storage.title; Layout.fillWidth: true }
         WorkbenchLabel {
             font.pixelSize: 14
-            text: storage.info.available ? storage.bytes(storage.info.usedBytes) + " / " + storage.bytes(storage.info.totalBytes) : qsTr("Nicht verfügbar")
+            text: storage.info.available ? (storage.capacityText || (storage.bytes(storage.info.usedBytes) + " / " + storage.bytes(storage.info.totalBytes))) : qsTr("Nicht verfügbar")
             opacity: 0.7
         }
     }
     Rectangle {
+        visible: storage.showCapacity
         Layout.fillWidth: true; implicitHeight: 5; radius: 2; color: "#3a1f10"
         Rectangle {
             height: parent.height; radius: 2; color: Theme.color.lightorange1
             width: storage.info.available && storage.info.totalBytes > 0 ? parent.width * Math.max(0, Math.min(1, storage.info.usedBytes / storage.info.totalBytes)) : 0
         }
+    }
+    WorkbenchLabel {
+        Layout.fillWidth: true; font.pixelSize: 13; opacity: 0.7; wrapMode: Text.Wrap
+        visible: storage.note.length > 0
+        text: storage.note
     }
     WorkbenchLabel {
         Layout.fillWidth: true; font.pixelSize: 13; opacity: 0.65; wrapMode: Text.Wrap

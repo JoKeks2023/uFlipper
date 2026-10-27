@@ -109,6 +109,8 @@ jobs:
           make -j2 application.o uireview.o
       - name: Build macOS Universal
         if: runner.os == 'macOS'
+        env:
+          BUILD_JOBS: 4
         run: bash build_mac.sh
       - name: Build Linux application
         if: runner.os == 'Linux'

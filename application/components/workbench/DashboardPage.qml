@@ -9,6 +9,10 @@ WorkbenchSplit {
     readonly property var snapshot: Backend.telemetry.snapshot
     readonly property var device: snapshot.device || ({})
     readonly property var power: snapshot.power || ({})
+    // Pinned Momentum source: storage_processing.c redirects /int to EXT_PATH(...).
+    // Keep unknown firmware as a logical RPC area; never infer physical flash capacity.
+    readonly property bool internalOnSd: device.firmwareVersion === "mntm-012" &&
+                                         (device.firmwareCommit || "").indexOf("e1784e74") === 0
     function metric(key, divisor, unit) {
         const m = (power.metrics || ({}))[key]
         return m && m.available ? Number(m.value / (divisor || 1)).toLocaleString(Qt.locale(), 'f', divisor === 1000 ? 3 : 0) + (unit || "") : "—"
@@ -45,7 +49,14 @@ WorkbenchSplit {
     WorkbenchHint { visible: !!dashboard.power.error; text: dashboard.power.error || "" }
     WorkbenchLabel { text: qsTr("Speicher"); font.pixelSize: 21 }
     WorkbenchStorage { title: qsTr("SD-Karte"); info: (dashboard.snapshot.storage || ({}))["/ext"] || ({}) }
-    WorkbenchStorage { title: qsTr("Interner Speicher"); info: (dashboard.snapshot.storage || ({}))["/int"] || ({}) }
+    WorkbenchStorage {
+        title: qsTr("Interne Daten (/int)")
+        info: (dashboard.snapshot.storage || ({}))["/int"] || ({})
+        showCapacity: !dashboard.internalOnSd
+        capacityText: dashboard.internalOnSd ? qsTr("Auf SD-Karte") : ""
+        note: dashboard.internalOnSd ? qsTr("Momentum speichert diesen Bereich auf der SD-Karte. Die Kapazität ist oben enthalten.") :
+                                      qsTr("Gemeldete Dateisystemkapazität für /int; kein Messwert der gesamten Geräte-Flashkapazität.")
+    }
     WorkbenchRule {}
     WorkbenchLabel { text: qsTr("Aktuelle Arbeit"); font.pixelSize: 21 }
     WorkbenchFact { label: qsTr("Gerät"); value: Backend.deviceState ? Backend.deviceState.statusString || qsTr("Bereit") : qsTr("Wartet auf USB-Verbindung") }

@@ -1,0 +1,17 @@
+{
+  "compactHeight": 680,
+  "compactWidth": 1060,
+  "easyModeRoundtrip": true,
+  "navigationClicks": 17,
+  "qmlErrors": 0,
+  "screenshots": 13,
+  "settingsDropdownRoundtrip": true,
+  "success": true,
+  "commit": "2cadf1fd99a94be7908d160cfd129f4922e5258f",
+  "ci_run": 40574014695,
+  "os": "Ubuntu 22.04.5",
+  "qt": "6.8.3",
+  "rendering": "offscreen software; native Qt Quick",
+  "device_connected": false,
+  "hardware_operations_exercised": false
+}
