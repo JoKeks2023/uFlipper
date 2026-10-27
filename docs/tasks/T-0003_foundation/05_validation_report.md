@@ -45,3 +45,6 @@ Qt-App-Build/Start, gemeinsame Nutzung der echten Verbindung, Live-Aufnahmen aus
 - Erster Start durch macOS mit Signal 9 beendet. `codesign --verify --deep --strict`: **code object is not signed at all**; ursprüngliches Binary nur linker-signiert, Info.plist und Ressourcen nicht gebunden. Keine Sicherheitsregeln des Computers geändert.
 - Lokal eigenes Testartefakt ad hoc nachsigniert und strikt geprüft; Ergebnis des erneuten Starts wird separat dokumentiert. Der CI-Build allein belegt keine laufende App.
 - Nächster Paketbau signiert das vollständige Testbundle ausdrücklich ad hoc und prüft die Signatur. Developer-ID-Signierung/Notarisierung und Veröffentlichung bleiben offen.
+
+- Nach lokaler Ad-hoc-Signierung startet das alte Mac-Paket bis zur QML-Ladeprüfung und endet mit `module "QtQuick.Window" is not installed`. Damit ist die fehlende QML-Paketierung tatsächlich beobachtet, nicht nur vermutet. Die QML-Deploymentkorrektur ist bereits im nächsten Buildpfad enthalten.
+- CI `b955e82`, Run `40538788021`: beide Core-Jobs erfolgreich, Desktop-Builds scheitern am fehlenden DFU-Header-Suchpfad des neu hinzugefügten Geräteprüfprogramms. Suchpfad ergänzt; frühe isolierte Compilerprüfung für Probe/Telemetrie vor dem kompletten App-Build hinzugefügt. Kein neuer grüner Gesamtstand behauptet.
