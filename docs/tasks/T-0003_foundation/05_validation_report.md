@@ -13,3 +13,10 @@ Datum: 27.10.2026. Dies ist ein Zwischenstand, keine Fertigmeldung.
 ## Noch offen
 
 Qt-App-Build/Start, gemeinsame Nutzung der echten Verbindung, Live-Aufnahmen aus der App, Restore, Helferinstallation, NFC-Systemreader, Cloud-Anmeldung/-Synchronisierung und MCP-Clienttest sind noch nicht nachgewiesen. CI-Ergebnisse werden nach dem tatsächlichen Lauf ergänzt. Kein öffentlicher Release erfolgt.
+
+## Zusätzliche beobachtete Ergebnisse
+
+- CTest `serial_contract` mit echter Pseudoterminal-Verbindung: Originalbytes, über mehrere Reads geteilte CLI-Stopbestätigung und Timeout bestanden.
+- Echter Flipper: fünf Sekunden `ir rx raw` ausgeführt; 66 empfangene Bytes, Stop durch CLI-Prompt bestätigt. Aufnahme `86e91731e855237eb67d54f634c53080` dauerhaft in der lokalen App-Ablage gespeichert und Integrität geprüft. **0 IR-Frames empfangen**; dies belegt Start/Stop/Ablage, noch keinen echten Pulsdatenempfang.
+- GitHub CI Commit `6605ddf`: Ubuntu-Coreprüfung erfolgreich; Desktop-Build noch fehlgeschlagen und macOS-Jobs wartend. Fehlerursache beim Qt-Pfad korrigiert; neuer Lauf folgt. Kein grüner Gesamtbuild behauptet.
+- Visuelle Entwürfe lokal gerendert und betrachtet; verbleibende Nutzerfreigabe dokumentiert. Kein öffentlicher Release.
