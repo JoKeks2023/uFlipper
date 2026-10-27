@@ -38,3 +38,10 @@ Qt-App-Build/Start, gemeinsame Nutzung der echten Verbindung, Live-Aufnahmen aus
 - Backup-Kern lokal tatsächlich mit Dateien/SQLite ausgeführt: Vollgerät-Abschluss ohne beide Inventare blockiert; Änderung nach Inventarbestätigung verwirft Freigabe; leere Verzeichnisse erhalten; Traversal abgewiesen; Testsicherungen separat markiert; zu kurze Datei abgewiesen; Payload- und Katalogpfadkorruption erkannt.
 - Echter Prozessabbruch während eines Backup-Dateitransfers: nach Wiederöffnen unterbrochen, nicht geprüft; Aufnahme-/Seriell-Vertragstests weiterhin bestanden. Letzter kleiner lokaler Build: 2/2 CTest-Suiten grün.
 - Neu angeschlossene Qt-Telemetrie, Geräteprobe, temporäre Vollbackup-Sperre und native Paket-Starttests noch nicht ausgeführt; nächster CI-Lauf prüft diese Änderungen.
+
+## Beobachteter Mac-Paketfehler
+
+- Heruntergeladenes CI-Paket `8626b3c` tatsächlich auf Apple Silicon gestartet. `lipo` bestätigt **x86_64 arm64**; Bundle-ID bestätigt **com.jorisconrad.flipperzeroutil**.
+- Erster Start durch macOS mit Signal 9 beendet. `codesign --verify --deep --strict`: **code object is not signed at all**; ursprüngliches Binary nur linker-signiert, Info.plist und Ressourcen nicht gebunden. Keine Sicherheitsregeln des Computers geändert.
+- Lokal eigenes Testartefakt ad hoc nachsigniert und strikt geprüft; Ergebnis des erneuten Starts wird separat dokumentiert. Der CI-Build allein belegt keine laufende App.
+- Nächster Paketbau signiert das vollständige Testbundle ausdrücklich ad hoc und prüft die Signatur. Developer-ID-Signierung/Notarisierung und Veröffentlichung bleiben offen.
