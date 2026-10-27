@@ -9,7 +9,7 @@ ComboBox {
     font.capitalization: Font.MixedCase
     borderWidth: 1
     backgroundColor: ColorSet {
-        normal: "#120900"; hover: "#261407"; down: Theme.color.darkorange1; disabled: "#120900"
+        normal: "#120900"; hover: "#261407"; down: Theme.color.lightorange2; disabled: "#120900"
     }
     strokeColor: ColorSet {
         normal: Theme.color.mediumorange2; hover: Theme.color.lightorange2

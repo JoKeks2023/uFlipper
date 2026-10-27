@@ -50,6 +50,8 @@ class Review : public QObject {
                   {"tool-tab-2", "infrared", "12_ir_library"},
                   {"tool-tab-0", "infrared", ""},
                   {"nav-settings", "settings", "03_settings"},
+                  {"easy-mode-preference", "settings", ""},
+                  {"easy-mode-preference", "settings", ""},
                   {"settings-tab-1", "settings", "04_storage"},
                   {"settings-tab-2", "settings", "05_cloud"},
                   {"settings-tab-3", "settings", "06_integrations"},
@@ -75,6 +77,15 @@ class Review : public QObject {
             throw std::runtime_error(("UI button unavailable: " + name).toStdString());
         const auto point = button->mapToScene(QPointF(button->width() / 2, button->height() / 2));
         QTest::mouseClick(window_, Qt::LeftButton, Qt::NoModifier, point.toPoint(), 30);
+        if (name == "easy-mode-preference") {
+            QTest::qWait(200);
+            if (dropdownChanges_ == 0 &&
+                !window_->grabWindow().save(directory_ + "/13_settings_dropdown.png"))
+                throw std::runtime_error("Cannot capture settings dropdown");
+            QTest::keyClick(window_, globalPrefs->easyMode() ? Qt::Key_End : Qt::Key_Home);
+            QTest::keyClick(window_, Qt::Key_Return);
+            ++dropdownChanges_;
+        }
     }
     void next() {
         try {
@@ -108,6 +119,11 @@ class Review : public QObject {
             if (index_ == 3 && globalPrefs->easyMode() != originalEasyMode_)
                 throw std::runtime_error("Easy Mode preference did not restore");
             const auto buttonName = QString::fromLatin1(step.button);
+            if (buttonName == "easy-mode-preference") {
+                const bool expected = dropdownChanges_ == 1 ? !originalEasyMode_ : originalEasyMode_;
+                if (globalPrefs->easyMode() != expected)
+                    throw std::runtime_error("Settings dropdown did not persist expected Easy Mode value");
+            }
             if (buttonName.startsWith("tool-tab-")) {
                 auto *tool = findItem(window_->contentItem(), "toolPage");
                 if (!tool || tool->property("currentTab").toInt() != buttonName.mid(9).toInt())
@@ -145,12 +161,17 @@ class Review : public QObject {
             fail("Cannot save UI result");
             return;
         }
-        int screenshots = 0;
+        if (dropdownChanges_ != 2) {
+            fail("Settings dropdown roundtrip was not exercised");
+            return;
+        }
+        int screenshots = QFile::exists(directory_ + "/13_settings_dropdown.png") ? 1 : 0;
         for (const auto &step : steps_)
             if (*step.image)
                 ++screenshots;
         result.write(QJsonDocument(QJsonObject{{"navigationClicks", int(steps_.size())},
                                                {"easyModeRoundtrip", true},
+                                               {"settingsDropdownRoundtrip", true},
                                                {"screenshots", screenshots},
                                                {"compactWidth", 1060},
                                                {"compactHeight", 680},
@@ -173,6 +194,7 @@ class Review : public QObject {
     QQuickWindow *window_;
     std::vector<Step> steps_;
     size_t index_ = 0;
+    int dropdownChanges_ = 0;
     bool originalEasyMode_ = true;
     QStringList errors_;
 };
