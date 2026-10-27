@@ -4,7 +4,9 @@
 #include "flipperzero/flipperzero.h"
 #include "flipperzero/protobufsession.h"
 #include "flipperzero/rpc/propertygetoperation.h"
+#include "flipperzero/rpc/storageinfooperation.h"
 #include "powersnapshot.h"
+#include <memory>
 DeviceTelemetry::DeviceTelemetry(Flipper::DeviceRegistry *registry, QObject *parent)
     : QObject(parent), registry_(registry) {
     connect(registry_, &Flipper::DeviceRegistry::currentDeviceChanged, this, &DeviceTelemetry::attachDevice);
@@ -22,8 +24,10 @@ void DeviceTelemetry::attachDevice() {
     connections_.clear();
     ++generation_;
     pending_ = false;
+    storagePending_ = 0;
     device_ = registry_->currentDevice();
     power_.clear();
+    storage_.clear();
     observedAt_ = {};
     error_.clear();
     connected_ = false;
@@ -45,6 +49,7 @@ void DeviceTelemetry::connectionChanged() {
         connected_ = online;
         ++generation_;
         pending_ = false;
+        storagePending_ = 0;
         emit snapshotChanged();
         if (online)
             QTimer::singleShot(0, this, &DeviceTelemetry::refresh);
@@ -72,11 +77,23 @@ QVariantMap DeviceTelemetry::snapshot() const {
     power.insert("pending", pending_);
     power.insert("error", error_);
     result.insert("power", power);
+    QVariantMap storage;
+    for (const QString &path : {QStringLiteral("/int"), QStringLiteral("/ext")}) {
+        auto item = storage_.value(path).toMap();
+        const auto observed = item.value("observedAt").toDateTime();
+        item.insert("stale", !connected_ || observed.isNull() || !item.value("error").toString().isEmpty() ||
+                                 observed.msecsTo(QDateTime::currentDateTimeUtc()) > 30000);
+        if (!observed.isNull())
+            item.insert("observedAt", observed.toString(Qt::ISODateWithMs));
+        storage.insert(path, item);
+    }
+    result.insert("storage", storage);
     return result;
 }
 void DeviceTelemetry::refresh() {
     if (!pollingEnabled_ || !connected_ || pending_ || !device_)
         return;
+    refreshStorage();
     auto generation = generation_;
     auto sequence = ++requestSequence_;
     auto expected = device_;
@@ -114,4 +131,50 @@ void DeviceTelemetry::setPollingEnabled(bool enabled) {
     pollingEnabled_ = enabled;
     if (enabled)
         refresh();
+}
+
+void DeviceTelemetry::refreshStorage() {
+    if (storagePending_ || !device_)
+        return;
+    const auto generation = generation_;
+    const auto sequence = ++storageSequence_;
+    storagePending_ = 2;
+    for (const QByteArray path : {QByteArray("/int"), QByteArray("/ext")}) {
+        auto *op = device_->rpc()->storageInfo(path);
+        op->setTimeout(3000);
+        auto completed = std::make_shared<bool>(false);
+        connect(op, &AbstractOperation::finished, this, [this, op, path, generation, sequence, completed] {
+            if (generation != generation_ || sequence != storageSequence_)
+                return;
+            *completed = true;
+            --storagePending_;
+            auto item = storage_.value(QString::fromLatin1(path)).toMap();
+            if (op->isError())
+                item.insert("error", op->errorString());
+            else if (!op->isPresent()) {
+                item.insert("available", false);
+                item.insert("error", tr("Storage is absent or cannot be read"));
+            } else if (op->sizeFree() > op->sizeTotal() || !op->sizeTotal())
+                item.insert("error", tr("Invalid storage information"));
+            else {
+                item = {{"available", true},
+                        {"totalBytes", double(op->sizeTotal())},
+                        {"freeBytes", double(op->sizeFree())},
+                        {"usedBytes", double(op->sizeTotal() - op->sizeFree())},
+                        {"observedAt", QDateTime::currentDateTimeUtc()},
+                        {"error", QString()}};
+            }
+            storage_.insert(QString::fromLatin1(path), item);
+            emit snapshotChanged();
+        });
+        connect(op, &QObject::destroyed, this, [this, path, generation, sequence, completed] {
+            if (*completed || generation != generation_ || sequence != storageSequence_)
+                return;
+            --storagePending_;
+            auto item = storage_.value(QString::fromLatin1(path)).toMap();
+            item.insert("error", tr("Storage query canceled before completion"));
+            storage_.insert(QString::fromLatin1(path), item);
+            emit snapshotChanged();
+        });
+    }
 }

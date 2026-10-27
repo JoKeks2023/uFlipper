@@ -8,7 +8,7 @@ CONFIG += c++17
 
 include(../qflipper_common.pri)
 
-SOURCES += workbench/devicetelemetry.cpp workbench/powersnapshot.cpp flipperzero/rpc/appoperation.cpp \
+SOURCES += workbench/workbenchdata.cpp workbench/devicetelemetry.cpp workbench/powersnapshot.cpp flipperzero/rpc/appoperation.cpp \
     abstractoperation.cpp \
     abstractoperationhelper.cpp \
     abstractoperationrunner.cpp \
@@ -111,7 +111,7 @@ SOURCES += workbench/devicetelemetry.cpp workbench/powersnapshot.cpp flipperzero
     updateregistry.cpp \
     versioninfo.cpp
 
-HEADERS += workbench/devicetelemetry.h workbench/powersnapshot.h flipperzero/rpc/appoperation.h \
+HEADERS += workbench/workbenchdata.h workbench/devicetelemetry.h workbench/powersnapshot.h flipperzero/rpc/appoperation.h \
     abstractoperation.h \
     abstractoperationhelper.h \
     abstractoperationrunner.h \

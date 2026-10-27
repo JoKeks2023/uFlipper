@@ -7,6 +7,7 @@
 #include "flipperupdates.h"
 
 class DeviceTelemetry;
+class WorkbenchData;
 
 namespace Flipper {
 class FlipperZero;
@@ -22,6 +23,7 @@ class VirtualDisplay;
 
 #if QT_VERSION >= 0x060000
 Q_MOC_INCLUDE("workbench/devicetelemetry.h")
+Q_MOC_INCLUDE("workbench/workbenchdata.h")
 Q_MOC_INCLUDE("flipperzero/devicestate.h")
 Q_MOC_INCLUDE("flipperzero/screenstreamer.h")
 Q_MOC_INCLUDE("flipperzero/virtualdisplay.h")
@@ -31,6 +33,7 @@ Q_MOC_INCLUDE("flipperzero/filemanager.h")
 class ApplicationBackend : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(WorkbenchData* workbench READ workbench CONSTANT)
     Q_PROPERTY(DeviceTelemetry* telemetry READ telemetry CONSTANT)
     Q_PROPERTY(BackendState backendState READ backendState NOTIFY backendStateChanged)
     Q_PROPERTY(Flipper::Zero::DeviceState* deviceState READ deviceState NOTIFY currentDeviceChanged)
@@ -76,6 +79,7 @@ public:
 
     ApplicationBackend(QObject *parent = nullptr);
 
+    WorkbenchData* workbench() const { return m_workbench; }
     DeviceTelemetry* telemetry() const { return m_telemetry; }
     BackendState backendState() const;
     BackendError::ErrorType errorType() const;
@@ -149,6 +153,7 @@ private:
 
     Flipper::DeviceRegistry *m_deviceRegistry;
     DeviceTelemetry* m_telemetry;
+    WorkbenchData* m_workbench;
     Flipper::UpdateRegistry *m_firmwareUpdateRegistry;
 
     Flipper::Zero::ScreenStreamer *m_screenStreamer;

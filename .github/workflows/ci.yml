@@ -2,6 +2,7 @@ name: uFlipper CI
 on:
   push:
     branches: [dev, main, 'codex/**']
+    paths-ignore: ['docs/**', '**/*.md']
   pull_request:
   workflow_dispatch:
 permissions:
@@ -77,7 +78,7 @@ jobs:
           make -j2 main.o
           cd "$RUNNER_TEMP/telemetry-compile"
           qmake "$GITHUB_WORKSPACE/backend/backend.pro"
-          make -j2 devicetelemetry.o powersnapshot.o
+          make -j2 devicetelemetry.o powersnapshot.o workbenchdata.o
       - name: Build macOS Universal
         if: runner.os == 'macOS'
         run: bash build_mac.sh
@@ -94,6 +95,19 @@ jobs:
           make -j2
           plugin=$(python3 -c 'import pathlib,sys; print(next(p for p in pathlib.Path(sys.argv[1]).glob("*flipperproto0*") if p.suffix in (".so", ".dylib")))' "$desktop_build/plugins")
           ./uflipper_protocol_tests "$plugin"
+      - name: Native UI navigation and screenshots on Linux
+        if: runner.os == 'Linux'
+        env:
+          QT_QPA_PLATFORM: offscreen
+          QT_QUICK_BACKEND: software
+        run: timeout 40 build/uFlipper --review-ui "$RUNNER_TEMP/ui-review"
+      - uses: actions/upload-artifact@v4
+        if: always() && runner.os == 'Linux'
+        with:
+          name: ui-review-linux
+          path: ${{ runner.temp }}/ui-review
+          retention-days: 14
+          if-no-files-found: warn
       - name: Native application startup on Linux
         if: runner.os == 'Linux'
         env:

@@ -22,13 +22,16 @@ class DeviceTelemetry : public QObject {
   private:
     void attachDevice();
     void connectionChanged();
+    void refreshStorage();
     Flipper::DeviceRegistry *registry_;
     QPointer<Flipper::FlipperZero> device_;
     QList<QMetaObject::Connection> connections_;
     QTimer timer_;
-    QVariantMap power_;
+    QVariantMap power_, storage_;
     QDateTime observedAt_;
     QString error_;
     quint64 generation_ = 0, requestSequence_ = 0;
+    quint64 storageSequence_ = 0;
+    int storagePending_ = 0;
     bool connected_ = false, pending_ = false, pollingEnabled_ = false;
 };

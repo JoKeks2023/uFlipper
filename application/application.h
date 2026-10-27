@@ -74,6 +74,7 @@ private:
     ApplicationBackend m_backend;
     QQmlApplicationEngine m_engine;
 
+    QString m_uiReviewDirectory;
     bool m_isDeveloperMode;
     UpdateStatus m_updateStatus;
 };

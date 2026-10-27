@@ -1,6 +1,20 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>components/workbench/CatalogPage.qml</file>
+        <file>components/workbench/DashboardPage.qml</file>
+        <file>components/workbench/FilesPage.qml</file>
+        <file>components/workbench/ScreenPage.qml</file>
+        <file>components/workbench/SettingsPage.qml</file>
+        <file>components/workbench/ToolPage.qml</file>
+        <file>components/workbench/WorkbenchButton.qml</file>
+        <file>components/workbench/WorkbenchFact.qml</file>
+        <file>components/workbench/WorkbenchHint.qml</file>
+        <file>components/workbench/WorkbenchLabel.qml</file>
+        <file>components/workbench/WorkbenchRule.qml</file>
+        <file>components/workbench/WorkbenchSplit.qml</file>
+        <file>components/workbench/WorkbenchStorage.qml</file>
+        <file>components/workbench/WorkbenchTitle.qml</file>
         <file>assets/fonts/Born2bSportyV2.ttf</file>
         <file>assets/fonts/haxrcorp-4089.ttf</file>
         <file>imports/Theme/Theme.qml</file>

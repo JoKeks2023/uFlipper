@@ -2,402 +2,175 @@ import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
-
-import Qt.labs.platform 1.1 as Pf
-
 import Theme 1.0
 import QFlipper 1.0
-
+import "workbench"
 Item {
-    id: mainWindow
-
-    signal expandStarted
-    signal expandFinished
-    signal collapseStarted
-    signal collapseFinished
-    signal resizeStarted
-    signal resizeFinished
-
-    property alias controls: windowControls
-
-    readonly property int baseWidth: 830
-    readonly property int baseHeight: 500
-
-    readonly property int logHeight: 200
-    readonly property int minimumLogHeight: 200
-
-    readonly property int shadowSize: 16
-    readonly property int shadowOffset: 4
-
-    readonly property var deviceState: Backend.deviceState
-    readonly property var deviceInfo: deviceState ? deviceState.info : undefined
-
-    Component.onCompleted: {
-        if(App.updateStatus === App.CanUpdate) {
-            askForSelfUpdate();
-        } else {
-            App.updateStatusChanged.connect(askForSelfUpdate);
+    id: shell
+    objectName: "workbench"
+    anchors.fill: parent
+    property string currentPage: "dashboard"
+    property bool showLogs: false
+    readonly property bool maintenance: Backend.backendState > ApplicationBackend.ScreenStreaming && Backend.backendState < ApplicationBackend.Finished
+    readonly property bool resultVisible: Backend.backendState >= ApplicationBackend.Finished
+    readonly property var device: Backend.deviceState ? Backend.deviceState.info : null
+    readonly property var navigation: [
+        {key:"dashboard",title:qsTr("Übersicht")}, {key:"screen",title:qsTr("Gerätebildschirm")},
+        {key:"library",title:qsTr("Dateien")}, {key:"firmware",title:qsTr("Firmware")}, {key:"backups",title:qsTr("Backups")},
+        {key:"infrared",title:qsTr("Infrarot")}, {key:"subghz",title:qsTr("Sub-GHz")}, {key:"nfc",title:qsTr("NFC")},
+        {key:"rfid",title:qsTr("125-kHz-RFID")}, {key:"ibutton",title:qsTr("iButton / 1-Wire")},
+        {key:"gpio",title:qsTr("GPIO und Busse")}, {key:"usb",title:qsTr("USB und Bluetooth")}, {key:"apps",title:qsTr("Apps und Skripte")}
+    ]
+    Rectangle { id: shellBg; anchors.fill: parent; color: "#080400"; border.color: Theme.color.mediumorange2 }
+    Canvas {
+        anchors.fill: workspace; opacity: 0.65
+        onWidthChanged: requestPaint()
+        onHeightChanged: requestPaint()
+        onPaint: {
+            const ctx = getContext("2d"); ctx.reset(); ctx.strokeStyle = "#2b1608"; ctx.lineWidth = 1; ctx.beginPath()
+            for (let x = 0; x < width; x += 40) { ctx.moveTo(x, 0); ctx.lineTo(x, height) }
+            for (let y = 0; y < height; y += 40) { ctx.moveTo(0, y); ctx.lineTo(width, y) }
+            ctx.stroke()
         }
     }
-
-    width: baseWidth
-    height: baseHeight
-
-    x: shadowSize
-    y: shadowSize - shadowOffset
-
-    Pf.Menu {
-        Pf.MenuItem {
-            text: qsTr("Check for updates")
-            role: Pf.MenuItem.ApplicationSpecificRole
-            shortcut: "Ctrl+U"
-            onTriggered: App.checkForUpdates()
-        }
-
-        Pf.MenuItem {
-            text: qsTr("Refresh firmware")
-            role: Pf.MenuItem.ApplicationSpecificRole
-            shortcut: "Ctrl+R"
-            onTriggered: Backend.checkFirmwareUpdates()
-        }
-    }
-
-    PropertyAnimation {
-        id: logExpand
-
-        duration: 500
-        target: mainWindow
-        property: "height"
-
-        to: target.baseHeight + logHeight
-        easing.type: Easing.InOutQuad
-
-        onStarted: mainWindow.expandStarted()
-        onFinished: mainWindow.expandFinished()
-    }
-
-    PropertyAnimation {
-        id: logCollapse
-        target: logExpand.target
-        easing: logExpand.easing
-        duration: logExpand.duration
-        property: logExpand.property
-
-        to: target.baseHeight
-
-        onStarted: mainWindow.collapseStarted()
-        onFinished: mainWindow.collapseFinished()
-    }
-
-    MessageDialog {
-        id: backupPreflightDialog
-        parent: bg
-        radius: bg.radius
-    }
-
-    Connections {
-        target: Backend
-        function onOperationBlocked(reason) {
-            backupPreflightDialog.openWithMessage(null, {
-                title: qsTr("Full backup required"),
-                message: reason
-            });
-        }
-    }
-
-    ConfirmationDialog {
-        id: confirmationDialog
-        radius: bg.radius
-        parent: bg
-    }
-
-    SelfUpdateDialog {
-        id: selfUpdateDialog
-        radius: bg.radius
-        parent: bg
-    }
-
-    WindowShadow {
-        id: shadow
-        anchors.fill: mainWindow
-        anchors.margins: -mainWindow.shadowSize
-        anchors.topMargin: -(mainWindow.shadowSize - mainWindow.shadowOffset)
-        anchors.bottomMargin: -(mainWindow.shadowSize + mainWindow.shadowOffset)
-        opacity: 0.75
-    }
-
     Rectangle {
-        id: blackBorder
-        anchors.fill: parent
-        anchors.margins: -1
-        radius: bg.radius + 1
-        opacity: 0.5
-        color: "black"
+        id: titlebar
+        height: 42; anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right
+        color: "#000000"
+        Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 1; color: Theme.color.mediumorange2 }
+        DragHandler { target: null; onActiveChanged: if (active) shell.Window.window.startSystemMove() }
+        RowLayout {
+            anchors.fill: parent; anchors.leftMargin: 20; anchors.rightMargin: 10; spacing: 14
+            WorkbenchLabel { text: "uFlipper"; font.pixelSize: 26 }
+            WorkbenchLabel { text: qsTr("ENTWICKLUNGSVERSION"); font.pixelSize: 12; opacity: 0.5 }
+            Item { Layout.fillWidth: true }
+            WorkbenchButton { text: "_"; implicitWidth: 36; navigation: true; Accessible.name: qsTr("Minimieren"); onClicked: shell.Window.window.showMinimized() }
+            WorkbenchButton { text: "[ ]"; implicitWidth: 36; navigation: true; Accessible.name: qsTr("Fenstergröße ändern"); onClicked: shell.Window.window.visibility === Window.Maximized ? shell.Window.window.showNormal() : shell.Window.window.showMaximized() }
+            WorkbenchButton { text: "X"; implicitWidth: 36; navigation: true; enabled: !shell.maintenance; Accessible.name: qsTr("Beenden"); onClicked: shell.Window.window.close() }
+        }
     }
-
     Rectangle {
-        id: bg
-        radius: 10
-        anchors.fill: parent
-
-        color: "black"
-        border.color: Theme.color.mediumorange3
-        border.width: 2
-    }
-
-    WindowControls {
-        id: windowControls
-        closeEnabled: Backend.backendState <= ApplicationBackend.ScreenStreaming ||
-                      Backend.backendState >= ApplicationBackend.Finished
-
-        controlPath: "qrc:/assets/gfx/controls"
-
-        anchors.top: mainWindow.top
-        anchors.left: mainContent.left
-        anchors.right: mainContent.right
-        anchors.bottom: mainContent.top
-
-        anchors.topMargin: bg.border.width
-    }
-
-    GridBackground {
-        id: mainContent
-
-        anchors.horizontalCenter: parent.horizontalCenter
-        y: 38
-
-        width: 800 + border.width * 2
-        height: 390 + border.width * 2
-
-        TextLabel {
-            id: versionLabel
-
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.margins: 10
-            anchors.rightMargin: 16
-
-            color: Theme.color.lightorange2
-            opacity: 0.5
-
-            font.family: "ProggySquareTT"
-            font.pixelSize: 16
-
-            text: App.version
-
-            // TODO: Implement copy version to clipboard
-        }
-
-        DeviceWidget {
-            id: deviceWidget
-            opacity: Backend.backendState !== ApplicationBackend.ScreenStreaming &&
-                     Backend.backendState !== ApplicationBackend.ErrorOccured ? 1 : 0
-
-            x: Backend.backendState === ApplicationBackend.Ready ? Math.round(mainContent.width / 2) : 216
-            y: 82
-
-            onScreenStreamRequested: Backend.startFullScreenStreaming()
-        }
-
-        NoDeviceOverlay {
-            id: noDeviceOverlay
-            anchors.fill: parent
-            opacity: Backend.backendState === ApplicationBackend.WaitingForDevices ? 1 : 0
-        }
-
-        HomeOverlay {
-            id: homeOverlay
-            backgroundRect: bg
-            anchors.fill: parent
-            opacity: Backend.backendState === ApplicationBackend.Ready ? 1 : 0
-        }
-
-        UpdateOverlay {
-            id: updateOverlay
-            backgroundRect: bg
-            anchors.fill: parent
-            opacity: Backend.backendState > ApplicationBackend.ScreenStreaming &&
-                     Backend.backendState < ApplicationBackend.Finished ? 1 : 0
-        }
-
-        FinishOverlay {
-            id: finishOverlay
-            backgroundRect: bg
-            anchors.fill: parent
-            opacity: Backend.backendState === ApplicationBackend.Finished ||
-                     Backend.backendState === ApplicationBackend.ErrorOccured ? 1 : 0
-        }
-
-        StreamOverlay {
-            id: streamOverlay
-            anchors.fill: parent
-            opacity: Backend.backendState === ApplicationBackend.ScreenStreaming ? 1 : 0
-        }
-    }
-
-    RowLayout {
-        id: footerLayour
-        width: mainContent.width
-
-        height: 42
-        spacing: 15
-
-        anchors.horizontalCenter: mainContent.horizontalCenter
-        anchors.top: mainContent.bottom
-        anchors.topMargin: 13
-
-        Button {
-            id: logButton
-            text: qsTr("LOGS")
-
-            Layout.preferredWidth: 110
-            Layout.fillHeight: true
-
-            icon.source: checked ? "qrc:/assets/gfx/symbolic/arrow-up.svg" :
-                                   "qrc:/assets/gfx/symbolic/arrow-down.svg"
-            icon.width: 24
-            icon.height: 24
-
-            checkable: true
-
-            Image {
-                x: parent.width - width / 2 - 1
-                y: -height / 2 + 1
-
-                source: "qrc:/assets/gfx/images/alert-badge.svg"
-                sourceSize: Qt.size(18, 18)
-
-                visible: Logger.errorCount > 0 && !logButton.checked
-            }
-
-            onCheckedChanged: {
-                Logger.errorCount = 0;
-
-                if(checked) {
-                    if(!logCollapse.running) {
-                        logExpand.start();
-                    } else {
-                        checked = false;
+        id: sidebar
+        anchors.top: titlebar.bottom; anchors.left: parent.left; anchors.bottom: footer.top
+        width: 186; color: "#000000"
+        Rectangle { anchors.right: parent.right; width: 1; height: parent.height; color: Theme.color.mediumorange2 }
+        ColumnLayout {
+            anchors.fill: parent; anchors.margins: 10; spacing: 10
+            WorkbenchLabel { text: qsTr("ARBEITSPLATZ"); font.pixelSize: 12; opacity: 0.65; Layout.margins: 8 }
+            ScrollView {
+                Layout.fillWidth: true; Layout.fillHeight: true; clip: true
+                contentWidth: availableWidth
+                ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+                ColumnLayout {
+                    width: parent.width; spacing: 3
+                    Repeater {
+                        model: shell.navigation
+                        ColumnLayout {
+                            required property var modelData
+                            required property int index
+                            Layout.fillWidth: true; spacing: 9
+                            WorkbenchLabel { visible: index === 5; text: qsTr("WERKZEUGE"); font.pixelSize: 12; opacity: 0.65; Layout.leftMargin: 8; Layout.topMargin: 12 }
+                            WorkbenchButton {
+                                objectName: "nav-" + modelData.key
+                                text: modelData.title; navigation: true; checked: shell.currentPage === modelData.key
+                                enabled: !shell.maintenance; Layout.fillWidth: true
+                                onClicked: shell.currentPage = modelData.key
+                            }
+                        }
                     }
-
-                } else {
-                    if(!logExpand.running) {
-                        logCollapse.start();
-                    } else {
-                        checked = true;
+                }
+            }
+            WorkbenchRule {}
+            WorkbenchButton { objectName: "nav-settings"; text: qsTr("Einstellungen"); navigation: true; checked: shell.currentPage === "settings"; Layout.fillWidth: true; enabled: !shell.maintenance; onClicked: shell.currentPage = "settings" }
+        }
+    }
+    Rectangle {
+        id: connectionbar
+        anchors.top: titlebar.bottom; anchors.left: sidebar.right; anchors.right: parent.right
+        height: 52; color: "#100800"
+        Rectangle { anchors.bottom: parent.bottom; height: 1; width: parent.width; color: Theme.color.mediumorange2 }
+        RowLayout {
+            anchors.fill: parent; anchors.leftMargin: 24; anchors.rightMargin: 20; spacing: 20
+            WorkbenchLabel { text: shell.device ? "Flipper Zero · " + shell.device.name : qsTr("Flipper Zero"); font.pixelSize: 16 }
+            Rectangle { width: 7; height: 7; radius: 4; color: Backend.deviceState && Backend.deviceState.isOnline ? Theme.color.lightgreen : Theme.color.mediumorange1 }
+            WorkbenchLabel { text: Backend.deviceState && Backend.deviceState.isOnline ? Backend.deviceState.isRecoveryMode ? qsTr("Wiederherstellungsmodus") : qsTr("USB verbunden") : Backend.isQueryInProgress ? qsTr("Gerät wird gelesen …") : qsTr("Nicht verbunden"); color: Backend.deviceState && Backend.deviceState.isOnline ? Theme.color.lightgreen : Theme.color.lightorange2; font.pixelSize: 15 }
+            Item { Layout.fillWidth: true }
+            WorkbenchButton { text: qsTr("Aktualisieren"); enabled: !shell.maintenance; onClicked: { Backend.telemetry.refresh(); Backend.workbench.refresh() } }
+        }
+    }
+    Item {
+        id: workspace
+        anchors.top: connectionbar.bottom; anchors.left: sidebar.right; anchors.right: parent.right; anchors.bottom: logPanel.visible ? logPanel.top : footer.top
+        Loader {
+            id: pageLoader
+            anchors.fill: parent; visible: !shell.maintenance && !shell.resultVisible
+            sourceComponent: {
+                if (shell.currentPage === "dashboard") return dashboardComponent
+                if (shell.currentPage === "settings") return settingsComponent
+                if (shell.currentPage === "screen") return screenComponent
+                if (shell.currentPage === "library") return filesComponent
+                if (shell.currentPage === "backups") return backupsComponent
+                if (shell.currentPage === "firmware") return firmwareComponent
+                return toolComponent
+            }
+        }
+        Connections { target: pageLoader.item; ignoreUnknownSignals: true; function onNavigate(page) { shell.currentPage = page } }
+        Item {
+            anchors.centerIn: parent; width: Math.min(800, parent.width - 16); height: 394
+            visible: shell.maintenance || shell.resultVisible
+            UpdateOverlay { anchors.fill: parent; backgroundRect: shellBg; opacity: shell.maintenance ? 1 : 0 }
+            FinishOverlay { anchors.fill: parent; backgroundRect: shellBg; opacity: shell.resultVisible ? 1 : 0 }
+        }
+    }
+    Rectangle {
+        id: logPanel
+        visible: shell.showLogs
+        height: 160; anchors.left: sidebar.right; anchors.right: parent.right; anchors.bottom: footer.top
+        color: "#000000"; border.color: Theme.color.mediumorange2
+        TextView { anchors.fill: parent; anchors.margins: 8; content.textFormat: TextArea.RichText; content.text: Logger.logText }
+    }
+    Rectangle {
+        id: footer
+        anchors.left: parent.left; anchors.right: parent.right; anchors.bottom: parent.bottom; height: 32
+        color: "black"
+        Rectangle { width: parent.width; height: 1; color: Theme.color.mediumorange2 }
+        RowLayout {
+            anchors.fill: parent; anchors.leftMargin: 18; anchors.rightMargin: 16; spacing: 18
+            WorkbenchLabel { text: "uFlipper " + App.version; font.pixelSize: 12; opacity: 0.6 }
+            Item { Layout.fillWidth: true }
+            WorkbenchButton { text: shell.showLogs ? qsTr("Logs schließen") : qsTr("Logs"); navigation: true; implicitHeight: 28; onClicked: { shell.showLogs = !shell.showLogs; Logger.errorCount = 0 } }
+            WorkbenchButton { text: qsTr("Logordner öffnen"); navigation: true; implicitHeight: 28; onClicked: Qt.openUrlExternally(Logger.logsPath) }
+        }
+    }
+    MessageDialog { id: blocked; parent: shell; radius: 0 }
+    Connections { target: Backend; function onOperationBlocked(reason) { blocked.openWithMessage(null, {title: qsTr("Vollbackup erforderlich"), message: reason}) } }
+    Component { id: dashboardComponent; DashboardPage {} }
+    Component { id: settingsComponent; SettingsPage {} }
+    Component { id: screenComponent; ScreenPage {} }
+    Component { id: filesComponent; FilesPage {} }
+    Component { id: backupsComponent; CatalogPage {} }
+    Component { id: toolComponent; ToolPage { toolKey: shell.currentPage } }
+    Component {
+        id: firmwareComponent
+        Item {
+            ColumnLayout {
+                anchors.fill: parent; anchors.margins: 24
+                WorkbenchTitle { title: qsTr("Firmware"); subtitle: qsTr("Bestehende Gerätepflege. Die erweiterbare Firmware-Bibliothek folgt.") }
+                WorkbenchHint { text: qsTr("Firmwareänderungen bleiben angehalten, bis ein geprüftes Vollbackup erstellt werden kann.") }
+                Item {
+                    Layout.fillWidth: true; Layout.fillHeight: true
+                    Item {
+                        anchors.centerIn: parent; width: 800; height: 394
+                        scale: Math.min(1, (parent.width - 8) / width, (parent.height - 8) / height)
+                        HomeOverlay { anchors.fill: parent; backgroundRect: shellBg; opacity: Backend.backendState === ApplicationBackend.Ready ? 1 : 0 }
+                        DeviceWidget { x: 400; y: 82; visible: Backend.backendState === ApplicationBackend.Ready; onScreenStreamRequested: shell.currentPage = "screen" }
+                        NoDeviceOverlay { anchors.fill: parent; opacity: Backend.backendState === ApplicationBackend.WaitingForDevices ? 1 : 0 }
                     }
                 }
             }
         }
-
-        StatusBar {
-            id: statusBar
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-        }
     }
-
-    TextView {
-        id: logView
-        visible: height > 0
-
-        anchors.top: footerLayour.bottom
-        anchors.left: mainContent.left
-        anchors.right: mainContent.right
-        anchors.bottom: parent.bottom
-
-        anchors.topMargin: 14
-        anchors.bottomMargin: 28
-
-        content.textFormat: TextArea.RichText
-        content.text: Logger.logText
-
-        menu: Menu {
-            id: logMenu
-            width: 170
-
-            MenuItem {
-                text: "Select all"
-                onTriggered: logView.content.selectAll()
-            }
-
-            MenuItem {
-                text: "Copy to clipboard"
-                onTriggered: logView.content.copy()
-            }
-
-            MenuItem {
-                text: "Browse all logs..."
-                onTriggered: Qt.openUrlExternally(Logger.logsPath)
-            }
-        }
-    }
-
-    MouseArea {
-        id: resizer
-
-        property int prevMouseY
-
-        width: parent.width
-        height: 28
-
-        visible: logView.visible && !logCollapse.running && !logExpand.running
-        cursorShape: Qt.SizeVerCursor
-
-        anchors.bottom: parent.bottom
-
-        preventStealing: true
-
-        onPressed: {
-            prevMouseY = mouseY;
-            mainWindow.resizeStarted();
-        }
-
-        onReleased: mainWindow.resizeFinished()
-
-        onMouseYChanged: {
-            const dy = mouseY - prevMouseY;
-            mainWindow.height = Math.max(mainWindow.height + dy, mainWindow.baseHeight + mainWindow.minimumLogHeight);
-        }
-    }
-
-    Text {
-        id: fullLogButton
-        visible: opacity
-        opacity: resizer.visible
-
-        text: "<a href=\"#\">%1</a>".arg(qsTr("Open Full Log"))
-
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 6
-
-        font.pixelSize: 14
-        font.family: "Share Tech"
-        font.capitalization: Font.AllUppercase
-
-        color: Theme.color.lightorange2
-        linkColor: Theme.color.lightorange2
-
-        onLinkActivated: Qt.openUrlExternally(Logger.logsFile)
-
-        MouseArea {
-            anchors.fill: parent
-            acceptedButtons: Qt.NoButton
-            cursorShape: Qt.PointingHandCursor
-        }
-
-        Behavior on opacity {
-            PropertyAnimation {
-                duration: 200
-                easing.type: Easing.OutCubic
-            }
-        }
-    }
-
-    function askForSelfUpdate() {
-        if(App.updateStatus === App.CanUpdate) {
-            selfUpdateDialog.open();
-        }
-    }
+    Shortcut { sequence: "Ctrl+1"; onActivated: if (!shell.maintenance) shell.currentPage = "dashboard" }
+    Shortcut { sequence: "Ctrl+2"; onActivated: if (!shell.maintenance) shell.currentPage = "infrared" }
+    Shortcut { sequence: StandardKey.Preferences; onActivated: if (!shell.maintenance) shell.currentPage = "settings" }
 }

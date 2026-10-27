@@ -1,3 +1,5 @@
+#include "uireview.h"
+#include "workbench/workbenchdata.h"
 #include "application.h"
 #include "workbench/devicetelemetry.h"
 
@@ -45,6 +47,7 @@ Application::Application(int &argc, char **argv):
     initStyles();
     initFonts();
     initGUI();
+    if(!m_uiReviewDirectory.isEmpty()) QTimer::singleShot(7000, this, [this] { runUiReview(m_engine, m_uiReviewDirectory); });
 
     qCInfo(LOG_APP).noquote() << APP_NAME << "version" << APP_VERSION << "commit"
                               << APP_COMMIT << QDateTime::fromSecsSinceEpoch(APP_TIMESTAMP).toString(Qt::ISODate);
@@ -131,12 +134,16 @@ void Application::initCommandOptions()
     parser.addOption(usbLogLevelOption);
     const QCommandLineOption smokeTest(QStringLiteral("smoke-test"), QStringLiteral("Exit after a native startup test."));
     parser.addOption(smokeTest);
+    const QCommandLineOption uiReview(QStringLiteral("review-ui"), QStringLiteral("Exercise native UI navigation and save screenshots"), QStringLiteral("directory"));
+    parser.addOption(uiReview);
     parser.addVersionOption();
     parser.addHelpOption();
 
     parser.process(*this);
 
     if(parser.isSet(smokeTest)) QTimer::singleShot(3000, this, [] { QCoreApplication::quit(); });
+    m_uiReviewDirectory = parser.value(uiReview);
+    if(parser.isSet(smokeTest) && !m_uiReviewDirectory.isEmpty()) parser.showHelp(2);
     m_isDeveloperMode |= parser.isSet(developerModeOption);
 
     if(parser.isSet(usbLogLevelOption)) {
@@ -190,6 +197,7 @@ void Application::initQmlTypes()
 
     qmlRegisterUncreatableType<BackendError>("QFlipper", 1, 0, "BackendError", QStringLiteral("This class is only a enum container"));
     qmlRegisterUncreatableType<InputEvent>("QFlipper", 1, 0, "InputEvent", QStringLiteral("This class is only a enum container"));
+    qmlRegisterUncreatableType<WorkbenchData>("QFlipper", 1, 0, "WorkbenchData", QStringLiteral("Workbench data is owned by the backend"));
     qmlRegisterUncreatableType<DeviceTelemetry>("QFlipper", 1, 0, "DeviceTelemetry", QStringLiteral("Device telemetry is owned by the backend"));
     qmlRegisterUncreatableType<ApplicationBackend>("QFlipper", 1, 0, "ApplicationBackend", QStringLiteral("This class is meant to be created from c++"));
     qmlRegisterUncreatableType<ApplicationUpdater>("QFlipper", 1, 0, "ApplicationUpdater", QStringLiteral("This class is meant to be created from c++"));

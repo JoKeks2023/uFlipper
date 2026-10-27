@@ -7,7 +7,7 @@ DESTDIR = $$OUT_PWD/..
 
 CONFIG += c++17
 
-SOURCES += \
+SOURCES += uireview.cpp \
         application.cpp \
         applicationupdater.cpp \
         applicationupdateregistry.cpp \

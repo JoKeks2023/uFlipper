@@ -7,6 +7,7 @@
 class Preferences : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(bool easyMode READ easyMode WRITE setEasyMode NOTIFY easyModeChanged)
     Q_PROPERTY(QString updateChannel READ firmwareUpdateChannel WRITE setFirmwareUpdateChannel NOTIFY firmwareUpdateChannelChanged)
     Q_PROPERTY(QString appUpdateChannel READ applicationUpdateChannel WRITE setApplicationUpdateChannel NOTIFY applicationUpdateChannelChanged)
     Q_PROPERTY(bool checkAppUpdates READ checkApplicationUpdates WRITE setCheckApplicationUpdates NOTIFY checkApplicationUpdatesChanged)
@@ -16,6 +17,8 @@ class Preferences : public QObject
 
 public:
     static Preferences *instance();
+    bool easyMode() const;
+    void setEasyMode(bool enabled);
 
     const QString firmwareUpdateChannel() const;
     void setFirmwareUpdateChannel(const QString &newUpdateChannel);
@@ -33,6 +36,7 @@ public:
     void setLastFolderUrl(const QUrl &url);
 
 signals:
+    void easyModeChanged();
     void firmwareUpdateChannelChanged();
     void applicationUpdateChannelChanged();
     void checkApplicationUpdatesChanged();

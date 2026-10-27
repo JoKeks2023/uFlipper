@@ -107,3 +107,10 @@ void Preferences::setLastFolderUrl(const QUrl &url)
     m_settings.setValue(LAST_FOLDER_URL_KEY, url.toLocalFile());
     emit lastFolderUrlChanged();
 }
+
+bool Preferences::easyMode() const { return m_settings.value("Workbench/EasyMode", true).toBool(); }
+void Preferences::setEasyMode(bool enabled) {
+    if (enabled==easyMode()) return;
+    m_settings.setValue("Workbench/EasyMode",enabled);
+    emit easyModeChanged();
+}

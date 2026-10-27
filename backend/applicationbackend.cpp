@@ -1,3 +1,4 @@
+#include "workbench/workbenchdata.h"
 ﻿#include "applicationbackend.h"
 #include "workbench/devicetelemetry.h"
 
@@ -36,6 +37,7 @@ ApplicationBackend::ApplicationBackend(QObject *parent):
     QObject(parent),
     m_deviceRegistry(new DeviceRegistry(this)),
     m_telemetry(new DeviceTelemetry(m_deviceRegistry, this)),
+    m_workbench(new WorkbenchData(this)),
     m_firmwareUpdateRegistry(new FirmwareUpdateRegistry("https://update.flipperzero.one/firmware/directory.json", this)),
     m_screenStreamer(new ScreenStreamer(this)),
     m_virtualDisplay(new VirtualDisplay(this)),
@@ -420,6 +422,7 @@ void ApplicationBackend::registerMetaTypes()
     qRegisterMetaType<Flipper::Zero::StorageInfo>("Flipper::Zero::StorageInfo");
 
     qRegisterMetaType<Flipper::FlipperZero*>("Flipper::FlipperZero*");
+    qRegisterMetaType<WorkbenchData*>("WorkbenchData*");
     qRegisterMetaType<DeviceTelemetry*>("DeviceTelemetry*");
     qRegisterMetaType<Flipper::Zero::DeviceState*>("Flipper::Zero::DeviceState*");
     qRegisterMetaType<Flipper::Zero::ScreenStreamer*>("Flipper::Zero::ScreenStreamer*");
