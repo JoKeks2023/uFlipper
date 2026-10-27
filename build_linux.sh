@@ -1,31 +1,15 @@
-#!/bin/bash
-
-set -euxo pipefail;
-
-TARGET="qFlipper"
-BUILDDIR="build"
-APPDIR_PREFIX="$PWD/$BUILDDIR/AppDir/usr"
-
-LIBSSL1_OVERRIDE="$(ldconfig -p | grep x86-64 | grep -oP '/[^\s]+/libssl.so.1.1' | head -n1)"
-
-LIBWAYLAND_EXCLUDE="libwayland*"
-LIBXCB_EXCLUDE="libxcb*"
-LIBXKB_EXCLUDE="libxkb*"
-LIBX11_EXCLUDE="libX*"
-
-export OUTPUT="$TARGET-x86_64.AppImage"
-
-mkdir -p "$BUILDDIR" && cd "$BUILDDIR"
-
-qmake "../$TARGET.pro" -spec linux-g++ "CONFIG+=release qtquickcompiler" PREFIX="$APPDIR_PREFIX"
-make qmake_all
-make -j"$(nproc)"
+#!/usr/bin/env bash
+set -euo pipefail
+source_dir=$(cd "$(dirname "$0")" && pwd)
+command -v qmake >/dev/null || { printf 'Qt 6 qmake is required. See the CI workflow.
+' >&2; exit 1; }
+mkdir -p "$source_dir/build"
+cd "$source_dir/build"
+qmake "$source_dir/qFlipper.pro" -spec linux-g++ CONFIG+=release PREFIX="$PWD/AppDir/usr"
+make -j"${BUILD_JOBS:-2}"
 make install
-
-linuxdeploy --appdir=AppDir -o appimage \
-    --custom-apprun="../installer-assets/appimage/AppRun" \
-    --library="$LIBSSL1_OVERRIDE" \
-    --exclude-library="$LIBWAYLAND_EXCLUDE" \
-    --exclude-library="$LIBXCB_EXCLUDE" \
-    --exclude-library="$LIBXKB_EXCLUDE" \
-    --exclude-library="$LIBX11_EXCLUDE"
+cp "$source_dir/application/assets/icons/qFlipper.png" AppDir/usr/share/icons/hicolor/512x512/apps/uFlipper.png
+cp "$source_dir/installer-assets/appimage/AppRun" AppDir/AppRun
+chmod +x AppDir/AppRun
+# Test artifact only. Self-contained AppImage packaging follows runtime validation.
+tar -czf uFlipper-linux-test.tar.gz AppDir

@@ -6,7 +6,7 @@ include(../qflipper_common.pri)
 TARGET = $${NAME}-cli
 
 DESTDIR = $$OUT_PWD/..
-CONFIG += c++11 console
+CONFIG += c++17 console
 CONFIG -= app_bundle
 
 win32:!win32-g++ {
@@ -49,7 +49,7 @@ win32 {
     } else: VERSION = 0.0.0
 }
 
-macx: ICON = $$PWD/../application/assets/icons/$${NAME}.icns
+macx: ICON = $$PWD/../application/assets/icons/qFlipper.icns
 else:win32: RC_ICONS = $$PWD/../application/assets/icons/$${NAME}-cli.ico
 
 INCLUDEPATH += \

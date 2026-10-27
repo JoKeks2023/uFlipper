@@ -1,0 +1,15 @@
+# Prüfkriterien / laufender Stand
+
+- [x] Branch und 27 Produktentscheidungen dokumentiert.
+- [x] Kleine Kernmodule für Belegung, Stop-Bestätigung, Aufzeichnung und Kryptografie implementiert und lokal geprüft.
+- [ ] Gemeinsamer Kern an vorhandenes Qt-Gerätebackend angebunden und App gestartet.
+- [ ] Fork-eigene Mac-/Linux-CI mit Testartefakten erfolgreich gelaufen.
+- [ ] Live-Empfang, Stop und gespeicherte Originaldaten am echten Flipper nachgewiesen.
+- [ ] Konkreten Helfer gebaut, zur Freigabe vorgelegt und erst danach installiert/geprüft.
+- [ ] Mac-Systemreader mit unabhängigem PC/SC-Client und dauerhafter Kartensitzung nachgewiesen.
+- [ ] Vollständige Sicherung und selektiver Restore mit abgegrenzten Testdaten geprüft.
+- [ ] Dashboard-/Werkzeug-/Settings-Entwürfe gezeigt und gemeinsam abgestimmt.
+- [ ] Sämtliche Werkzeuge, Integrationen und drei Layouts aus dem Release-Plan umgesetzt und geprüft.
+- [ ] Kernabnahme erfolgt; öffentlicher Release separat freigegeben.
+
+Ein Modul-Test ist kein Nachweis einer funktionierenden gesamten App oder Hardwareintegration. Die offenen Punkte dürfen nicht als erledigt beworben werden.

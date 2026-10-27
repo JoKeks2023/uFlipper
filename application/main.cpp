@@ -8,8 +8,8 @@ int main(int argc, char *argv[])
 
     QCoreApplication::setApplicationName(APP_NAME);
     QCoreApplication::setApplicationVersion(APP_VERSION);
-    QCoreApplication::setOrganizationName(QStringLiteral("Flipper Devices Inc"));
-    QCoreApplication::setOrganizationDomain(QStringLiteral("flipperdevices.com"));
+    QCoreApplication::setOrganizationName(QStringLiteral("Joris Conrad"));
+    QCoreApplication::setOrganizationDomain(QStringLiteral("jorisconrad.com"));
 
 #if QT_VERSION < 0x060000
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);

@@ -4,7 +4,7 @@ QT += serialport network
 TEMPLATE = lib
 CONFIG += staticlib
 
-CONFIG += c++11
+CONFIG += c++17
 
 include(../qflipper_common.pri)
 

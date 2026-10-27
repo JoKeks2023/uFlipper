@@ -5,7 +5,7 @@ include(../qflipper_common.pri)
 TARGET = $$NAME
 DESTDIR = $$OUT_PWD/..
 
-CONFIG += c++11
+CONFIG += c++17
 
 SOURCES += \
         application.cpp \
@@ -76,8 +76,10 @@ win32 {
     } else: VERSION = 0.0.0
 }
 
-macx: ICON = assets/icons/$${NAME}.icns
-else:win32: RC_ICONS = assets/icons/$${NAME}.ico
+macx {
+    ICON = assets/icons/qFlipper.icns
+    QMAKE_INFO_PLIST = $$PWD/../installer-assets/macos/Info.plist
+} else:win32: RC_ICONS = assets/icons/qFlipper.ico
 
 INCLUDEPATH += \
     $$PWD/../dfu \
@@ -103,10 +105,10 @@ DISTFILES +=
 unix:!macx {
     target.path = $$PREFIX/bin
 
-    desktopfiles.files = $$PWD/../installer-assets/appimage/$${TARGET}.desktop
+    desktopfiles.files = $$PWD/../installer-assets/appimage/uFlipper.desktop
     desktopfiles.path = $$PREFIX/share/applications
 
-    iconfiles.files = $$PWD/assets/icons/$${TARGET}.png
+    iconfiles.files = $$PWD/assets/icons/qFlipper.png
     iconfiles.path = $$PREFIX/share/icons/hicolor/512x512/apps
 
     udevfiles.files = $$PWD/../installer-assets/udev/42-flipperzero.rules

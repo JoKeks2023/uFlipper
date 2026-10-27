@@ -25,7 +25,7 @@ Q_LOGGING_CATEGORY(LOG_APP, "APP")
 
 Application::Application(int &argc, char **argv):
     QtSingleApplication(QStringLiteral(APP_NAME), argc, argv),
-    m_updateRegistry(globalPrefs->checkApplicationUpdates() ? QStringLiteral("https://update.flipperzero.one/qFlipper/directory.json") : QString()),
+    m_updateRegistry(QString()),
     m_isDeveloperMode(QGuiApplication::queryKeyboardModifiers() & Qt::KeyboardModifier::AltModifier),
     m_updateStatus(UpdateStatus::NoUpdates)
 {
@@ -82,18 +82,13 @@ Application::UpdateStatus Application::updateStatus() const
 
 void Application::selfUpdate()
 {
-    m_updater.installUpdate(m_updateRegistry.latestVersion());
+    qCInfo(LOG_APP) << "Application updates are disabled until a uFlipper update channel is configured.";
 }
 
 void Application::checkForUpdates()
 {
-    if(m_updateStatus == UpdateStatus::Checking) {
-        return;
-    }
-
-    setUpdateStatus(UpdateStatus::Checking);
-    m_updater.reset();
-    m_updateRegistry.check();
+    setUpdateStatus(UpdateStatus::NoUpdates);
+    qCInfo(LOG_APP) << "No uFlipper application update channel is configured.";
 }
 
 void Application::onMessageReceived()

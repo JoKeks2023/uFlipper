@@ -1,0 +1,10 @@
+TEMPLATE = lib
+CONFIG -= qt
+CONFIG += staticlib c++17 link_pkgconfig
+TARGET = uflipper-core
+DESTDIR = $$OUT_PWD/..
+PKGCONFIG += libsodium sqlite3
+INCLUDEPATH += $$PWD/core
+SOURCES += core/operation_coordinator.cpp core/capture_store.cpp core/file_crypto.cpp
+HEADERS += core/operation_coordinator.h core/capture_store.h core/file_crypto.h core/io_utils.h
+macx: QMAKE_MACOSX_DEPLOYMENT_TARGET = 13.0

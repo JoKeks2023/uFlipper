@@ -8,8 +8,8 @@ int main(int argc, char *argv[])
 
     QCoreApplication::setApplicationName(QStringLiteral("%1-cli").arg(APP_NAME));
     QCoreApplication::setApplicationVersion(APP_VERSION);
-    QCoreApplication::setOrganizationName(QStringLiteral("Flipper Devices Inc"));
-    QCoreApplication::setOrganizationDomain(QStringLiteral("flipperdevices.com"));
+    QCoreApplication::setOrganizationName(QStringLiteral("Joris Conrad"));
+    QCoreApplication::setOrganizationDomain(QStringLiteral("jorisconrad.com"));
 
     Cli a(argc, argv);
     return a.exec();

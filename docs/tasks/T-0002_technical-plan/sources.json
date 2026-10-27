@@ -1,0 +1,584 @@
+{
+  "review_date": "2026-10-27",
+  "qflipper_revision": "1d26683ff5b751f219a4e40443b7c8355eb39469",
+  "momentum_tag": "mntm-012",
+  "momentum_revision": "e1784e7418d8b074e971983ceb6fef0f37e52ae4",
+  "runtime_verified": false,
+  "qflipper_files": [
+    {
+      "id": "Q01",
+      "path": "backend/flipperzero/protobufsession.h",
+      "url": "https://github.com/JoKeks2023/uFlipper/blob/1d26683ff5b751f219a4e40443b7c8355eb39469/backend/flipperzero/protobufsession.h",
+      "sha256": "2043fd0c4dc42b9748b341e53c2f3df5e4615b7c111d1e8e0722707fe500860f",
+      "bytes": 4781,
+      "note": "Host-Wrapper für System, Storage, GUI und Property; keine vollständige App-RPC-Werkzeugschicht."
+    },
+    {
+      "id": "Q02",
+      "path": "backend/simpleserialoperation.cpp",
+      "url": "https://github.com/JoKeks2023/uFlipper/blob/1d26683ff5b751f219a4e40443b7c8355eb39469/backend/simpleserialoperation.cpp",
+      "sha256": "72d4a2db947187d4e6cabf318a42c6cc10f1b56a8e8c2c7a59f7e9651fd38bec",
+      "bytes": 1615,
+      "note": "Antwort sammeln bis zum Endtoken; kein fertiger unbegrenzter Live-Datenpfad."
+    },
+    {
+      "id": "Q03",
+      "path": "backend/flipperzero/rpc/startrpcoperation.cpp",
+      "url": "https://github.com/JoKeks2023/uFlipper/blob/1d26683ff5b751f219a4e40443b7c8355eb39469/backend/flipperzero/rpc/startrpcoperation.cpp",
+      "sha256": "bbf180cb0745344942b3c7f9cd9648958be7b9a6cbe6f03ea77f68343194c88d",
+      "bytes": 1251,
+      "note": "Übergang CLI → RPC über start_rpc_session."
+    },
+    {
+      "id": "Q04",
+      "path": "backend/flipperzero/helper/deviceinfohelper.cpp",
+      "url": "https://github.com/JoKeks2023/uFlipper/blob/1d26683ff5b751f219a4e40443b7c8355eb39469/backend/flipperzero/helper/deviceinfohelper.cpp",
+      "sha256": "5ef92590b199e5bcc89057402119b8d9bd6c730318c43b44f9e20b1288b69380",
+      "bytes": 15292,
+      "note": "Versionsabhängige Geräteabfrage mit Property-/Legacy-Pfad."
+    },
+    {
+      "id": "Q05",
+      "path": "backend/flipperzero/deviceinfo.h",
+      "url": "https://github.com/JoKeks2023/uFlipper/blob/1d26683ff5b751f219a4e40443b7c8355eb39469/backend/flipperzero/deviceinfo.h",
+      "sha256": "1eb792ac8b11f33381dfab6f6da3fd9a6692542d32a0f32b1c95f580d76e5990",
+      "bytes": 2849,
+      "note": "Bisheriges Geräte-/Firmware-/Speichermodell."
+    },
+    {
+      "id": "Q06",
+      "path": "backend/flipperzero/screenstreamer.cpp",
+      "url": "https://github.com/JoKeks2023/uFlipper/blob/1d26683ff5b751f219a4e40443b7c8355eb39469/backend/flipperzero/screenstreamer.cpp",
+      "sha256": "f8ec3c1c95ba9cfb33ed4321feb28b619bb860f15d26254be7a25354b73fc33f",
+      "bytes": 5014,
+      "note": "Bildschirmstream und Eingaben, kein Messdatenstream."
+    },
+    {
+      "id": "Q07",
+      "path": "plugins/flipperproto0/messages/application.pb.h",
+      "url": "https://github.com/JoKeks2023/uFlipper/blob/1d26683ff5b751f219a4e40443b7c8355eb39469/plugins/flipperproto0/messages/application.pb.h",
+      "sha256": "0cadfb833ab26946839708a707640e422721ad6db52fa7870f80eb5efa6cc8a8",
+      "bytes": 8006,
+      "note": "Vorhandene generierte App-Nachrichten; gegen Momentum-Schema abzugleichen."
+    },
+    {
+      "id": "Q08",
+      "path": "backend/flipperzero/utility/userbackupoperation.cpp",
+      "url": "https://github.com/JoKeks2023/uFlipper/blob/1d26683ff5b751f219a4e40443b7c8355eb39469/backend/flipperzero/utility/userbackupoperation.cpp",
+      "sha256": "435a37ef53bf2723c3ddb9a6b4b05f1b31f638d1d2533758159f28c1240bc159",
+      "bytes": 4233,
+      "note": "Backup-Verzeichnis /int; keine gesamte SD-Sicherung."
+    },
+    {
+      "id": "Q09",
+      "path": "backend/flipperzero/toplevel/settingsbackupoperation.cpp",
+      "url": "https://github.com/JoKeks2023/uFlipper/blob/1d26683ff5b751f219a4e40443b7c8355eb39469/backend/flipperzero/toplevel/settingsbackupoperation.cpp",
+      "sha256": "dd3eb520ba89633689b6cad3c62074a4b2eca7209e51c68a14274b8b19e317de",
+      "bytes": 1656,
+      "note": "Nutzt backupInternalStorage."
+    },
+    {
+      "id": "Q10",
+      "path": "backend/flipperzero/toplevel/settingsrestoreoperation.cpp",
+      "url": "https://github.com/JoKeks2023/uFlipper/blob/1d26683ff5b751f219a4e40443b7c8355eb39469/backend/flipperzero/toplevel/settingsrestoreoperation.cpp",
+      "sha256": "bdddfd0743e0f48aeca512876fd3d73aff439606e5bb90187c7e4b2b3ba717a8",
+      "bytes": 2134,
+      "note": "Interne Wiederherstellung mit Neustart."
+    },
+    {
+      "id": "Q11",
+      "path": "backend/flipperzero/utility/userrestoreoperation.cpp",
+      "url": "https://github.com/JoKeks2023/uFlipper/blob/1d26683ff5b751f219a4e40443b7c8355eb39469/backend/flipperzero/utility/userrestoreoperation.cpp",
+      "sha256": "f1c2960ff45ee8ba26ee8f9c5c49f68fd6cdc0ad2001c76ca9a391fbc3498a91",
+      "bytes": 4876,
+      "note": "Dateibasierte Wiederherstellung, kein allgemeiner transaktionaler Snapshot."
+    },
+    {
+      "id": "Q12",
+      "path": "backend/flipperzero/utility/directorydownloadoperation.cpp",
+      "url": "https://github.com/JoKeks2023/uFlipper/blob/1d26683ff5b751f219a4e40443b7c8355eb39469/backend/flipperzero/utility/directorydownloadoperation.cpp",
+      "sha256": "77401698fa83586d30d1db8bfa0db8781fdf3d270223fea8cf8bd10fab72bcdc",
+      "bytes": 4287,
+      "note": "Baustein für Verzeichnis-Download."
+    },
+    {
+      "id": "Q13",
+      "path": "backend/flipperzero/toplevel/firmwareinstalloperation.cpp",
+      "url": "https://github.com/JoKeks2023/uFlipper/blob/1d26683ff5b751f219a4e40443b7c8355eb39469/backend/flipperzero/toplevel/firmwareinstalloperation.cpp",
+      "sha256": "66bc33aee19af72d5d41685be4f3e5a6e90699165657889631d697e2d7b56ee8",
+      "bytes": 3726,
+      "note": "DFU-/Recovery-Pfad und temporäre interne Sicherung."
+    },
+    {
+      "id": "Q14",
+      "path": "backend/flipperzero/toplevel/fullupdateoperation.cpp",
+      "url": "https://github.com/JoKeks2023/uFlipper/blob/1d26683ff5b751f219a4e40443b7c8355eb39469/backend/flipperzero/toplevel/fullupdateoperation.cpp",
+      "sha256": "04c621dbf3b523e70555df489d6663e1f34cd988ff82f7e78e9b7cc83a80eef9",
+      "bytes": 10091,
+      "note": "TGZ-/SD-Updater; kein dauerhafter vollständiger Benutzerbackup-Schritt im Ablauf."
+    },
+    {
+      "id": "Q15",
+      "path": "backend/remotefilefetcher.cpp",
+      "url": "https://github.com/JoKeks2023/uFlipper/blob/1d26683ff5b751f219a4e40443b7c8355eb39469/backend/remotefilefetcher.cpp",
+      "sha256": "de11ced7b5e559cd336abb8a1f3ae8aeea780f37afcc49b713a30782589597d9",
+      "bytes": 2868,
+      "note": "SHA256-Vergleich bei vorhandener erwarteter Prüfsumme."
+    },
+    {
+      "id": "Q16",
+      "path": "backend/versioninfo.cpp",
+      "url": "https://github.com/JoKeks2023/uFlipper/blob/1d26683ff5b751f219a4e40443b7c8355eb39469/backend/versioninfo.cpp",
+      "sha256": "e32d09ce6660cf40186dcc673788db23feebd0c517bbdf3d2a7bc0e271d3f733",
+      "bytes": 5177,
+      "note": "Numerische Versionen; keine universelle Ordnung verschiedener Firmware-Projekte."
+    },
+    {
+      "id": "Q17",
+      "path": "application/application.cpp",
+      "url": "https://github.com/JoKeks2023/uFlipper/blob/1d26683ff5b751f219a4e40443b7c8355eb39469/application/application.cpp",
+      "sha256": "65669b09ccf5ec92adf7a321e428da847526aa7859bfbe21bf88f330c7edf409",
+      "bytes": 7564,
+      "note": "Bestehende qFlipper-App-Updateadresse."
+    }
+  ],
+  "momentum_files": [
+    {
+      "path": "applications/main/infrared/infrared_cli.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/main/infrared/infrared_cli.c",
+      "sha256": "88f86a4d78645f20a22aecd7d8493f8ec4a1aa37c31ef2c3b5399a4f6c42c753",
+      "bytes": 18914,
+      "id": "M-IR"
+    },
+    {
+      "path": "applications/main/subghz/subghz_cli.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/main/subghz/subghz_cli.c",
+      "sha256": "22b2afb2185e947333d6a69f18fb35c9b5e94ceb3348ea06db30129bb6a36e55",
+      "bytes": 43643,
+      "id": "M-RF"
+    },
+    {
+      "path": "applications/main/lfrfid/lfrfid_cli.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/main/lfrfid/lfrfid_cli.c",
+      "sha256": "1d9b2a787cdc646967cae994089c5a4e2ac7912464fbfe3b903a6083462eed04",
+      "bytes": 18962,
+      "id": "M-LF"
+    },
+    {
+      "path": "applications/main/ibutton/ibutton_cli.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/main/ibutton/ibutton_cli.c",
+      "sha256": "9533ba97acde2136623148889637476bb6a7b1656580483229abdd74eabd9f45",
+      "bytes": 7498,
+      "id": "M-IB"
+    },
+    {
+      "path": "applications/main/onewire/onewire_cli.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/main/onewire/onewire_cli.c",
+      "sha256": "9ca50d274b773befb8aac2b8119284777760f5d1f8428431774e3f2fce02fa2d",
+      "bytes": 1702,
+      "id": "M-1W"
+    },
+    {
+      "path": "applications/services/cli/cli_command_gpio.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/services/cli/cli_command_gpio.c",
+      "sha256": "f16df28187dd6dc618ad93bf8a1b83b255b429f44dddda66a9082b0151f2a67e",
+      "bytes": 6054,
+      "id": "M-GPIOCLI"
+    },
+    {
+      "path": "applications/services/rpc/rpc_gpio.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/services/rpc/rpc_gpio.c",
+      "sha256": "a1ea7cbed28fbbf2d744015bd7bb47cf00f5e1c0018a4bb7b9eb93ac34b038fc",
+      "bytes": 8604,
+      "id": "M-GPIORPC"
+    },
+    {
+      "path": "applications/services/rpc/rpc_property.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/services/rpc/rpc_property.c",
+      "sha256": "b9cb104cfffc66d2b13c503ffe1912dfe9726ca4ca7c9fd1855c23b709281371",
+      "bytes": 3376,
+      "id": "M-PROP"
+    },
+    {
+      "path": "applications/services/rpc/rpc_system.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/services/rpc/rpc_system.c",
+      "sha256": "6bcbcf4bf2e789287b70482a00978d3d6c9cdad149397e1fe6a3468cd7b1a569",
+      "bytes": 12910,
+      "id": "M-SYS"
+    },
+    {
+      "path": "applications/services/rpc/rpc_app.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/services/rpc/rpc_app.c",
+      "sha256": "f6a360eb1dd9f48984d005f48832fb18f3730774bb261c8c34d9e235325ad94e",
+      "bytes": 16835,
+      "id": "M-APP"
+    },
+    {
+      "path": "applications/services/rpc/rpc_gui.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/services/rpc/rpc_gui.c",
+      "sha256": "ef537c0d5d0caf7441ad931bffedeab83e06723a86d48a992220bf273875b3fe",
+      "bytes": 20289,
+      "id": "M-GUI"
+    },
+    {
+      "path": "applications/services/rpc/rpc_storage.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/services/rpc/rpc_storage.c",
+      "sha256": "69ac293ee37d753c6e88e57baa44acee15334090d19a42bca66ad0e8e34dbb45",
+      "bytes": 28050,
+      "id": "M-STOR"
+    },
+    {
+      "path": "applications/services/loader/loader_cli.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/services/loader/loader_cli.c",
+      "sha256": "a8e120f73eccad849348e65e68ca22a13f285e9d47e2dfd2fc3cab7c4f130878",
+      "bytes": 4861,
+      "id": "M-LOAD"
+    },
+    {
+      "path": "applications/services/power/power_cli.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/services/power/power_cli.c",
+      "sha256": "0975891cfd209e47e20cfc4c278c7b9cfc8a773d93fe8a927c4b1e765d5d53f9",
+      "bytes": 3275,
+      "id": "M-POWER"
+    },
+    {
+      "path": "applications/services/bt/bt_cli.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/services/bt/bt_cli.c",
+      "sha256": "6bb171324ffb4f3754894ae41a71ce22e3bb67a728ccb446cd421f8e40d58d56",
+      "bytes": 7893,
+      "id": "M-BT"
+    },
+    {
+      "path": "applications/main/gpio/application.fam",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/main/gpio/application.fam",
+      "sha256": "298dcf739fdd95731a35919b36fa96bb4254c25f9f51734b4e95c21e7ed338fd",
+      "bytes": 247,
+      "id": "M-UARTAPP"
+    },
+    {
+      "path": "applications/main/gpio/scenes/gpio_scene_usb_uart_close_rpc.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/main/gpio/scenes/gpio_scene_usb_uart_close_rpc.c",
+      "sha256": "7852017aeab6ebabc7cf734a2a3712977f05427cf29c5cc3ad3d476ae2af68b2",
+      "bytes": 1292,
+      "id": "M-UARTCLOSE"
+    },
+    {
+      "path": "applications/main/bad_usb/application.fam",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/main/bad_usb/application.fam",
+      "sha256": "7f054354a3bf9a58ddc3100418f03c7f32e2c6f92cad8b1c0c4b7659836b69ff",
+      "bytes": 411,
+      "id": "M-BADAPP"
+    },
+    {
+      "path": "applications/main/bad_usb/bad_usb_app.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/main/bad_usb/bad_usb_app.c",
+      "sha256": "b51e7b18d7a9cdb35fc504dc3d09c784612e47492b4186a89ba1d48d11a6710b",
+      "bytes": 12095,
+      "id": "M-BAD"
+    },
+    {
+      "path": "applications/system/js_app/js_app.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/system/js_app/js_app.c",
+      "sha256": "1fd5c840d76c94274626456ff0ca3bba6844c1569f1b730ecb9b27e36de8d299",
+      "bytes": 6775,
+      "id": "M-JS"
+    },
+    {
+      "path": "applications/system/js_app/js_thread.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/system/js_app/js_thread.c",
+      "sha256": "ed8baa78d226fa78e8bd0b45935b284d930e761b8f0824b673c445e860efcbca",
+      "bytes": 11279,
+      "id": "M-JSTHREAD"
+    },
+    {
+      "path": "applications/system/js_app/modules/js_serial.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/system/js_app/modules/js_serial.c",
+      "sha256": "cd963b49a01dbdd9ec6a6c1de9ba0ed643581f56cd3fa8202eaac5e68437a07a",
+      "bytes": 21060,
+      "id": "M-SERIAL"
+    },
+    {
+      "path": "applications/system/js_app/modules/js_gpio.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/system/js_app/modules/js_gpio.c",
+      "sha256": "1ecf21bf1caa148d94b04be59f5ffa1c8925cfa961085ff7928fb2f5608dcb4f",
+      "bytes": 15932,
+      "id": "M-GPIOJS"
+    },
+    {
+      "path": "applications/system/js_app/modules/js_i2c.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/system/js_app/modules/js_i2c.c",
+      "sha256": "a3e9fd7d09ab0ea68bd9641b0edddfa26bbda5221fff143e986bbf85caa9bf54",
+      "bytes": 9137,
+      "id": "M-I2C"
+    },
+    {
+      "path": "applications/system/js_app/modules/js_spi.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/system/js_app/modules/js_spi.c",
+      "sha256": "84093fdecf745f956999de8b876cf895938d23cee6a42c97ef1f61953da565a1",
+      "bytes": 9182,
+      "id": "M-SPI"
+    },
+    {
+      "path": "applications/system/js_app/modules/js_subghz/js_subghz.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/system/js_app/modules/js_subghz/js_subghz.c",
+      "sha256": "a58a296e88db68f5fb1fb9d93279d0f74de01b25b8d125959a6461d7551df9ea",
+      "bytes": 19045,
+      "id": "M-RFJS"
+    },
+    {
+      "path": "applications/system/js_app/modules/js_blebeacon.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/system/js_app/modules/js_blebeacon.c",
+      "sha256": "a5ad5847df0e7915f95c347d0d3213af9ea6527e54473a437efc98884de33b64",
+      "bytes": 7782,
+      "id": "M-BEACON"
+    },
+    {
+      "path": "applications/system/js_app/modules/js_usbdisk/js_usbdisk.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/system/js_app/modules/js_usbdisk/js_usbdisk.c",
+      "sha256": "6c2101c9fa5823f14dbfe5c399bcd26b51b5f36a7d8f143e256bdcdc2dde2567",
+      "bytes": 8182,
+      "id": "M-DISK"
+    },
+    {
+      "path": "applications/main/nfc/cli/nfc_cli_commands.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/main/nfc/cli/nfc_cli_commands.c",
+      "sha256": "76150581c27a5a447a824e6edb67c638fbb1a918e19ca3c069435c5febd440bc",
+      "bytes": 5341,
+      "id": "M-NFCCLI"
+    },
+    {
+      "path": "applications/main/nfc/cli/commands/nfc_cli_command_scanner.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/main/nfc/cli/commands/nfc_cli_command_scanner.c",
+      "sha256": "f31f20051a91f96d9ee9f30d7c0ef03d1523e6b468d08a1e525d1a93b0c8c6a4",
+      "bytes": 3223,
+      "id": "M-NFSCAN"
+    },
+    {
+      "path": "applications/main/nfc/cli/commands/dump/nfc_cli_command_dump.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/main/nfc/cli/commands/dump/nfc_cli_command_dump.c",
+      "sha256": "15d5a363980dc57dc41ac5ed69a44c9b0bbcd0d68174dc70253c9e94b3672cef",
+      "bytes": 11561,
+      "id": "M-NFDUMP"
+    },
+    {
+      "path": "applications/main/nfc/cli/commands/apdu/nfc_cli_command_apdu.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/main/nfc/cli/commands/apdu/nfc_cli_command_apdu.c",
+      "sha256": "855ec5801c0bcb7dfcf87e3c592f7e9b3e2bdf7d8bcd305e8ea8375e7ac9630a",
+      "bytes": 10439,
+      "id": "M-APDU"
+    },
+    {
+      "path": "applications/main/nfc/cli/commands/raw/nfc_cli_command_raw.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/main/nfc/cli/commands/raw/nfc_cli_command_raw.c",
+      "sha256": "6b760e2a39ab91ff2bc2e41023b6f74a0cf3948134f438c930affd7e942c90b9",
+      "bytes": 11478,
+      "id": "M-NFRAW"
+    },
+    {
+      "path": "applications/main/nfc/cli/commands/mfu/nfc_cli_action_rdbl.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/main/nfc/cli/commands/mfu/nfc_cli_action_rdbl.c",
+      "sha256": "3afd42a1e6e8d93e299321239f8e7a1d96a734fea4c4d0961d5e3621be40977c",
+      "bytes": 1530,
+      "id": "M-MFREAD"
+    },
+    {
+      "path": "applications/main/nfc/cli/commands/mfu/nfc_cli_action_wrbl.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/main/nfc/cli/commands/mfu/nfc_cli_action_wrbl.c",
+      "sha256": "76a78a952ea63f6dc321f84faf74d53c947aa51662067c9bbd871e14f7a6a6cb",
+      "bytes": 2066,
+      "id": "M-MFWRITE"
+    },
+    {
+      "path": "applications/main/nfc/cli/commands/nfc_cli_command_emulate.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/main/nfc/cli/commands/nfc_cli_command_emulate.c",
+      "sha256": "83e01a8f0b09ba193cba59e112cd4d7531cc3ecb5e6958f9abe3b7caba4d753c",
+      "bytes": 3899,
+      "id": "M-NFEMU"
+    },
+    {
+      "path": "applications/main/infrared/scenes/infrared_scene_rpc.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/main/infrared/scenes/infrared_scene_rpc.c",
+      "sha256": "5efe8481675a607fcd37a750683f59eb16d187409be4b52cb2813bb3cfb8c2f2",
+      "bytes": 8900,
+      "id": "M-IRRPC"
+    },
+    {
+      "path": "applications/main/subghz/scenes/subghz_scene_rpc.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/main/subghz/scenes/subghz_scene_rpc.c",
+      "sha256": "38798ab23985ccaaac857ee13565049a9b528b26dbc95fd79bbb759640c85546",
+      "bytes": 6941,
+      "id": "M-RFRPC"
+    },
+    {
+      "path": "applications/main/lfrfid/scenes/lfrfid_scene_rpc.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/main/lfrfid/scenes/lfrfid_scene_rpc.c",
+      "sha256": "c5ff83d488147231880dc2e01aaf9c15f930d4473b7c00637ebc6583fbb509b2",
+      "bytes": 2527,
+      "id": "M-LFRPC"
+    },
+    {
+      "path": "applications/main/ibutton/scenes/ibutton_scene_rpc.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/main/ibutton/scenes/ibutton_scene_rpc.c",
+      "sha256": "ef601c79fc6afe1b7308bc42e7a1c6db5beb176f767c682482a7024865772442",
+      "bytes": 2260,
+      "id": "M-IBRPC"
+    },
+    {
+      "path": "applications/main/nfc/helpers/protocol_support/nfc_protocol_support.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/main/nfc/helpers/protocol_support/nfc_protocol_support.c",
+      "sha256": "ba342152d2ea0e2f0fdfe4d9b4e1e4bc93e46ddbf1c1951a4ba7b5a38a10bfa0",
+      "bytes": 46556,
+      "id": "M-NFRPC"
+    },
+    {
+      "path": "applications/debug/ccid_test/application.fam",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/debug/ccid_test/application.fam",
+      "sha256": "f4fde403effa9ffd81494ff5b5e43fc51f7b01595d8cc208d5b089013ac696d2",
+      "bytes": 251,
+      "id": "M-CCIDFAM"
+    },
+    {
+      "path": "applications/services/cli/cli_main_shell.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/services/cli/cli_main_shell.c",
+      "sha256": "45f01497ebc5164334c526b34d75c3e22ed1de4684f979ab8d8f738ccf967c3f",
+      "bytes": 2113,
+      "id": "M-SHELL"
+    },
+    {
+      "path": "applications/debug/ccid_test/ccid_test_app.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/debug/ccid_test/ccid_test_app.c",
+      "sha256": "7c7ed9c5cb54a21e490b84ad8061f235c2f8012a9aae186d656e98fca52d53a4",
+      "bytes": 3943,
+      "id": "M-CCID"
+    },
+    {
+      "path": "applications/debug/ccid_test/ccid_test_app_commands.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/debug/ccid_test/ccid_test_app_commands.c",
+      "sha256": "040917a0b6347917b9e70a994b096a8d68734ff40d696089a8f749eccb70e204",
+      "bytes": 4184,
+      "id": "M-CCIDCMD"
+    },
+    {
+      "path": "applications/main/gpio/usb_uart_bridge.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/main/gpio/usb_uart_bridge.c",
+      "sha256": "913947aae104a585cd6987f6473ccad7c5c51c5fc55f2ebeb9aadeb3e5eaf7aa",
+      "bytes": 15408,
+      "id": "M-UART"
+    },
+    {
+      "path": "lib/toolbox/property.h",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/lib/toolbox/property.h",
+      "sha256": "ffa5d8bd9b21793bd9ccf760547e4eea1ef338592d1a8d5553b34b5e8167473f",
+      "bytes": 1471,
+      "id": "M-PROPDEF"
+    },
+    {
+      "path": "targets/f7/furi_hal/furi_hal_power.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/targets/f7/furi_hal/furi_hal_power.c",
+      "sha256": "8d123e60bc91b48b0983c83918a836801b8c0ce9bf9bd5dc2741d42a7f5aaeaa",
+      "bytes": 24704,
+      "id": "M-POWERHAL"
+    },
+    {
+      "path": "targets/f7/furi_hal/furi_hal_usb_ccid.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/targets/f7/furi_hal/furi_hal_usb_ccid.c",
+      "sha256": "88d5c3c0bd1a528ac9937364148152e0cc00816f49264661c0120dcb7ebfac9e",
+      "bytes": 23931,
+      "id": "M-CCIDHAL"
+    },
+    {
+      "path": "applications/main/bad_usb/scenes/bad_usb_scene_work.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/main/bad_usb/scenes/bad_usb_scene_work.c",
+      "sha256": "ece4c941e34648f727a3da4ff744c2849a3409d61c066bd8c32d3a9295a5b7ca",
+      "bytes": 3918,
+      "id": "M-BADWORK"
+    },
+    {
+      "path": "applications/services/cli/cli_main_commands.c",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/services/cli/cli_main_commands.c",
+      "sha256": "f8503d648d1c8623dd967d9bd174d597944e6889104297ef19ac2cdea1602582",
+      "bytes": 21296,
+      "id": "M-CMD"
+    }
+  ],
+  "web_sources": [
+    {
+      "id": "W01",
+      "title": "IR-Empfänger und Demodulation",
+      "url": "https://docs.flipper.net/zero/infrared/read",
+      "note": "Demodulierte IR-Empfangsdaten; kein optisches Amplitudenspektrum."
+    },
+    {
+      "id": "W02",
+      "title": "Sub-GHz-Hardware",
+      "url": "https://docs.flipper.net/zero/sub-ghz",
+      "note": "CC1101 und unterstützte Frequenzbereiche; kein universeller SDR."
+    },
+    {
+      "id": "W03",
+      "title": "Momentum mntm-012 Release",
+      "url": "https://github.com/Next-Flip/Momentum-Firmware/releases/tag/mntm-012",
+      "note": "Release-Metadaten und Update-Paket, heute keine Installation."
+    },
+    {
+      "id": "W04",
+      "title": "Offizielles Firmware-Verzeichnis",
+      "url": "https://update.flipperzero.one/firmware/directory.json",
+      "note": "Kanäle release, release-candidate, development am Recherchetag."
+    },
+    {
+      "id": "W05",
+      "title": "Apple Smartcard-Entitlement",
+      "url": "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.security.smartcard",
+      "note": "Zugriff sandboxierter Reader-Clients; implementiert keinen eigenen Reader."
+    },
+    {
+      "id": "W06",
+      "title": "Apple Smartcard-Slot-Namen",
+      "url": "https://developer.apple.com/de/documentation/cryptotokenkit/tksmartcardslotmanager/slotnames",
+      "note": "Betriebssystemseitig sichtbare Slots als Abnahmepunkt."
+    },
+    {
+      "id": "W07",
+      "title": "Apple Smartcard-Slot-Zustände",
+      "url": "https://developer.apple.com/documentation/cryptotokenkit/tksmartcardslot/state-swift.enum?language=objc",
+      "note": "Missing/empty/probing/mute/valid als Integrationsfälle."
+    },
+    {
+      "id": "W08",
+      "title": "vsmartcard-Projektdokumentation",
+      "url": "https://github.com/frankmorgner/vsmartcard/blob/master/virtualsmartcard/doc/README.txt.in",
+      "note": "Virtueller PC/SC-Reader als Kandidat; historische macOS-Hinweise sind keine aktuelle OS-Zertifizierung."
+    },
+    {
+      "id": "W09",
+      "title": "Google Drive App-Daten",
+      "url": "https://developers.google.com/workspace/drive/api/guides/appdata",
+      "note": "Google Drive ist als Release-Anbieter gewählt; App-Datenbereich ist ein Integrationsansatz, noch keine fertige Anbindung."
+    },
+    {
+      "id": "W10",
+      "title": "Dropbox Entwicklerleitfaden",
+      "url": "https://docs.dropboxapi.com/dropbox-api/docs/developer-resources/developer-guide",
+      "note": "Dropbox ist als Release-Anbieter gewählt; App-Registrierung, Berechtigungen und Integration noch zu prüfen."
+    },
+    {
+      "id": "W11",
+      "title": "Microsoft Graph App-Ordner",
+      "url": "https://learn.microsoft.com/en-us/graph/onedrive-sharepoint-appfolder",
+      "note": "OneDrive ist als Release-Anbieter gewählt; AppFolder ist ein Integrationsansatz, Anbietergrenzen noch zu prüfen."
+    },
+    {
+      "id": "W12",
+      "title": "Nextcloud WebDAV",
+      "url": "https://docs.nextcloud.com/server/latest/developer_manual/client_apis/WebDAV/basic.html",
+      "note": "WebDAV ist als Release-Anbindung gewählt; konkrete Server und Konfliktpfad separat testen."
+    },
+    {
+      "id": "W13",
+      "title": "S3 Conditional Writes",
+      "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/conditional-writes.html",
+      "note": "S3 ist als Release-Anbindung gewählt; bedingte Writes und kompatible Server jeweils prüfen."
+    }
+  ]
+}

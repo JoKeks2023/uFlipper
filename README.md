@@ -1,131 +1,34 @@
-## qFlipper
+# uFlipper
 
-### Graphical desktop application for updating [Flipper Zero](https://flipperzero.one/) firmware via PC
-qFlipper is completely open source and based on [Qt](https://www.qt.io/) framework. Runs on Windows, macOS, Linux.
+A desktop workbench for Flipper Zero, built on qFlipper. macOS and Linux are the target platforms; Momentum remains unmodified.
 
-<img alt="qFlipper" width="450" src="https://cdn.flipperzero.one/qflipper_logo_with_connected_flipper.png" />
+**Development in progress — no public release yet.** Device integration and the full feature set are being implemented and verified. A successful core test does not certify the complete application.
 
-## Download
+## The workbench
 
-Download official qFlipper builds here: [update.flipperzero.one](https://update.flipperzero.one/)
+- Device dashboard with firmware, storage, battery and power information.
+- Desktop tools for supported IR, Sub-GHz, NFC, LF RFID, iButton, GPIO/buses, USB/Bluetooth functions and device apps.
+- Automatically saved live sessions and a searchable local library.
+- Firmware sources, verified device backups and restore workflows.
+- Google Drive, Dropbox, OneDrive, WebDAV and S3 synchronization, optional encryption and a shared trash.
+- Local MCP integration and a planned macOS NFC system reader.
 
-<a href="https://update.flipperzero.one"><img width="300" alt="download qFlipper Button" src="https://cdn.flipperzero.one/download_qFlipper_button.png" /></a>
+These are the accepted product goals, **not a claim that every item is already available**. Current implementation and observed results: [foundation task](docs/tasks/T-0003_foundation/00_brief.md). Device capabilities and limits: [function matrix](docs/tasks/T-0002_technical-plan/06_function_matrix.md).
 
+## Development
 
-## Features
-* Update Flipper's firmware and supplemental data with a press of one button
-* Repair a broken firmware installation
-* Stream Flipper's display and control it remotely
-* Install firmware from a `.dfu` file
-* Backup and restore settings, progress and pairing data
-* Automatic self-update feature
-* Command line interface
+The application uses C++17, Qt 6 and qmake. Portable core checks use a small separate CMake target:
 
-## Build from sources 
-### Cloning
-Make sure to clone the project together with submodules: 
 ```sh
-git clone https://github.com/flipperdevices/qFlipper.git --recursive
-```
-### Windows
-
-Build requirements:
-- MS Visual Studio 2019 or newer
-- Qt5 (MSVC build) >= 5.15.0 or Qt6 >= 6.3.0
-- NSIS (to generate the installer)
-
-Edit `build_windows.bat` to adjust to your build environment and then run:
-```cmd
-build_windows.bat
+cmake -S workbench -B build-core -DCMAKE_BUILD_TYPE=Debug
+cmake --build build-core --parallel 2
+ctest --test-dir build-core --output-on-failure
 ```
 
-Note: STM32 Bootloader driver is not provided in this repository.
+Core dependencies: SQLite3, libsodium and pkg-config. Desktop builds additionally require Qt Quick/Quick Controls, SerialPort, SVG, Core5Compat, zlib and libusb. Initialize the nanopb submodule before a full build. See the fork-owned CI workflow for the pinned Qt toolchain and test artifacts.
 
-### Linux
-#### Docker build (AppImage, official)
+Release targets are macOS 13+ (Apple Silicon and Intel Universal) and Ubuntu 22.04+ x86_64 (AppImage). Minimum-version runtime certification and distribution packaging remain release checks. No simulator is required.
 
-Setup dev container by running:
-```sh 
-docker compose up -d
-```
-Compile qFlipper by running:
-```sh
-docker compose exec dev ./build_linux.sh
-```
+## Credits and license
 
-#### Standalone build
-Build requirements:
-- Qt5 >= 5.15.0 or Qt6 >= 6.3.0
-- libusb >= 1.0.16
-- zlib >= 1.2.0
-
-Make sure to install the following Qt modules (the exact package names might differ slightly depending on your Linux distribution): 
-```
-base, tools, serialport, declarative,  wayland, [quickcontrols2, graphicaleffects] (Qt5 only), qt5-compat (Qt6 only)
-```
-Then run:
-```sh
-mkdir build && cd build
-qmake ../qFlipper.pro PREFIX=/path/to/install/dir -spec linux-g++ CONFIG+=qtquickcompiler && 
-make qmake_all && make && make install
-```
-**Caution:** `make install`ing to the system prefix is not recommended. Instead, use this method for building distro-specific packages. 
-In this case, it is possible to disable the built-in application update feature by passing `DEFINES+=DISABLE_APPLICATION_UPDATES` to the `qmake` call.
-
-### MacOS
-
-Build requirements:
-
-- Xcode or command line tools
-- Qt6 6.3.1 static universal from [Flipper brew tap](https://github.com/flipperdevices/homebrew-flipper)
-- libusb 1.0.24 universal from [Flipper brew tap](https://github.com/flipperdevices/homebrew-flipper)
-- [dmgbuild](https://pypi.org/project/dmgbuild/) >= 1.5.2
-
-If you want to sign binaries, set `SIGNING_KEY` environment variable:
-
-	export SIGNING_KEY="Your Developer Key ID"
-
-Building, signing and creating package:
-
-	./build_mac.sh
-
-Resulting image can be found in: `build_mac/qFlipper.dmg`
-
-## Run
-
-### Linux
-```sh
-./build/qFlipper-x86_64.AppImage
-```
-
-or just launch the file above from your favourite file manager.
-You will likely need to set up udev rules in order to use qFlipper as a normal user:
-```sh
-./qFlipper-x86_64.AppImage rules install [/optional/path/to/rules/dir]
-```
-
-#### Package managers support
-See [contrib](./contrib) for available options.
-
-## Project structure
-- `application` - The main graphical application, written mostly in QML.
-- `cli` - The command line interface, provides nearly all main application's functionality.
-- `backend` - The backend library, written in C++. Takes care of most of the logic.
-- `dfu` - Low level library for accessing USB and DFU devices.
-- `plugins` - Protobuf-based communication protocol support.
-- `3rdparty` - Third-party libraries.
-- `contrib` - Contributed packages and scripts.
-- `driver-tool` - DFU driver installation tool for Windows (based on `libwdi`).
-- `docker` - Docker configuration files.
-- `installer-assets` - Supplementary data for deployment.
-
-## Reporting bugs
-qFlipper is a project under active development. Please report any encountered bugs to make it better!
-
-The (mostly) complete guide is located [here](./.github/ISSUE_TEMPLATE/bug_report.md).
-
-## Known bugs
-
-* Sometimes Flipper's serial port doesn't get recognised by the OS, which leads to firmware update errors. This is a firmware issue.
-* On some systems, there is noticeable flicker during opening, closing or resizing of the log area.
-* Release source archives are automatically generated by Github and are unsuitable for building as they do not contain submodules.
+uFlipper is a fork of [qFlipper](https://github.com/flipperdevices/qFlipper) by Flipper Devices and its contributors, distributed under the existing [GNU GPLv3](LICENSE). Existing third-party licenses and notices remain applicable. [Momentum](https://github.com/Next-Flip/Momentum-Firmware) is an independent firmware project; uFlipper does not imply endorsement by either upstream project.

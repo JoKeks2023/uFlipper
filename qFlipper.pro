@@ -6,9 +6,10 @@ SUBDIRS += \
     backend \
     dfu \
     plugins \
-    cli
+    cli \
+    workbench
 
-backend.depends = dfu plugins
+backend.depends = dfu plugins workbench
 application.depends = backend
 cli.depends = backend
 plugins.depends = 3rdparty

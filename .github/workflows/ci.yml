@@ -1,148 +1,85 @@
-name: 'CI'
-
+name: uFlipper CI
 on:
   push:
-
+    branches: [dev, main, 'codex/**']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: uflipper-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
-  build_linux:
-    runs-on: ubuntu-latest
+  core:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, macos-14]
+    runs-on: ${{ matrix.os }}
     steps:
-      - name: 'Wipe workspace'
-        run: find ./ -mount -maxdepth 1 -exec rm -rf {} \;
-
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - name: Dependencies on Linux
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libsodium-dev libsqlite3-dev pkg-config
+      - name: Dependencies on macOS
+        if: runner.os == 'macOS'
+        run: brew install libsodium pkg-config
+      - run: cmake -S workbench -B build-core -DCMAKE_BUILD_TYPE=Debug
+      - run: cmake --build build-core --parallel 2
+      - run: ctest --test-dir build-core --output-on-failure --output-junit core-results.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: core-results-${{ matrix.os }}
+          path: build-core/core-results.xml
+          retention-days: 14
+  desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            qt_host: linux
+            qt_arch: linux_gcc_64
+          - os: macos-14
+            qt_host: mac
+            qt_arch: clang_64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
         with:
           submodules: true
-          fetch-depth: 0
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build and push
-        uses: docker/build-push-action@v5
+      - name: Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config libusb-1.0-0-dev zlib1g-dev libsodium-dev libsqlite3-dev libgl1-mesa-dev libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-xinerama0 libxcb-xkb1 libegl1 libopengl0 libfuse2 patchelf
+      - name: macOS dependencies
+        if: runner.os == 'macOS'
+        run: |
+          brew install pkg-config autoconf automake libtool
+          bash scripts/ci/macos_dependencies.sh "$RUNNER_TEMP/uflipper-deps"
+          printf 'PKG_CONFIG_PATH=%s/universal/lib/pkgconfig
+' "$RUNNER_TEMP/uflipper-deps" >> "$GITHUB_ENV"
+      - name: Install prebuilt Qt 6.8.3
+        run: |
+          python3 -m venv "$RUNNER_TEMP/aqt"
+          "$RUNNER_TEMP/aqt/bin/pip" install aqtinstall==3.3.0
+          "$RUNNER_TEMP/aqt/bin/aqt" install-qt ${{ matrix.qt_host }} desktop 6.8.3 ${{ matrix.qt_arch }} -O "$RUNNER_TEMP/Qt" -m qtserialport qt5compat qtshadertools
+          qt_bin=$(rg --files "$RUNNER_TEMP/Qt/6.8.3" | rg '/bin/qmake$' | head -n 1)
+          dirname "$qt_bin" >> "$GITHUB_PATH"
+      - name: Build macOS Universal
+        if: runner.os == 'macOS'
+        run: bash build_mac.sh
+      - name: Build Linux application
+        if: runner.os == 'Linux'
+        run: bash build_linux.sh
+      - uses: actions/upload-artifact@v4
         with:
-          push: false
-          context: docker
-          tags: qflipper-build:latest
-          load: true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Build application in docker
-        run: docker run --rm --privileged -v $(pwd):/project qflipper-build:latest /project/build_linux.sh
-
-      - name: Publish application
-        uses: actions/upload-artifact@v4
-        with:
-          name: qFlipper-x86_64.AppImage
+          name: uFlipper-${{ matrix.os }}-test-build
           path: |
-                ./build/qFlipper-x86_64.AppImage
+            build_mac/uFlipper.dmg
+            build_mac/uFlipper.app.zip
+            build/uFlipper-linux-test.tar.gz
           if-no-files-found: error
-          retention-days: 1
-
-  build_mac:
-    runs-on: [self-hosted, ARM64, macOS, qFlipper]
-    env:
-      MAC_OS_KEYCHAIN_NAME: ${{ secrets.MAC_OS_KEYCHAIN_NAME }}
-      MAC_OS_KEYCHAIN_PASSWORD: ${{ secrets.MAC_OS_KEYCHAIN_PASSWORD }}
-      MAC_OS_SIGNING_KEY_ID: ${{ secrets.MAC_OS_SIGNING_KEY_ID }}
-      MAC_OS_SIGNING_TEAM_ID: ${{ secrets.MAC_OS_SIGNING_TEAM_ID }}
-      MAC_OS_SIGNING_USERNAME: ${{ secrets.MAC_OS_SIGNING_USERNAME }}
-      MAC_OS_SIGNING_PASSWORD: ${{ secrets.MAC_OS_SIGNING_PASSWORD }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-          fetch-depth: 0
-
-      - name: Build application
-        run: ./build_mac.sh
-
-      - name: Publish application
-        uses: actions/upload-artifact@v4
-        with:
-          name: qflipper.dmg
-          path: |
-            ./build_mac/qflipper.dmg
-          if-no-files-found: error
-          retention-days: 1
-
-  build_windows:
-    runs-on: [self-hosted, X64, Windows]
-    env:
-        SIGNING_TOOL: ${{ secrets.WIN_SIGNING_TOOL }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-          fetch-depth: 0  # must to be there, see installer_windows.nsi file for details
-
-      - name: Build application
-        run: .\build_windows.bat
-
-      - name: Publish application
-        uses: actions/upload-artifact@v4
-        with:
-          name: qFlipperSetup-64bit.exe
-          path: |
-            .\build\qFlipperSetup-64bit.exe
-            .\build\qFlipper-64bit.zip
-          if-no-files-found: error
-          retention-days: 1
-
-  upload:
-    name: Upload apps to storage
-    needs: [build_windows, build_mac, build_linux]
-    runs-on: ubuntu-latest
-    steps:
-
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: 'Make artifacts directory'
-        run: |
-          test -d artifacts && rm -rf artifacts || true
-          mkdir artifacts
-
-      - name: 'Generate tag suffix'
-        if: startsWith(github.ref, 'refs/tags/') == true
-        run: |
-          echo "REF=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
-          echo "SUFFIX=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
-
-      - name: 'Generate branch suffix'
-        if: startsWith(github.ref, 'refs/tags/') != true
-        run: |
-          echo "REF=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
-          echo "SUFFIX=$(git rev-parse --abbrev-ref HEAD | sed 's/\//_/g')-$(date +'%d%m%Y')-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: qFlipper-x86_64.AppImage
-      - uses: actions/download-artifact@v4
-        with:
-          name: qFlipperSetup-64bit.exe
-      - uses: actions/download-artifact@v4
-        with:
-          name: qflipper.dmg
-
-      - name: Rename app
-        run: |
-            mv qFlipper-x86_64.AppImage ./artifacts/qFlipper-x86_64-${SUFFIX}.AppImage
-            mv qFlipperSetup-64bit.exe ./artifacts/qFlipperSetup-64bit-${SUFFIX}.exe
-            mv qFlipper-64bit.zip ./artifacts/qFlipper-64bit-${SUFFIX}.zip
-            mv qflipper.dmg ./artifacts/qFlipper-${SUFFIX}.dmg
-
-      - name: Upload artifacts to update server
-        if: ${{ !github.event.pull_request.head.repo.fork }}
-        run: |
-          FILES=$(for CUR in $(ls artifacts/); do echo "-F files=@artifacts/$CUR"; done)
-          curl --fail -L -H "Token: ${{ secrets.INDEXER_TOKEN }}" \
-              -F "branch=${REF}" \
-              ${FILES[@]} \
-              "${{ secrets.INDEXER_URL }}"/qFlipper/uploadfiles
+          retention-days: 14

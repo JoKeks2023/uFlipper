@@ -1,5 +1,6 @@
 /build_mac
 build
+build-core/
 .directory
 *.user
 x64

@@ -1,7 +1,7 @@
 CONFIG -= qt
 
 TEMPLATE = lib
-CONFIG += staticlib c++11
+CONFIG += staticlib c++17
 
 include(../qflipper_common.pri)
 

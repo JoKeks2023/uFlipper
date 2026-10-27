@@ -8,7 +8,7 @@ else: TARGET = flipperproto0
 DESTDIR = $$OUT_PWD/..
 
 TEMPLATE = lib
-CONFIG += plugin c++11
+CONFIG += plugin c++17
 
 VERSION = 0.0.0
 

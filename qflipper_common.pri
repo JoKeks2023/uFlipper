@@ -1,4 +1,7 @@
-NAME = qFlipper
+NAME = uFlipper
+CONFIG -= c++11
+CONFIG += c++17
+macx: QMAKE_MACOSX_DEPLOYMENT_TARGET = 13.0
 
 equals(QT_MAJOR_VERSION, 6): QT += core5compat
 
@@ -19,18 +22,17 @@ unix:!macx {
 
 } else:macx {
     DEFINES += USB_BACKEND_LIBUSB
-    PKG_CONFIG = /opt/homebrew/bin/pkg-config
+    PKG_CONFIG = pkg-config
     CONFIG += link_pkgconfig
     PKGCONFIG += libusb-1.0 zlib
+    LIBS += $$system(pkg-config --libs --static libusb-1.0)
 
 } else {
     error("Unsupported OS or compiler")
 }
 
-GIT_VERSION = $$system("git describe --tags --abbrev=0","lines", HAS_VERSION)
-!equals(HAS_VERSION, 0) {
-    GIT_VERSION = unknown
-}
+GIT_VERSION = 0.0.0-dev
+HAS_VERSION = 0
 
 GIT_COMMIT = $$system("git rev-parse --short=8 HEAD","lines", HAS_COMMIT)
 !equals(HAS_COMMIT, 0) {

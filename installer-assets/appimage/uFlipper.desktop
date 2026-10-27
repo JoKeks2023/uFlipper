@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+StartupWMClass=uFlipper
+Categories=Utility;Education;
+Comment=Flipper Zero desktop workbench
+Icon=uFlipper
+Name=uFlipper
+Exec=uFlipper
+Terminal=false

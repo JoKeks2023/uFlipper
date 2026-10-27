@@ -71,13 +71,13 @@ uninstall_udev_rules() {
 }
 
 if [[ $# -eq 0 ]]; then
-    "$THIS_DIR"/usr/bin/qFlipper
+    "$THIS_DIR"/usr/bin/uFlipper
 elif [[ "$1" = 'gui' ]]; then
     shift 1
-    "$THIS_DIR"/usr/bin/qFlipper "$@"
+    "$THIS_DIR"/usr/bin/uFlipper "$@"
 elif [[ "$1" = 'cli' ]]; then
     shift 1
-    "$THIS_DIR"/usr/bin/qFlipper-cli "$@"
+    "$THIS_DIR"/usr/bin/uFlipper-cli "$@"
 elif [[ "$1" = 'rules' ]]; then
     case "$2" in
         'install') install_udev_rules ;;
