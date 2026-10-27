@@ -7,11 +7,11 @@
 #include <QImage>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QMouseEvent>
 #include <QQmlApplicationEngine>
 #include <QQmlError>
 #include <QQuickItem>
 #include <QQuickWindow>
+#include <QTest>
 #include <QTimer>
 #include <functional>
 #include <stdexcept>
@@ -71,13 +71,7 @@ class Review : public QObject {
         if (!button || !button->isVisible() || !button->isEnabled())
             throw std::runtime_error(("UI button unavailable: " + name).toStdString());
         const auto point = button->mapToScene(QPointF(button->width() / 2, button->height() / 2));
-        const auto global = window_->mapToGlobal(point.toPoint());
-        QMouseEvent press(QEvent::MouseButtonPress, point, point, global, Qt::LeftButton, Qt::LeftButton,
-                          Qt::NoModifier);
-        QMouseEvent release(QEvent::MouseButtonRelease, point, point, global, Qt::LeftButton, Qt::NoButton,
-                            Qt::NoModifier);
-        QCoreApplication::sendEvent(window_, &press);
-        QCoreApplication::sendEvent(window_, &release);
+        QTest::mouseClick(window_, Qt::LeftButton, Qt::NoModifier, point.toPoint(), 30);
     }
     void next() {
         try {
@@ -101,7 +95,11 @@ class Review : public QObject {
             const auto &step = steps_[index_];
             auto *shell = findItem(window_->contentItem(), "workbench");
             if (!shell || shell->property("currentPage").toString() != QString::fromLatin1(step.page))
-                throw std::runtime_error("Navigation click did not reach expected page");
+                throw std::runtime_error(
+                    (QString("Click %1: expected %2, actual %3")
+                         .arg(step.button, step.page,
+                              shell ? shell->property("currentPage").toString() : "missing shell"))
+                        .toStdString());
             if (index_ == 2 && globalPrefs->easyMode() == originalEasyMode_)
                 throw std::runtime_error("Easy Mode click did not update preference");
             if (index_ == 3 && globalPrefs->easyMode() != originalEasyMode_)
@@ -149,6 +147,8 @@ class Review : public QObject {
         QCoreApplication::exit(0);
     }
     void fail(const QString &message) {
+        if (window_)
+            window_->grabWindow().save(directory_ + "/failure.png");
         globalPrefs->setEasyMode(originalEasyMode_);
         QFile result(directory_ + "/failure.txt");
         if (result.open(QIODevice::WriteOnly))

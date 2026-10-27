@@ -43,6 +43,7 @@ import Theme 1.0
 
 T.ScrollView {
     id: control
+    property bool outlined: true
 
     implicitWidth: Math.max(implicitBackgroundWidth + leftInset + rightInset,
                             contentWidth + leftPadding + rightPadding)
@@ -55,7 +56,7 @@ T.ScrollView {
         radius: 7
         color: Theme.color.transparent
         border.color: Theme.color.mediumorange3
-        border.width: 2
+        border.width: control.outlined ? 2 : 0
         z: control.children.length //Make the border go over the text
     }
 

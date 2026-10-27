@@ -10,6 +10,8 @@ Item {
     RowLayout {
         anchors.fill: parent; spacing: 0
         ScrollView {
+                padding: 0
+                outlined: false
             id: mainScroll
             Layout.fillWidth: true; Layout.fillHeight: true
             clip: true
@@ -28,6 +30,8 @@ Item {
             color: "#120900"
             Rectangle { width: 1; height: parent.height; color: Theme.color.mediumorange2 }
             ScrollView {
+                padding: 0
+                outlined: false
                 id: detailScroll
                 anchors.fill: parent; clip: true
                 contentWidth: availableWidth; contentHeight: detailColumn.implicitHeight + 48

@@ -8,7 +8,7 @@
 - [x] Konkreten Helfer gebaut, ausdrücklich freigegeben, danach installiert und Start/Version/Stop geprüft. Kartenfunktion noch offen.
 - [ ] Mac-Systemreader mit unabhängigem PC/SC-Client und dauerhafter Kartensitzung nachgewiesen.
 - [ ] Vollständige Sicherung und selektiver Restore mit abgegrenzten Testdaten geprüft.
-- [ ] Dashboard-/Werkzeug-/Settings-Entwürfe gezeigt und gemeinsam abgestimmt.
+- [x] Dashboard-/Werkzeug-/Settings-Entwürfe sichtbar gezeigt und am 27.10.2026 ausdrücklich freigegeben; Umsetzung/Prüfung unter T-0004.
 - [ ] Sämtliche Werkzeuge, Integrationen und drei Layouts aus dem Release-Plan umgesetzt und geprüft.
 - [ ] Kernabnahme erfolgt; öffentlicher Release separat freigegeben.
 

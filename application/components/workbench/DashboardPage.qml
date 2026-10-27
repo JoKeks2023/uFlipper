@@ -38,7 +38,7 @@ WorkbenchSplit {
                 spacing: 7; Layout.preferredWidth: 120
                 WorkbenchLabel { text: qsTr("AKKU"); font.pixelSize: 13; opacity: 0.7 }
                 WorkbenchLabel { text: dashboard.metric("charge.level", 1, " %"); font.pixelSize: 32 }
-                WorkbenchLabel { text: dashboard.power.stale ? qsTr("Veraltet") : dashboard.chargeState(); font.pixelSize: 14; opacity: 0.7 }
+                WorkbenchLabel { text: !dashboard.power.available ? qsTr("Keine Messung") : dashboard.power.stale ? qsTr("Veraltet") : dashboard.chargeState(); font.pixelSize: 14; opacity: 0.7 }
             }
         }
     }

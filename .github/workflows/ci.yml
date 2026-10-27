@@ -57,18 +57,43 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential pkg-config libusb-1.0-0-dev zlib1g-dev libsodium-dev libsqlite3-dev libgl1-mesa-dev libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-xinerama0 libxcb-xkb1 libegl1 libopengl0 libfuse2 patchelf
+      - uses: actions/cache/restore@v4
+        if: runner.os == 'macOS'
+        id: mac-dependencies
+        with:
+          path: ${{ runner.temp }}/uflipper-deps
+          key: uflipper-mac-deps-${{ runner.arch }}-${{ hashFiles('scripts/ci/macos_dependencies.sh') }}
       - name: macOS dependencies
         if: runner.os == 'macOS'
         run: |
           brew install pkg-config autoconf automake libtool
-          bash scripts/ci/macos_dependencies.sh "$RUNNER_TEMP/uflipper-deps"
+          if [[ "${{ steps.mac-dependencies.outputs.cache-hit }}" != "true" ]]; then
+            bash scripts/ci/macos_dependencies.sh "$RUNNER_TEMP/uflipper-deps"
+          fi
           printf 'PKG_CONFIG_PATH=%s/universal/lib/pkgconfig\n' "$RUNNER_TEMP/uflipper-deps" >> "$GITHUB_ENV"
+      - uses: actions/cache/save@v4
+        if: runner.os == 'macOS' && steps.mac-dependencies.outputs.cache-hit != 'true'
+        with:
+          path: ${{ runner.temp }}/uflipper-deps
+          key: ${{ steps.mac-dependencies.outputs.cache-primary-key }}
+      - uses: actions/cache/restore@v4
+        id: qt-sdk
+        with:
+          path: ${{ runner.temp }}/Qt
+          key: uflipper-qt-6.8.3-aqt3.3.0-${{ matrix.qt_host }}-${{ matrix.qt_arch }}-serialport-compat-shadertools
       - name: Install prebuilt Qt 6.8.3
+        if: steps.qt-sdk.outputs.cache-hit != 'true'
         run: |
           python3 -m venv "$RUNNER_TEMP/aqt"
           "$RUNNER_TEMP/aqt/bin/pip" install aqtinstall==3.3.0
           "$RUNNER_TEMP/aqt/bin/aqt" install-qt ${{ matrix.qt_host }} desktop 6.8.3 ${{ matrix.qt_arch }} -O "$RUNNER_TEMP/Qt" -m qtserialport qt5compat qtshadertools
-          python3 -c 'import pathlib,sys; print(next(pathlib.Path(sys.argv[1]).rglob("qmake")).parent)' "$RUNNER_TEMP/Qt/6.8.3" >> "$GITHUB_PATH"
+      - uses: actions/cache/save@v4
+        if: steps.qt-sdk.outputs.cache-hit != 'true'
+        with:
+          path: ${{ runner.temp }}/Qt
+          key: ${{ steps.qt-sdk.outputs.cache-primary-key }}
+      - name: Configure Qt path
+        run: python3 -c 'import pathlib,sys; print(next(pathlib.Path(sys.argv[1]).rglob("qmake")).parent)' "$RUNNER_TEMP/Qt/6.8.3" >> "$GITHUB_PATH"
       - name: Compile new integration paths before the full build
         shell: bash
         run: |

@@ -1,4 +1,4 @@
-QT += quick serialport widgets quickcontrols2 svg
+QT += quick serialport widgets quickcontrols2 svg testlib
 
 include(../qflipper_common.pri)
 

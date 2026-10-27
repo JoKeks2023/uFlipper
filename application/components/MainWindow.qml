@@ -59,6 +59,8 @@ Item {
             anchors.fill: parent; anchors.margins: 10; spacing: 10
             WorkbenchLabel { text: qsTr("ARBEITSPLATZ"); font.pixelSize: 12; opacity: 0.65; Layout.margins: 8 }
             ScrollView {
+                padding: 0
+                outlined: false
                 Layout.fillWidth: true; Layout.fillHeight: true; clip: true
                 contentWidth: availableWidth
                 ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
