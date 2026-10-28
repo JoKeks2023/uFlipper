@@ -29,6 +29,10 @@ TRANSLATIONS += \
 CONFIG += lrelease
 CONFIG += embed_translations
 
+# Generated translations must exist before any parallel RCC invocation.
+load(lrelease)
+rcc.depends += $$QM_FILES
+
 QML_IMPORT_PATH += $$PWD/imports
 
 unix:!macx {

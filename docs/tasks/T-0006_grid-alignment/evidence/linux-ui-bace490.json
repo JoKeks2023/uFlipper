@@ -1,0 +1,16 @@
+{
+  "compactHeight": 680,
+  "compactWidth": 1060,
+  "easyModeRoundtrip": true,
+  "navigationClicks": 17,
+  "qmlErrors": 0,
+  "screenshots": 13,
+  "settingsDropdownRoundtrip": true,
+  "success": true,
+  "commit": "bace49017efd9bc239facce648426520aa1b6427",
+  "ci_run": 40774081195,
+  "artifact_id": 12853163975,
+  "artifact_sha256": "51996651a1757a3903d4f6ba44ed318f8ccf59430367a5027d368299b4149ef9",
+  "rendering": "native Qt Quick; offscreen software in Ubuntu 22.04 CI",
+  "device_connected": false
+}

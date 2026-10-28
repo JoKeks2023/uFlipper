@@ -106,6 +106,8 @@ jobs:
           make -j2 devicetelemetry.o powersnapshot.o workbenchdata.o applicationbackend.o preferences.o logger.o
           cd "$RUNNER_TEMP/ui-compile"
           qmake "$GITHUB_WORKSPACE/application/application.pro"
+          make -j4 qrc_qmake_qmake_qm_files.cpp
+          test -s .qm/en_US.qm
           make -j2 application.o uireview.o
       - name: Build macOS Universal
         if: runner.os == 'macOS'

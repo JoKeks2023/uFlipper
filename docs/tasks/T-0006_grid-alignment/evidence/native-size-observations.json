@@ -1,0 +1,80 @@
+{
+  "commit": "bace49017efd9bc239facce648426520aa1b6427",
+  "backend_commit": "ece44caf261b0cc3d9a15877009db8bac2f4ca00",
+  "bundled_default": false,
+  "cases": [
+    {
+      "initial_window_size": [
+        1173,
+        731
+      ],
+      "exit_code": 2,
+      "local_artifact_directory": "grid-layout-odd-size",
+      "failure": "Tool tab click did not reach expected tab",
+      "scroll_observations": [],
+      "input_observation_enabled": false
+    },
+    {
+      "initial_window_size": [
+        1173,
+        731
+      ],
+      "exit_code": 0,
+      "local_artifact_directory": "grid-tab-observation",
+      "result": {
+        "compactHeight": 680,
+        "compactWidth": 1060,
+        "easyModeRoundtrip": true,
+        "navigationClicks": 17,
+        "qmlErrors": 0,
+        "screenshots": 13,
+        "settingsDropdownRoundtrip": true,
+        "success": true
+      },
+      "scroll_observations": [],
+      "input_observation_enabled": true
+    },
+    {
+      "initial_window_size": [
+        1173,
+        731
+      ],
+      "exit_code": 0,
+      "local_artifact_directory": "grid-odd-repeat",
+      "result": {
+        "compactHeight": 680,
+        "compactWidth": 1060,
+        "easyModeRoundtrip": true,
+        "navigationClicks": 17,
+        "qmlErrors": 0,
+        "screenshots": 13,
+        "settingsDropdownRoundtrip": true,
+        "success": true
+      },
+      "scroll_observations": [],
+      "input_observation_enabled": true
+    },
+    {
+      "initial_window_size": [
+        1060,
+        680
+      ],
+      "exit_code": 0,
+      "local_artifact_directory": "grid-compact-all-pages",
+      "result": {
+        "compactHeight": 680,
+        "compactWidth": 1060,
+        "easyModeRoundtrip": true,
+        "navigationClicks": 17,
+        "qmlErrors": 0,
+        "screenshots": 13,
+        "settingsDropdownRoundtrip": true,
+        "success": true
+      },
+      "scroll_observations": [],
+      "input_observation_enabled": true
+    }
+  ],
+  "unresolved_finding": "https://github.com/JoKeks2023/uFlipper/issues/1",
+  "root_cause_proven": false
+}
