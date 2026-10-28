@@ -47,22 +47,15 @@ WorkbenchSplit {
     }
     WorkbenchLabel { text: tool.currentTab === 0 ? (tool.infrared ? qsTr("Pulsfolge") : qsTr("Live-Daten")) : tool.currentTab === 1 ? qsTr("Am Gerät bedienen") : qsTr("Gespeicherte Dateien"); font.pixelSize: 21 }
     Rectangle {
-        Layout.fillWidth: true; implicitHeight: 210
+        Layout.fillWidth: true; implicitHeight: 224
         radius: 5; color: "#100800"; border.color: Theme.color.mediumorange2
-        Canvas {
+        WorkbenchGrid {
             anchors.fill: parent; anchors.margins: 16
-            onWidthChanged: requestPaint()
-            onHeightChanged: requestPaint()
-            onPaint: {
-                const ctx = getContext("2d")
-                ctx.reset(); ctx.strokeStyle = "#3a1f10"; ctx.lineWidth = 1; ctx.beginPath()
-                for (let x = 0; x < width; x += 48) { ctx.moveTo(x, 0); ctx.lineTo(x, height) }
-                for (let y = 0; y < height; y += 40) { ctx.moveTo(0, y); ctx.lineTo(width, y) }
-                ctx.stroke()
-            }
+            originX: 0; originY: 0
+            majorColor: "#3a1f10"
         }
         WorkbenchLabel {
-            anchors.centerIn: parent; width: parent.width - 44; horizontalAlignment: Text.AlignHCenter; wrapMode: Text.Wrap
+            anchors.centerIn: parent; width: parent.width - 32; horizontalAlignment: Text.AlignHCenter; wrapMode: Text.Wrap
             text: tool.currentTab === 0 ? qsTr("Noch keine Live-Daten\nDirekter Empfang ist in dieser Version noch nicht verfügbar.") : tool.currentTab === 1 ? qsTr("Gerätebildschirm öffnen und das Werkzeug am Flipper auswählen.") : qsTr("Dateien von internem Speicher und SD-Karte im Dateimanager öffnen.")
         }
     }
@@ -78,6 +71,7 @@ WorkbenchSplit {
             required property var modelData
             Layout.fillWidth: true
             RowLayout {
+                spacing: 8
                 Layout.fillWidth: true
                 WorkbenchFact { label: modelData.kind; value: Qt.formatDateTime(new Date(modelData.started_ms), "dd.MM.yyyy hh:mm") + " · " + modelData.bytes + " Bytes" }
                 WorkbenchButton { text: qsTr("Originaldaten"); onClicked: Qt.openUrlExternally(Backend.workbench.recordingUrl(modelData.id)) }

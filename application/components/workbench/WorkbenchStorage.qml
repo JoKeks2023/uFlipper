@@ -13,8 +13,9 @@ ColumnLayout {
         if (value >= 1048576) return (value / 1048576).toLocaleString(Qt.locale(), 'f', 1) + " MiB"
         return (value / 1024).toLocaleString(Qt.locale(), 'f', 0) + " KiB"
     }
-    spacing: 10; Layout.fillWidth: true
+    spacing: 8; Layout.fillWidth: true
     RowLayout {
+        spacing: 8
         Layout.fillWidth: true
         WorkbenchLabel { text: storage.title; Layout.fillWidth: true }
         WorkbenchLabel {
@@ -25,7 +26,7 @@ ColumnLayout {
     }
     Rectangle {
         visible: storage.showCapacity
-        Layout.fillWidth: true; implicitHeight: 5; radius: 2; color: "#3a1f10"
+        Layout.fillWidth: true; implicitHeight: 8; radius: 2; color: "#3a1f10"
         Rectangle {
             height: parent.height; radius: 2; color: Theme.color.lightorange1
             width: storage.info.available && storage.info.totalBytes > 0 ? parent.width * Math.max(0, Math.min(1, storage.info.usedBytes / storage.info.totalBytes)) : 0

@@ -23,40 +23,29 @@ Item {
         {key:"gpio",title:qsTr("GPIO und Busse")}, {key:"usb",title:qsTr("USB und Bluetooth")}, {key:"apps",title:qsTr("Apps und Skripte")}
     ]
     Rectangle { id: shellBg; anchors.fill: parent; color: "#080400"; border.color: Theme.color.mediumorange2 }
-    Canvas {
-        anchors.fill: workspace; opacity: 0.65
-        onWidthChanged: requestPaint()
-        onHeightChanged: requestPaint()
-        onPaint: {
-            const ctx = getContext("2d"); ctx.reset(); ctx.strokeStyle = "#2b1608"; ctx.lineWidth = 1; ctx.beginPath()
-            for (let x = 0; x < width; x += 40) { ctx.moveTo(x, 0); ctx.lineTo(x, height) }
-            for (let y = 0; y < height; y += 40) { ctx.moveTo(0, y); ctx.lineTo(width, y) }
-            ctx.stroke()
-        }
-    }
     Rectangle {
         id: titlebar
-        height: 42; anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right
+        height: 40; anchors.top: parent.top; anchors.left: parent.left; anchors.right: parent.right
         color: "#000000"
         Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 1; color: Theme.color.mediumorange2 }
         DragHandler { target: null; onActiveChanged: if (active) shell.Window.window.startSystemMove() }
         RowLayout {
-            anchors.fill: parent; anchors.leftMargin: 20; anchors.rightMargin: 10; spacing: 14
+            anchors.fill: parent; anchors.leftMargin: 20; anchors.rightMargin: 16; spacing: 16
             WorkbenchLabel { text: "uFlipper"; font.pixelSize: 26 }
             WorkbenchLabel { text: qsTr("ENTWICKLUNGSVERSION"); font.pixelSize: 12; opacity: 0.5 }
             Item { Layout.fillWidth: true }
-            WorkbenchButton { text: "_"; implicitWidth: 36; navigation: true; leftPadding: 0; rightPadding: 0; Accessible.name: qsTr("Minimieren"); onClicked: shell.Window.window.showMinimized() }
-            WorkbenchButton { text: "[ ]"; implicitWidth: 36; navigation: true; leftPadding: 0; rightPadding: 0; Accessible.name: qsTr("Fenstergröße ändern"); onClicked: shell.Window.window.visibility === Window.Maximized ? shell.Window.window.showNormal() : shell.Window.window.showMaximized() }
-            WorkbenchButton { text: "X"; implicitWidth: 36; navigation: true; leftPadding: 0; rightPadding: 0; enabled: !shell.busy; Accessible.name: qsTr("Beenden"); onClicked: shell.Window.window.close() }
+            WorkbenchButton { text: "_"; implicitWidth: 40; navigation: true; leftPadding: 0; rightPadding: 0; Accessible.name: qsTr("Minimieren"); onClicked: shell.Window.window.showMinimized() }
+            WorkbenchButton { text: "[ ]"; implicitWidth: 40; navigation: true; leftPadding: 0; rightPadding: 0; Accessible.name: qsTr("Fenstergröße ändern"); onClicked: shell.Window.window.visibility === Window.Maximized ? shell.Window.window.showNormal() : shell.Window.window.showMaximized() }
+            WorkbenchButton { text: "X"; implicitWidth: 40; navigation: true; leftPadding: 0; rightPadding: 0; enabled: !shell.busy; Accessible.name: qsTr("Beenden"); onClicked: shell.Window.window.close() }
         }
     }
     Rectangle {
         id: sidebar
         anchors.top: titlebar.bottom; anchors.left: parent.left; anchors.bottom: footer.top
-        width: 186; color: "#000000"
+        width: 184; color: "#000000"
         Rectangle { anchors.right: parent.right; width: 1; height: parent.height; color: Theme.color.mediumorange2 }
         ColumnLayout {
-            anchors.fill: parent; anchors.margins: 10; spacing: 10
+            anchors.fill: parent; anchors.margins: 8; spacing: 8
             WorkbenchLabel { text: qsTr("ARBEITSPLATZ"); font.pixelSize: 12; opacity: 0.65; Layout.margins: 8 }
             ScrollView {
                 padding: 0
@@ -65,14 +54,14 @@ Item {
                 contentWidth: availableWidth
                 ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
                 ColumnLayout {
-                    width: parent.width; spacing: 3
+                    width: parent.width; spacing: 0
                     Repeater {
                         model: shell.navigation
                         ColumnLayout {
                             required property var modelData
                             required property int index
-                            Layout.fillWidth: true; spacing: 9
-                            WorkbenchLabel { visible: index === 5; text: qsTr("WERKZEUGE"); font.pixelSize: 12; opacity: 0.65; Layout.leftMargin: 8; Layout.topMargin: 12 }
+                            Layout.fillWidth: true; spacing: 8
+                            WorkbenchLabel { visible: index === 5; text: qsTr("WERKZEUGE"); font.pixelSize: 12; opacity: 0.65; Layout.leftMargin: 8; Layout.topMargin: 16 }
                             WorkbenchButton {
                                 objectName: "nav-" + modelData.key
                                 text: modelData.title; navigation: true; checked: shell.currentPage === modelData.key
@@ -90,10 +79,10 @@ Item {
     Rectangle {
         id: connectionbar
         anchors.top: titlebar.bottom; anchors.left: sidebar.right; anchors.right: parent.right
-        height: 52; color: "#100800"
+        height: 56; color: "#100800"
         Rectangle { anchors.bottom: parent.bottom; height: 1; width: parent.width; color: Theme.color.mediumorange2 }
         RowLayout {
-            anchors.fill: parent; anchors.leftMargin: 24; anchors.rightMargin: 20; spacing: 20
+            anchors.fill: parent; anchors.leftMargin: 24; anchors.rightMargin: 24; spacing: 16
             WorkbenchLabel { text: shell.device ? "Flipper Zero · " + shell.device.name : qsTr("Flipper Zero"); font.pixelSize: 16 }
             Rectangle { width: 7; height: 7; radius: 4; color: Backend.deviceState && Backend.deviceState.isOnline ? Theme.color.lightgreen : Theme.color.mediumorange1 }
             WorkbenchLabel { text: Backend.deviceState && Backend.deviceState.isOnline ? Backend.deviceState.isRecoveryMode ? qsTr("Wiederherstellungsmodus") : qsTr("USB verbunden") : Backend.isQueryInProgress ? qsTr("Gerät wird gelesen …") : qsTr("Nicht verbunden"); color: Backend.deviceState && Backend.deviceState.isOnline ? Theme.color.lightgreen : Theme.color.lightorange2; font.pixelSize: 15 }
@@ -138,11 +127,11 @@ Item {
         color: "black"
         Rectangle { width: parent.width; height: 1; color: Theme.color.mediumorange2 }
         RowLayout {
-            anchors.fill: parent; anchors.leftMargin: 18; anchors.rightMargin: 16; spacing: 18
+            anchors.fill: parent; anchors.leftMargin: 16; anchors.rightMargin: 16; spacing: 16
             WorkbenchLabel { text: "uFlipper " + App.version; font.pixelSize: 12; opacity: 0.6 }
             Item { Layout.fillWidth: true }
-            WorkbenchButton { text: shell.showLogs ? qsTr("Logs schließen") : qsTr("Logs"); navigation: true; implicitHeight: 28; onClicked: { shell.showLogs = !shell.showLogs; Logger.errorCount = 0 } }
-            WorkbenchButton { text: qsTr("Logordner öffnen"); navigation: true; implicitHeight: 28; onClicked: Qt.openUrlExternally(Logger.logsPath) }
+            WorkbenchButton { text: shell.showLogs ? qsTr("Logs schließen") : qsTr("Logs"); navigation: true; implicitHeight: 32; onClicked: { shell.showLogs = !shell.showLogs; Logger.errorCount = 0 } }
+            WorkbenchButton { text: qsTr("Logordner öffnen"); navigation: true; implicitHeight: 32; onClicked: Qt.openUrlExternally(Logger.logsPath) }
         }
     }
     MessageDialog { id: blocked; parent: shell; radius: 0 }
@@ -156,8 +145,9 @@ Item {
     Component {
         id: firmwareComponent
         Item {
+            WorkbenchGrid { anchors.fill: parent }
             ColumnLayout {
-                anchors.fill: parent; anchors.margins: 24
+                anchors.fill: parent; anchors.margins: 24; spacing: 16
                 WorkbenchTitle { title: qsTr("Firmware"); subtitle: qsTr("Bestehende Gerätepflege. Die erweiterbare Firmware-Bibliothek folgt.") }
                 WorkbenchHint { text: qsTr("Firmwareänderungen bleiben angehalten, bis ein geprüftes Vollbackup erstellt werden kann.") }
                 Item {

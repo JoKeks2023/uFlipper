@@ -27,19 +27,19 @@ WorkbenchSplit {
     }
     WorkbenchTitle { title: qsTr("Übersicht"); subtitle: qsTr("Gerät, Versorgung und laufende Arbeit auf einen Blick.") }
     Rectangle {
-        Layout.fillWidth: true; implicitHeight: 116
+        Layout.fillWidth: true; implicitHeight: 120
         radius: 6; color: "#120900"; border.color: Theme.color.mediumorange2
         RowLayout {
-            anchors.fill: parent; anchors.margins: 18; spacing: 20
+            anchors.fill: parent; anchors.margins: 16; spacing: 16
             ColumnLayout {
-                Layout.fillWidth: true; spacing: 8
+                Layout.fillWidth: true; Layout.fillHeight: false; Layout.alignment: Qt.AlignTop; spacing: 8
                 WorkbenchLabel { text: qsTr("FLIPPER ZERO"); font.pixelSize: 13; opacity: 0.7 }
                 WorkbenchLabel { text: dashboard.device.firmwareVersion || qsTr("Kein Gerät verbunden"); font.pixelSize: 23; Layout.fillWidth: true }
                 WorkbenchLabel { text: dashboard.device.firmwareCommit ? qsTr("Firmware %1 · RPC %2.%3").arg(dashboard.device.firmwareCommit).arg(dashboard.device.rpcMajor).arg(dashboard.device.rpcMinor) : qsTr("Flipper per USB verbinden"); font.pixelSize: 14; opacity: 0.7; Layout.fillWidth: true }
             }
             Rectangle { width: 1; Layout.fillHeight: true; color: Theme.color.mediumorange2 }
             ColumnLayout {
-                spacing: 7; Layout.preferredWidth: 120
+                spacing: 8; Layout.preferredWidth: 120; Layout.fillHeight: false; Layout.alignment: Qt.AlignTop
                 WorkbenchLabel { text: qsTr("AKKU"); font.pixelSize: 13; opacity: 0.7 }
                 WorkbenchLabel { text: dashboard.metric("charge.level", 1, " %"); font.pixelSize: 32 }
                 WorkbenchLabel { text: !dashboard.power.available ? qsTr("Keine Messung") : dashboard.power.stale ? qsTr("Veraltet") : dashboard.chargeState(); font.pixelSize: 14; opacity: 0.7 }
@@ -61,6 +61,7 @@ WorkbenchSplit {
     WorkbenchLabel { text: qsTr("Aktuelle Arbeit"); font.pixelSize: 21 }
     WorkbenchFact { label: qsTr("Gerät"); value: Backend.deviceState ? Backend.deviceState.statusString || qsTr("Bereit") : qsTr("Wartet auf USB-Verbindung") }
     RowLayout {
+        spacing: 8
         WorkbenchButton { text: qsTr("Gerätebildschirm"); enabled: !!Backend.deviceState && !Backend.deviceState.isRecoveryMode; onClicked: dashboard.navigate("screen") }
         WorkbenchButton { text: qsTr("Dateien öffnen"); enabled: Backend.backendState === ApplicationBackend.Ready; onClicked: dashboard.navigate("library") }
     }
@@ -71,8 +72,9 @@ WorkbenchSplit {
         model: Backend.workbench.recordings.slice(0, 4)
         delegate: ColumnLayout {
             required property var modelData
-            Layout.fillWidth: true; spacing: 9
+            Layout.fillWidth: true; spacing: 8
             RowLayout {
+                spacing: 8
                 Layout.fillWidth: true
                 WorkbenchLabel { text: modelData.kind; Layout.fillWidth: true }
                 WorkbenchLabel { text: modelData.state === "completed" ? qsTr("Abgeschlossen") : modelData.state === "interrupted" ? qsTr("Unterbrochen") : qsTr("Status im Katalog: läuft"); opacity: 0.65; font.pixelSize: 14 }

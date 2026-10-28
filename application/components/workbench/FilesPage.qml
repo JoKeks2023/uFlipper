@@ -8,6 +8,7 @@ Item {
     onReadyChanged: if (ready) Backend.fileManager.refresh()
     Component.onCompleted: if (ready) Backend.fileManager.refresh()
     Component.onDestruction: if (Backend.backendState === ApplicationBackend.Ready) Backend.screenStreamer.isEnabled = true
+    WorkbenchGrid { anchors.fill: parent }
     ColumnLayout {
         anchors.fill: parent; anchors.margins: 24; spacing: 16
         WorkbenchTitle { title: qsTr("Dateien"); subtitle: qsTr("Interner Speicher und SD-Karte – bestehende qFlipper-Dateiverwaltung.") }

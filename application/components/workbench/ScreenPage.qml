@@ -26,6 +26,7 @@ WorkbenchSplit {
             WorkbenchLabel { anchors.centerIn: parent; visible: !canvas.visible; text: qsTr("Keine Bildschirmverbindung") }
         }
         DirectionalKeypad {
+            Layout.preferredWidth: 192
             enabled: Backend.backendState === ApplicationBackend.Ready
             onInputEvent: function(key, type) { Backend.screenStreamer.sendInputEvent(key, type) }
         }

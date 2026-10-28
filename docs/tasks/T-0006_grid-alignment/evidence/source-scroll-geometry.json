@@ -1,0 +1,256 @@
+[
+  {
+    "label": "settings-controls",
+    "columnOrigin": [
+      208,
+      120
+    ],
+    "gridOrigin": [
+      208,
+      120
+    ],
+    "contentY": 0,
+    "children": [
+      {
+        "x": 0,
+        "y": 0,
+        "width": 1088,
+        "height": 64
+      },
+      {
+        "x": 0,
+        "y": 80,
+        "width": 600,
+        "height": 40
+      },
+      {
+        "x": 0,
+        "y": 136,
+        "width": 1088,
+        "height": 8
+      },
+      {
+        "x": 0,
+        "y": 160,
+        "width": 1088,
+        "height": 560
+      }
+    ],
+    "easyModeBounds": [
+      808,
+      424,
+      280,
+      40
+    ]
+  },
+  {
+    "label": "before-scroll",
+    "columnOrigin": [
+      208,
+      120
+    ],
+    "gridOrigin": [
+      208,
+      120
+    ],
+    "contentY": 0,
+    "children": [
+      {
+        "x": 0,
+        "y": 0,
+        "width": 848,
+        "height": 64
+      },
+      {
+        "x": 0,
+        "y": 80,
+        "width": 848,
+        "height": 120
+      },
+      {
+        "x": 0,
+        "y": 216,
+        "width": 71,
+        "height": 24
+      },
+      {
+        "x": 0,
+        "y": 256,
+        "width": 848,
+        "height": 40
+      },
+      {
+        "x": 0,
+        "y": 312,
+        "width": 848,
+        "height": 48
+      },
+      {
+        "x": 0,
+        "y": 376,
+        "width": 848,
+        "height": 8
+      },
+      {
+        "x": 0,
+        "y": 400,
+        "width": 122,
+        "height": 24
+      },
+      {
+        "x": 0,
+        "y": 440,
+        "width": 848,
+        "height": 48
+      },
+      {
+        "x": 0,
+        "y": 504,
+        "width": 296,
+        "height": 40
+      },
+      {
+        "x": 0,
+        "y": 560,
+        "width": 848,
+        "height": 8
+      },
+      {
+        "x": 0,
+        "y": 584,
+        "width": 149,
+        "height": 24
+      },
+      {
+        "x": 0,
+        "y": 624,
+        "width": 848,
+        "height": 56
+      },
+      {
+        "x": 0,
+        "y": 696,
+        "width": 848,
+        "height": 56
+      },
+      {
+        "x": 0,
+        "y": 768,
+        "width": 848,
+        "height": 56
+      },
+      {
+        "x": 0,
+        "y": 840,
+        "width": 848,
+        "height": 56
+      }
+    ],
+    "easyModeBounds": null
+  },
+  {
+    "label": "after-scroll",
+    "columnOrigin": [
+      208,
+      -3
+    ],
+    "gridOrigin": [
+      208,
+      -3
+    ],
+    "contentY": 123,
+    "children": [
+      {
+        "x": 0,
+        "y": 0,
+        "width": 848,
+        "height": 64
+      },
+      {
+        "x": 0,
+        "y": 80,
+        "width": 848,
+        "height": 120
+      },
+      {
+        "x": 0,
+        "y": 216,
+        "width": 71,
+        "height": 24
+      },
+      {
+        "x": 0,
+        "y": 256,
+        "width": 848,
+        "height": 40
+      },
+      {
+        "x": 0,
+        "y": 312,
+        "width": 848,
+        "height": 48
+      },
+      {
+        "x": 0,
+        "y": 376,
+        "width": 848,
+        "height": 8
+      },
+      {
+        "x": 0,
+        "y": 400,
+        "width": 122,
+        "height": 24
+      },
+      {
+        "x": 0,
+        "y": 440,
+        "width": 848,
+        "height": 48
+      },
+      {
+        "x": 0,
+        "y": 504,
+        "width": 296,
+        "height": 40
+      },
+      {
+        "x": 0,
+        "y": 560,
+        "width": 848,
+        "height": 8
+      },
+      {
+        "x": 0,
+        "y": 584,
+        "width": 149,
+        "height": 24
+      },
+      {
+        "x": 0,
+        "y": 624,
+        "width": 848,
+        "height": 56
+      },
+      {
+        "x": 0,
+        "y": 696,
+        "width": 848,
+        "height": 56
+      },
+      {
+        "x": 0,
+        "y": 768,
+        "width": 848,
+        "height": 56
+      },
+      {
+        "x": 0,
+        "y": 840,
+        "width": 848,
+        "height": 56
+      }
+    ],
+    "easyModeBounds": null
+  }
+]

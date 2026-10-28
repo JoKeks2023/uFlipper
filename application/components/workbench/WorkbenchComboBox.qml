@@ -1,9 +1,12 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import Primitives 1.0
 import Theme 1.0
+import "WorkbenchGeometry.js" as Geometry
 ComboBox {
-    implicitHeight: 36
+    Layout.alignment: Qt.AlignBottom
+    implicitHeight: Geometry.controlHeight
     font.family: "Share Tech"
     font.pixelSize: 17
     font.capitalization: Font.MixedCase

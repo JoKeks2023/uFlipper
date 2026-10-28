@@ -1,13 +1,16 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import Theme 1.0
+import "WorkbenchGeometry.js" as Geometry
 Button {
     id: control
     property bool navigation: false
     property bool primary: false
-    implicitHeight: navigation ? 36 : 34
-    implicitWidth: Math.max(80, label.implicitWidth + 26)
-    leftPadding: 12; rightPadding: 12
+    Layout.alignment: Qt.AlignBottom
+    implicitHeight: Geometry.controlHeight
+    implicitWidth: Geometry.snapUp(Math.max(80, label.implicitWidth + 32))
+    leftPadding: 16; rightPadding: 16
     Accessible.name: text
     ToolTip.visible: hovered && label.truncated
     ToolTip.text: text

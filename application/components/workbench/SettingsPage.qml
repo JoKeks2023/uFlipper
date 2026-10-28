@@ -10,7 +10,7 @@ WorkbenchSplit {
     property int tab: 0
     WorkbenchTitle { title: qsTr("Einstellungen"); subtitle: qsTr("Allgemeines, Datenablage und Integrationen.") }
     RowLayout {
-        Layout.fillWidth: true; spacing: 12
+        Layout.fillWidth: true; spacing: 16
         Repeater {
             model: [qsTr("Allgemein"), qsTr("Speicher"), qsTr("Cloud"), qsTr("Integrationen"), qsTr("Über uFlipper")]
             WorkbenchTab {
@@ -24,15 +24,17 @@ WorkbenchSplit {
     }
     WorkbenchRule {}
     ColumnLayout {
-        visible: settings.tab === 0; Layout.fillWidth: true; spacing: 22
+        visible: settings.tab === 0; Layout.fillWidth: true; spacing: 24
         WorkbenchLabel { text: qsTr("Darstellung und Arbeitsfläche"); font.pixelSize: 21 }
         RowLayout {
+            spacing: 8
             Layout.fillWidth: true
             WorkbenchFact { label: qsTr("Design"); value: qsTr("qFlipper · Dunkel, Orange und Raster") }
             WorkbenchComboBox { Layout.preferredWidth: 280; model: ["qFlipper"]; font.family: "Share Tech"; font.pixelSize: 17 }
         }
         WorkbenchRule {}
         RowLayout {
+            spacing: 8
             Layout.fillWidth: true
             WorkbenchFact { label: qsTr("Arbeitsfläche"); value: qsTr("Workbench und separate Werkzeugfenster folgen.") }
             WorkbenchComboBox {
@@ -45,6 +47,7 @@ WorkbenchSplit {
         }
         WorkbenchRule {}
         RowLayout {
+            spacing: 8
             Layout.fillWidth: true
             WorkbenchFact { label: qsTr("Easy Mode"); value: qsTr("Geführte Hinweise in denselben Werkzeugen") }
             WorkbenchComboBox {
@@ -57,6 +60,7 @@ WorkbenchSplit {
         }
         WorkbenchRule {}
         RowLayout {
+            spacing: 8
             Layout.fillWidth: true
             WorkbenchFact { label: qsTr("Dateiverwaltung"); value: qsTr("Versteckte Dateien anzeigen") }
             Switch { checked: Preferences.showHiddenFiles; onToggled: Preferences.showHiddenFiles = checked; Accessible.name: qsTr("Versteckte Dateien anzeigen") }
@@ -64,13 +68,14 @@ WorkbenchSplit {
         WorkbenchRule {}
         WorkbenchLabel { text: qsTr("Hintergrundbetrieb"); font.pixelSize: 21 }
         RowLayout {
+            spacing: 8
             Layout.fillWidth: true
             WorkbenchFact { label: qsTr("Bei geschlossenem Fenster weiterarbeiten"); value: qsTr("Noch nicht verfügbar. Schließen beendet die Anwendung.") }
             Switch { checked: false; enabled: false; Accessible.name: qsTr("Hintergrundbetrieb noch nicht verfügbar") }
         }
     }
     ColumnLayout {
-        visible: settings.tab === 1; Layout.fillWidth: true; spacing: 22
+        visible: settings.tab === 1; Layout.fillWidth: true; spacing: 24
         WorkbenchLabel { text: qsTr("Lokale Ablage"); font.pixelSize: 21 }
         WorkbenchFact { label: qsTr("Aufnahmen und Backups"); value: decodeURIComponent(Backend.workbench.storageUrl.toString().replace("file://", "")) }
         WorkbenchButton { text: qsTr("Datenordner öffnen"); onClicked: Qt.openUrlExternally(Backend.workbench.storageUrl) }
@@ -81,7 +86,7 @@ WorkbenchSplit {
         WorkbenchFact { label: qsTr("Aufbewahrung"); value: qsTr("Grenzen für Alter, Anzahl und Speicherverbrauch folgen mit der Datenverwaltung.") }
     }
     ColumnLayout {
-        visible: settings.tab === 2; Layout.fillWidth: true; spacing: 20
+        visible: settings.tab === 2; Layout.fillWidth: true; spacing: 16
         WorkbenchLabel { text: qsTr("Cloud-Verbindungen"); font.pixelSize: 21 }
         WorkbenchHint { text: qsTr("Die Cloud-Anbindungen sind noch nicht verfügbar. Es werden derzeit keine Daten hochgeladen.") }
         Repeater {
@@ -99,7 +104,7 @@ WorkbenchSplit {
         WorkbenchFact { label: qsTr("Konflikte"); value: qsTr("Nur den betroffenen Eintrag anhalten und eine Auswahl verlangen.") }
     }
     ColumnLayout {
-        visible: settings.tab === 3; Layout.fillWidth: true; spacing: 22
+        visible: settings.tab === 3; Layout.fillWidth: true; spacing: 24
         WorkbenchLabel { text: qsTr("MCP"); font.pixelSize: 21 }
         WorkbenchFact { label: qsTr("Status"); value: qsTr("Noch nicht angeschlossen · kein MCP-Zugriff aktiv") }
         WorkbenchHint { text: qsTr("Nach Fertigstellung: bewusste Gesamtfreigabe je Computer, jederzeit widerrufbar. Geräteaktionen verwenden dieselbe Verbindung und Konfliktentscheidung wie die Oberfläche.") }
@@ -109,13 +114,14 @@ WorkbenchSplit {
         WorkbenchFact { label: qsTr("Hilfsprogramme auf dem Flipper"); value: qsTr("Jede Installation und jede neue Version benötigt eine ausdrückliche Freigabe. Keine automatische Installation.") }
     }
     ColumnLayout {
-        visible: settings.tab === 4; Layout.fillWidth: true; spacing: 22
+        visible: settings.tab === 4; Layout.fillWidth: true; spacing: 24
         WorkbenchLabel { text: "uFlipper"; font.pixelSize: 30 }
         WorkbenchFact { label: qsTr("Version"); value: App.version + " · " + App.commit }
         WorkbenchFact { label: qsTr("Entwicklung"); value: "Joris Conrad" }
         WorkbenchFact { label: qsTr("Lizenz"); value: qsTr("GNU General Public License v3 · GPLv3") }
         WorkbenchFact { label: qsTr("Credits"); value: qsTr("Auf Basis von qFlipper von Flipper Devices. Momentum-Firmware und Community-Werkzeuge bleiben eigenständige Projekte.") }
         RowLayout {
+            spacing: 8
             WorkbenchButton { text: "qFlipper"; onClicked: Qt.openUrlExternally("https://github.com/flipperdevices/qFlipper") }
             WorkbenchButton { text: "Momentum"; onClicked: Qt.openUrlExternally("https://github.com/Next-Flip/Momentum-Firmware") }
             WorkbenchButton { text: "GPLv3"; onClicked: Qt.openUrlExternally("https://www.gnu.org/licenses/gpl-3.0.html") }

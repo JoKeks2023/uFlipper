@@ -1,0 +1,43 @@
+{
+  "compactHeight": 680,
+  "compactWidth": 1060,
+  "easyModeRoundtrip": true,
+  "navigationClicks": 17,
+  "qmlErrors": 0,
+  "screenshots": 13,
+  "settingsDropdownRoundtrip": true,
+  "success": true,
+  "observed_at_utc": "2026-10-28T21:41:49.750733+00:00",
+  "os": "macOS 27.0.1",
+  "host_arch": "arm64",
+  "backend_commit": "ece44caf261b0cc3d9a15877009db8bac2f4ca00",
+  "ui_source": "working tree QML; local observation wrapper",
+  "bundled_default": false,
+  "geometry": "source-scroll-geometry.json",
+  "limits": [
+    "Not a newly bundled package yet",
+    "Existing native UI review reused; temporary observation wrapper not shipped",
+    "IR and NFC sessions not started; remaining feature development postponed"
+  ],
+  "ui_file_sha256": {
+    "application/components/MainWindow.qml": "42101a83119385aacd68d47e1bb56c59673562d612d4950fa91bcff2aecd2cb5",
+    "application/components/workbench/CatalogPage.qml": "a14e126658d6e3650c299739e9c3c382552b1b3d911eb03cc439725c628cf060",
+    "application/components/workbench/DashboardPage.qml": "cbed51c918831d48d4d3a549ded4a4ea1f25fe6d2a0c3462be96ff5a0c6b7aca",
+    "application/components/workbench/FilesPage.qml": "08dfa0c3070105ed28e1cdb041e27d160926251e590f2b9ea32d2acb75c33bc3",
+    "application/components/workbench/ScreenPage.qml": "34335525787f27123991d065979fa3a53e60cdeae3f8b09bdd916e00f47be63f",
+    "application/components/workbench/SettingsPage.qml": "4731d9ce62c9a5e8c13f2c13e5468dca7dc2484cee7223777d0249ca3e7b0b95",
+    "application/components/workbench/ToolPage.qml": "656cdfc82ba44b9852dca669dbe61bb768a0f3ff0a91ccf1d5501dbee3cecb55",
+    "application/components/workbench/WorkbenchButton.qml": "734631d68c450ed23650a85a02cf717c1ac51fb381294555d74606c38dea9f72",
+    "application/components/workbench/WorkbenchComboBox.qml": "9353ed2c84b76d62758c0aff44e636b16f8dbcb8b10d7448e862a1dc74bf070d",
+    "application/components/workbench/WorkbenchFact.qml": "0b240e26fd142a80264c329fc9df052e636d33941a2e5cba1e776df91a2e18f8",
+    "application/components/workbench/WorkbenchGeometry.js": "40d59deb48223d7c849f89f97e8d14a96b973ab7c3d6de4612010872fae2cb48",
+    "application/components/workbench/WorkbenchGrid.qml": "5af1cd8a7099a7005cf4a20bfa7e97260ee83ebd1dfe73b80141587e7ff74d99",
+    "application/components/workbench/WorkbenchHint.qml": "bad4daddb54eb47e63714d04288e33e3d06308479ee3756d75f0302fcfa46eb8",
+    "application/components/workbench/WorkbenchLabel.qml": "dc509fe155c35ac2b890fcce5c787adbb6faac831445b2d85569d734841df8e1",
+    "application/components/workbench/WorkbenchRule.qml": "c737b6a656d24f3e5757567ca893df9aecf8aa24fb834e194735d958c5e9964e",
+    "application/components/workbench/WorkbenchSplit.qml": "4bce29743b5d4dfb02a3a5420f4faaf1a9883b51bc147395792800ad6907673c",
+    "application/components/workbench/WorkbenchStorage.qml": "9e106420490bdaf620bb9b907c50522f91e2ce5b946817a762afaba33d2f217c",
+    "application/components/workbench/WorkbenchTab.qml": "af669a086e491ce522fc8dde08f1e1fea8988d9a01115552b39fd84f5b73fc7b",
+    "application/components/workbench/WorkbenchTitle.qml": "4537475c402e443796f7f03e8501fde85f011da0cd6cab3cb99d6612a200736f"
+  }
+}

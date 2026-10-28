@@ -13,8 +13,9 @@ WorkbenchSplit {
         model: Backend.workbench.backups
         delegate: ColumnLayout {
             required property var modelData
-            Layout.fillWidth: true; spacing: 12
+            Layout.fillWidth: true; spacing: 16
             RowLayout {
+                spacing: 8
                 Layout.fillWidth: true
                 WorkbenchFact { label: modelData.scope === "test-subset" ? qsTr("Testsicherung · nur Testdateien") : qsTr("Gerätesicherung"); value: Qt.formatDateTime(new Date(modelData.started_ms), "dd.MM.yyyy hh:mm") }
                 WorkbenchLabel { text: modelData.state === "verified" ? qsTr("Katalogstatus: geprüft") : qsTr("Unterbrochen / unvollständig"); font.pixelSize: 14; opacity: 0.7 }
