@@ -1,0 +1,15 @@
+{
+  "commit": "c2eea8535fc35ab6c1a57808dda91036a8616e12",
+  "ci_run": 40777350400,
+  "mac_job_id": 123129960751,
+  "fixed_issue": "https://github.com/JoKeks2023/uFlipper/issues/2",
+  "observed_log_lines": [
+    "2026-10-28T22:09:11.7980260Z /Users/runner/work/_temp/Qt/6.8.3/macos/bin/lrelease ../../uFlipper/uFlipper/application/translations/en_US.ts -qm .qm/en_US.qm",
+    "2026-10-28T22:09:11.8985950Z Updating '.qm/en_US.qm'...",
+    "2026-10-28T22:09:11.9229400Z /Users/runner/work/_temp/Qt/6.8.3/macos/libexec/rcc -name qmake_qmake_qm_files --no-zstd qmake_qmake_qm_files.qrc -o qrc_qmake_qmake_qm_files.cpp",
+    "2026-10-28T22:17:49.4154880Z /Users/runner/work/_temp/Qt/6.8.3/macos/bin/lrelease ../../application/translations/en_US.ts -qm .qm/en_US.qm",
+    "2026-10-28T22:17:49.4465490Z Updating '.qm/en_US.qm'...",
+    "2026-10-28T22:17:54.2629470Z /Users/runner/work/_temp/Qt/6.8.3/macos/libexec/rcc -name qmake_qmake_qm_files --no-zstd qmake_qmake_qm_files.qrc -o qrc_qmake_qmake_qm_files.cpp"
+  ],
+  "note": "Both early isolated resource generation and full Mac build run lrelease before RCC; no dummy QM or translation bypass"
+}

@@ -1,0 +1,48 @@
+{
+  "compactHeight": 680,
+  "compactWidth": 1060,
+  "easyModeRoundtrip": true,
+  "navigationClicks": 17,
+  "qmlErrors": 0,
+  "screenshots": 13,
+  "settingsDropdownRoundtrip": true,
+  "success": true,
+  "commit": "c2eea8535fc35ab6c1a57808dda91036a8616e12",
+  "ci_run": 40777350400,
+  "artifact_id": 12856720558,
+  "artifact_sha256": "6806504227b31be1b38dcf548eeae66d44e20cf94931fdb31789a954600475d0",
+  "observed_at_utc": "2026-10-28T22:22:15.009640+00:00",
+  "os": "macOS 27.0.1",
+  "host_arch": "arm64",
+  "bundled_default": true,
+  "binary_architectures": [
+    "x86_64",
+    "arm64"
+  ],
+  "codesign_deep_strict_exit_code": 0,
+  "bundle_identifier": "com.jorisconrad.flipperzeroutil",
+  "usb_device_present": true,
+  "limits": [
+    "Presentation check only; no IR or NFC session or helper installation",
+    "Isolated source-view input failure remains tracked in GitHub issue 1; not claimed fixed",
+    "No release or full product acceptance"
+  ],
+  "device_connected": true,
+  "visual_review": [
+    "dashboard",
+    "infrared",
+    "settings",
+    "compact dashboard"
+  ],
+  "rendering": "native Cocoa Qt Quick; bundled default QML; no source override",
+  "local_screenshot_sha256": {
+    "01_dashboard.png": "a913b7515e8366ceaca20ace1a29f78c82056fbaf7723bff01317503b051825a",
+    "02_infrared.png": "0698062f42b5c1191a0fc9626347d51f2dc79b39c24a96445ff92bafd8fba9c7",
+    "03_settings.png": "73e396e8efd177c6ed728a399a5df43f9965dccf16ad86104df8d7489c0583f9",
+    "10_compact.png": "af8b1fcd79c374e9b48d938f2fbaa6090ded4a9769c86f5662674dc04cb708fa"
+  },
+  "normal_app_reopened": {
+    "observed_at_utc": "2026-10-28T22:24:35.353558+00:00",
+    "process_running": true
+  }
+}
