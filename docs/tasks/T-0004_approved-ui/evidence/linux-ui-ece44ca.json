@@ -1,0 +1,19 @@
+{
+  "compactHeight": 680,
+  "compactWidth": 1060,
+  "easyModeRoundtrip": true,
+  "navigationClicks": 17,
+  "qmlErrors": 0,
+  "screenshots": 13,
+  "settingsDropdownRoundtrip": true,
+  "success": true,
+  "commit": "ece44caf261b0cc3d9a15877009db8bac2f4ca00",
+  "ci_run": 40579017366,
+  "artifact_id": 12769490677,
+  "artifact_sha256": "8febe1c47c029e19892f5ed18f90fa0becb9a70bbb9c9179c67ac1965aad7417",
+  "os": "Ubuntu 22.04",
+  "qt": "6.8.3",
+  "rendering": "offscreen software; native Qt Quick",
+  "device_connected": false,
+  "hardware_operations_exercised": false
+}

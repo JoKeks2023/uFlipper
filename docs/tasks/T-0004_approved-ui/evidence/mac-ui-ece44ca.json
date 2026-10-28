@@ -1,0 +1,39 @@
+{
+  "compactHeight": 680,
+  "compactWidth": 1060,
+  "easyModeRoundtrip": true,
+  "navigationClicks": 17,
+  "qmlErrors": 0,
+  "screenshots": 13,
+  "settingsDropdownRoundtrip": true,
+  "success": true,
+  "commit": "ece44caf261b0cc3d9a15877009db8bac2f4ca00",
+  "ci_run": 40579017366,
+  "artifact_id": 12768539564,
+  "artifact_sha256": "d9585f1017a614d6c3adb80c1ad714d909e4c924fcc81e6e0b1410f2ecab859f",
+  "observed_at_utc": "2026-10-28T20:52:42.853437+00:00",
+  "os": "macOS 27.0.1",
+  "host_arch": "arm64",
+  "qt": "6.8.3",
+  "rendering": "native Cocoa Qt Quick; bundled default QML; no ui-source override",
+  "bundled_default": true,
+  "bundle_identifier": "com.jorisconrad.flipperzeroutil",
+  "binary_architectures": [
+    "x86_64",
+    "arm64"
+  ],
+  "codesign_deep_strict_exit_code": 0,
+  "device_connected": false,
+  "hardware_operations_exercised": false,
+  "limitations": [
+    "No USB Flipper detected during this final package run",
+    "Connected-device evidence is the earlier source-view run; not relabeled as this bundled run",
+    "No IR retry, card activation, helper installation, firmware change or full backup test",
+    "A01 and A18 remain open"
+  ],
+  "screenshots_in_repo": {
+    "01_dashboard.png": "1cb58769cdedb5aefce57bc2cbd114d4ac83e39e3379d4f6ab970024452b5ac1",
+    "02_infrared.png": "9716f341f77ae9bc644d741efffc254dd1b565f70eb1661d97bfdbe329084699",
+    "03_settings.png": "05a3c770e0e03d30fac50783c4cd7c60f4aaea7c1f3a28dbd0091e37a3778069"
+  }
+}

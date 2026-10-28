@@ -1,6 +1,6 @@
 # Prüfung
 
-Aktuell: Linux-Build und native Klick-/Renderprüfung für Code `2cadf1f` bestanden; Universal-Mac-Paket und lokaler Gerätenachweis noch in Prüfung. Vorheriger Paketstand `290f6ce` wird nicht als Nachweis dieses UI-Stands verwendet. Ergebnisse unten nach tatsächlich geprüftem Commit getrennt.
+Aktuell, 28.10.2026: Code `ece44ca`, CI `40579017366`: alle vier Jobs erfolgreich. Neu gepacktes Universal-Mac-Bundle lokal mit Standardressourcen gestartet und geklickt; Linux ebenfalls nativ in CI geprüft. Finaler Mac-Lauf ohne USB-Gerät, früheren Quellansichts-/Gerätenachweis davon getrennt halten. A01/A18 und vollständiger Release-Umfang bleiben offen. Ergebnisse unten nach tatsächlich geprüftem Commit getrennt.
 
 - CI `b9b0f96` / Run `40569613446`: Core auf beiden Plattformen bestanden. Linux-App-Build scheitert an einer durch das Voranstellen eines Includes in Zeile 2 verschobenen UTF-8-BOM in `applicationbackend.cpp`. BOM entfernt; frühe Compilerprüfung auf alle geänderten Integrationsdateien erweitert. Noch keine grüne neue Oberfläche behauptet.
 
@@ -25,3 +25,17 @@ Aktuell: Linux-Build und native Klick-/Renderprüfung für Code `2cadf1f` bestan
 
 - Korrektur sofort lokal mit dem gebauten Backend `2cadf1f` und explizitem `--ui-source application/main.qml` gegen den echten Flipper geprüft: erneut 17 Klicks, zwei Einstellungsrundläufe, 13 Screenshots, Exit 0 und keine erfassten QML-Fehler. Dashboard selbst angesehen: SD-Kapazität nur einmal; `/int` eindeutig „Auf SD-Karte“. Dies ist ein Quellansichts-Nachweis, noch kein Nachweis des neu gepackten Bundles. Lokale Dateien: `build_mac/ui-review-storage-fix/`.
 - Für den erforderlichen erneuten Paketbau verwendet ausschließlich der Cloud-Mac-Job vier Compilerprozesse. Lokale Build-Defaults bleiben bei zwei; kein lokaler Qt-Komplettbuild und kein Simulator.
+
+## Finales Testpaket · 28.10.2026
+
+- [CI 40579017366](https://github.com/JoKeks2023/uFlipper/actions/runs/40579017366), Code `ece44caf261b0cc3d9a15877009db8bac2f4ca00`: Core auf Ubuntu 22.04 und Intel-macOS sowie beide Desktop-Jobs erfolgreich. Qt-Verträge einschließlich Loggerthread bestanden. Linux: 17 Klickschritte, beide Einstellungsrundläufe, 13 Screenshots, 1060×680 und 0 erfasste QML-Laufzeitfehler. Maschinenlesbar: `evidence/linux-ui-ece44ca.json`.
+- Mac-Artefakt `12768539564` heruntergeladen und äußeres ZIP gegen den GitHub-SHA-256 geprüft. Neue App separat von unserem alten Testbundle entpackt. `codesign --verify --deep --strict` Exit 0; Binary `x86_64 arm64`; Bundle-ID `com.jorisconrad.flipperzeroutil`.
+- **Fertiges Bundle ohne `--ui-source`** am 28.10.2026 auf Apple Silicon / macOS 27.0.1 gestartet, Cocoa-Oberfläche: 17 reale QtTest-Klickschritte, beide Einstellungsrundläufe mit Wiederherstellung, alle Settings-/IR-Tabs, 13 native Screenshots, kompakte Größe und Exit 0. Keine erfassten QML-Laufzeitfehler; keine Renderthread-Timerwarnung im beobachteten Protokoll. Maschinenlesbar: `evidence/mac-ui-ece44ca.json`.
+- Dashboard, IR, Allgemein und kompakte Ansicht selbst visuell angesehen; drei unveränderte native Bilder dauerhaft unter `evidence/screenshots/`. Lokale vollständige Bilder/Logs unter `build_mac/ui-review-final-ece44ca/` (ignorierte Entwicklungsartefakte).
+- **Kein Flipper am USB-Port erkannt.** Finaler Bundle-Lauf beweist Offline-Darstellung und Bedienoberfläche; reale Power-/SD-Daten und korrigierte SD-Zuordnung stammen vom separat dokumentierten Lauf am 27.10. Kein Linux-Hardwarenachweis, kein Abziehen/Wiederverbinden und kein neuer Echtgerätetest des finalen Bundles behauptet. Nutzer um erneutes Anschließen gebeten.
+- Rohwerte der früheren Speicher-/Power-Abfrage mit Zeitbezug und entfernter Gerätebezeichnung unter `evidence/power-storage-2cadf1f.json`. `/int`- und `/ext`-Kapazität sind bei dieser Firmware dieselbe SD-Kapazität; keine Aussage über die gesamte physische interne Flashgröße.
+- Native App-Teststarts führen keine IR-/NFC-Sitzung aus, installieren keinen Helfer und ändern keine Firmware. NFC-Testkarte fehlt weiterhin; IR-Signalwiederholung bleibt vertagt. Vorhandene Bibliotheks-/Testsicherungsdaten wurden nur angezeigt. Vollbackup-/Restore-Sperre bleibt aktiv.
+
+## Offen
+
+Finales Bundle erneut mit angeschlossenem Gerät prüfen; anschließend M2-Verbindungsbesitzer und produktive Live-Auftragsintegration. Die vollständigen A01/A18-Szenarien, alle weiteren Funktionsbereiche und die öffentliche Kernabnahme sind nicht erledigt. Aktionsartefakte sind Testpakete, keine Veröffentlichung; Ad-hoc-Signatur ist keine Developer-ID-Notarisierung. Linux-AppImage und Ziel-OS-Abnahme noch offen.

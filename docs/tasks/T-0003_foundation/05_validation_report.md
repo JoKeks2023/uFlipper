@@ -12,7 +12,7 @@ Datum: 27.10.2026. Dies ist ein Zwischenstand, keine Fertigmeldung.
 
 ## Noch offen
 
-Aktueller Stand siehe die datierten Nachweise weiter unten. Noch offen sind insbesondere der eigenständige Mac-Paketstart, gemeinsame Nutzung der echten Verbindung durch UI/MCP/Reader, Live-Aufnahmen aus der App, vollständiges Gerätebackup und Produkt-Restore, NFC-Kartensitzung/Systemreader, Cloud-Anmeldung/-Synchronisierung und MCP-Clienttest. Kein öffentlicher Release erfolgt.
+Aktueller Stand siehe die datierten Nachweise weiter unten. Eigenständige Mac-Paketstarts sind inzwischen belegt (unten und T-0004). Noch offen sind insbesondere gemeinsame Nutzung der echten Verbindung durch UI/MCP/Reader, Live-Aufnahmen aus der App, vollständiges Gerätebackup und Produkt-Restore, NFC-Kartensitzung/Systemreader, Cloud-Anmeldung/-Synchronisierung und MCP-Clienttest. Kein öffentlicher Release erfolgt.
 
 ## Zusätzliche beobachtete Ergebnisse
 
@@ -86,3 +86,7 @@ Aktueller Stand siehe die datierten Nachweise weiter unten. Noch offen sind insb
 - Verbleibende beobachtete Startwarnungen: Timer aus fremdem Thread, QML-Variablenreihenfolge in `ConfirmationDialog`, zwei SVG-`use`-Elemente, ausstehende QML-Erstellung beim kurzen Test-Shutdown. Kein absturzfreier Produktbetrieb daraus abgeleitet. Logger schreibt aus dem Qt-Messagehandler direkt auf Timer/Objektzustand; Thread-Ursache vor Korrektur gezielt reproduzieren. Issue-Anlage weiterhin durch deaktivierte Fork-Issues/fehlende Connector-Schreibrechte blockiert; Befund bleibt in diesem Task.
 - Maschinenlesbarer Beleg einschließlich Paket-Hash und Power-Rohwerten: `evidence/mac-runtime-290f6ce.json`. Vollständige lokale Start-/Probeprotokolle unter `/private/tmp/uflipper-runtime-290f6ce/` (nicht als dauerhafte Ablage voraussetzen).
 - Neuester Code `8363e3c`, Run `40564637207`: beide Core-Jobs inklusive nativer Probe-Kompilation erfolgreich; Desktop-Läufe noch offen. Der oben beobachtete Paketstand bleibt eindeutig `290f6ce`.
+
+## Freigegebene Oberfläche · Stand 28.10.2026
+
+Die frühere ausstehende Designfreigabe und der eigenständige Mac-Paketstart sind überholt: Nutzerfreigabe am 27.10., Umsetzung und native Mac-/Linux-Prüfung unter [T-0004](../T-0004_approved-ui/05_validation_report.md). Der dortige finale Mac-Bundle-Lauf ist offline; frühere Gerätenachweise nicht auf diesen Lauf übertragen. Gemeinsamer Verbindungsbesitzer, produktive Live-UI und vollständige Kernabnahme bleiben offen.

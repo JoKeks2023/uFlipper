@@ -1,6 +1,6 @@
 # Funktionsmatrix · Quelle ist noch kein Laufzeitnachweis
 
-Stand: 27.10.2026. Firmware und Fork sind in [10_sources.md](10_sources.md) festgelegt. Keine Zeile ist vollständig abgenommen. Erste ausdrücklich begrenzte Teilnachweise stehen im Laufzeitstatus der CSV sowie unter [T-0003](../T-0003_foundation/05_validation_report.md) und [T-0004](../T-0004_approved-ui/05_validation_report.md). Status bezeichnet den Weg im Quellcode oder Planungsbedarf, nicht eine fertige uFlipper-Funktion.
+Stand: 28.10.2026. Firmware und Fork sind in [10_sources.md](10_sources.md) festgelegt. Keine Zeile ist vollständig abgenommen. Erste ausdrücklich begrenzte Teilnachweise stehen im Laufzeitstatus der CSV sowie unter [T-0003](../T-0003_foundation/05_validation_report.md) und [T-0004](../T-0004_approved-ui/05_validation_report.md). Status bezeichnet den Weg im Quellcode oder Planungsbedarf, nicht eine fertige uFlipper-Funktion.
 
 | Kürzel | Bedeutung |
 | --- | --- |

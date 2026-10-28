@@ -1,0 +1,114 @@
+{
+  "connected": true,
+  "device": {
+    "firmwareBranch": "mntm-012",
+    "firmwareCommit": "e1784e74",
+    "firmwareVersion": "mntm-012",
+    "hardwareTarget": "f7",
+    "model": "",
+    "rpcMajor": 0,
+    "rpcMinor": 25
+  },
+  "power": {
+    "available": true,
+    "error": "",
+    "formatSupported": true,
+    "metrics": {
+      "battery.current": {
+        "available": true,
+        "unit": "mA",
+        "value": 0
+      },
+      "battery.health": {
+        "available": true,
+        "unit": "%",
+        "value": 100
+      },
+      "battery.temp": {
+        "available": true,
+        "unit": "°C",
+        "value": 20
+      },
+      "battery.voltage": {
+        "available": true,
+        "unit": "mV",
+        "value": 3915
+      },
+      "capacity.design": {
+        "available": true,
+        "unit": "mAh",
+        "value": 2100
+      },
+      "capacity.full": {
+        "available": true,
+        "unit": "mAh",
+        "value": 2100
+      },
+      "capacity.remain": {
+        "available": true,
+        "unit": "mAh",
+        "value": 2062
+      },
+      "charge.level": {
+        "available": true,
+        "unit": "%",
+        "value": 99
+      },
+      "charge.state": {
+        "available": true,
+        "value": "discharging"
+      },
+      "charge.voltage.limit": {
+        "available": true,
+        "unit": "mV",
+        "value": 4208
+      }
+    },
+    "observedAt": "2026-10-27T20:35:17.810Z",
+    "pending": false,
+    "raw": {
+      "battery.current": "0",
+      "battery.health": "100",
+      "battery.temp": "20",
+      "battery.voltage": "3915",
+      "capacity.design": "2100",
+      "capacity.full": "2100",
+      "capacity.remain": "2062",
+      "charge.level": "99",
+      "charge.state": "discharging",
+      "charge.voltage.limit": "4208",
+      "format.major": "2",
+      "format.minor": "1"
+    },
+    "stale": false
+  },
+  "storage": {
+    "/ext": {
+      "available": true,
+      "error": "",
+      "freeBytes": 61280583680,
+      "observedAt": "2026-10-27T20:35:17.765Z",
+      "stale": false,
+      "totalBytes": 62502895616,
+      "usedBytes": 1222311936
+    },
+    "/int": {
+      "available": true,
+      "error": "",
+      "freeBytes": 61280583680,
+      "observedAt": "2026-10-27T20:35:17.758Z",
+      "stale": false,
+      "totalBytes": 62502895616,
+      "usedBytes": 1222311936
+    }
+  },
+  "provenance": {
+    "backend_commit": "2cadf1fd99a94be7908d160cfd129f4922e5258f",
+    "observed_date": "2026-10-27",
+    "device_name_removed": true,
+    "physical_internal_flash_capacity_proven": false,
+    "internal_path_is_sd_alias_for_this_firmware": true,
+    "source": "https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/services/storage/storage_processing.c#L607",
+    "note": "Raw RPC capacities for logical paths; identical backing SD filesystem, not independent capacities"
+  }
+}
