@@ -1,6 +1,6 @@
 # Prüfung
 
-Aktuell, 28.10.2026: Code `ece44ca`, CI `40579017366`: alle vier Jobs erfolgreich. Neu gepacktes Universal-Mac-Bundle lokal mit Standardressourcen gestartet und geklickt; Linux ebenfalls nativ in CI geprüft. Finaler Mac-Lauf ohne USB-Gerät, früheren Quellansichts-/Gerätenachweis davon getrennt halten. A01/A18 und vollständiger Release-Umfang bleiben offen. Ergebnisse unten nach tatsächlich geprüftem Commit getrennt.
+Aktuell, 28.10.2026: Code `ece44ca`, CI `40579017366`: alle vier Jobs erfolgreich. Neu gepacktes Universal-Mac-Bundle lokal mit Standardressourcen gestartet und geklickt; Linux ebenfalls nativ in CI geprüft. Nach dem getrennt erhaltenen Offline-Lauf nun auch finales Bundle mit angeschlossenem Flipper gestartet: Dashboardwerte, Momentum-Speicherzuordnung und realer Bildschirmstream bestätigt. A01/A18 und vollständiger Release-Umfang bleiben offen. Ergebnisse unten nach tatsächlich geprüftem Commit getrennt.
 
 - CI `b9b0f96` / Run `40569613446`: Core auf beiden Plattformen bestanden. Linux-App-Build scheitert an einer durch das Voranstellen eines Includes in Zeile 2 verschobenen UTF-8-BOM in `applicationbackend.cpp`. BOM entfernt; frühe Compilerprüfung auf alle geänderten Integrationsdateien erweitert. Noch keine grüne neue Oberfläche behauptet.
 
@@ -38,4 +38,17 @@ Aktuell, 28.10.2026: Code `ece44ca`, CI `40579017366`: alle vier Jobs erfolgreic
 
 ## Offen
 
-Finales Bundle erneut mit angeschlossenem Gerät prüfen; anschließend M2-Verbindungsbesitzer und produktive Live-Auftragsintegration. Die vollständigen A01/A18-Szenarien, alle weiteren Funktionsbereiche und die öffentliche Kernabnahme sind nicht erledigt. Aktionsartefakte sind Testpakete, keine Veröffentlichung; Ad-hoc-Signatur ist keine Developer-ID-Notarisierung. Linux-AppImage und Ziel-OS-Abnahme noch offen.
+Begrenzter Gerätenachweis des finalen Bundles inzwischen bestanden (Nachtrag unten). Weiter offen: Abziehen/Wiederverbinden und Linux-Hardware; anschließend M2-Verbindungsbesitzer und produktive Live-Auftragsintegration. Die vollständigen A01/A18-Szenarien, alle weiteren Funktionsbereiche und die öffentliche Kernabnahme sind nicht erledigt. Aktionsartefakte sind Testpakete, keine Veröffentlichung; Ad-hoc-Signatur ist keine Developer-ID-Notarisierung. Linux-AppImage und Ziel-OS-Abnahme noch offen.
+
+## Nachtrag · finales Bundle am echten Flipper, 28.10.2026
+
+- Nutzer bestätigt erneutes Anschließen und geschlossene andere Apps. Ein USB-Port vorhanden und vor Teststart frei. Keine andere laufende uFlipper-Instanz. Strikte Bundlesignatur vor Start erneut erfolgreich geprüft.
+- **Unverändertes CI-Bundle `ece44ca`, Standard-QML ohne Quellüberschreibung**, Apple Silicon / macOS 27.0.1, nativer Lauf endet `2026-10-28T21:13:27.705Z` mit Exit 0: erneut 17 QtTest-Klickschritte, beide Einstellungsrundläufe mit Wiederherstellung, 13 Screenshots und 0 erfasste QML-Laufzeitfehler. Maschinenlesbar: `evidence/mac-ui-connected-ece44ca.json`.
+- Dashboard selbst visuell geprüft: `mntm-012`, Commit `e1784e74`, RPC `0.25`, Akku **99 %**, Spannung **3,914 V**, Strom **0 mA**, Temperatur **20 °C**, Akku-Zustand **100 %**, Restkapazität **2066 mAh**, SD **1,1 GiB / 58,2 GiB**. Das sind beobachtete Anzeigen zu diesem Zeitpunkt, keine zugesagten festen Werte. `/int` korrekt als auf SD liegend erklärt; keine zweite Kapazität. Kompakte Ansicht ebenfalls geprüft.
+- Gerätebildschirm zeigt den echten Flipper-Desktop und die Gerätezeit. Streamstart im Log erfolgreich; nach Prozessende Verbindung für die folgende Probe wieder nutzbar. Kein gesonderter Stream-Stop-Ack geprüft; D-pad nicht betätigt. Dateiansicht erreicht, keine Dateiübertragung in diesem Durchlauf.
+- Nach Ende und Freigabe der Verbindung getrennt den bereits gebündelten Standard-Powerprüfer ohne Helfer-/Kartenflags ausgeführt: Exit 0, frische verfügbare Power- und beide Storageantworten, Spannung jetzt **3913 mV**. Rohdaten mit Einheiten/Zeitbezug und entfernter Gerätebezeichnung unter `evidence/power-storage-connected-ece44ca.json`. Dies ist ein nachfolgendes Sample, keine Behauptung eines bitgleichen UI-Samples.
+- Vorhandene Initialisierung synchronisiert wie bisher die Geräteuhr (im App-Log `System Set DateTime SUCCESS`, gemessene vorherige Abweichung −2202 ms). Keine neue Zeitabgleich-Funktion eingeführt; kein IR-/NFC-Empfang, kein Senden, keine Helfer-/Firmwareinstallation, kein Vollbackup/Restore. IR-Wiederholung bleibt vertagt, geeignete NFC-Testkarte fehlt.
+- Der frühere Offline-Lauf bleibt unverändert erhalten; keine nachträgliche Umdeutung seiner Evidence. Aktuelle angeschlossene Screenshots bleiben lokal unter `build_mac/ui-review-connected-ece44ca/` und im Chat-Artefaktordner, Hashes im neuen JSON. Die bereits committed Offline-Screenshots behalten ihre Bedeutung.
+- Ergebnis: **begrenzt angeforderte Dashboard-/Bundle-Prüfung bestanden**. Physisches Abziehen/Wiederverbinden, Tastenbedienung, Linux-Hardware sowie vollständige A01/A18-Abnahmen weiterhin offen. Keine öffentliche Veröffentlichung.
+
+- Nach Abschluss der Prüfprogramme normale App ohne Testparameter erneut geöffnet; laufender Prozess und vorhandener USB-Port bestätigt.

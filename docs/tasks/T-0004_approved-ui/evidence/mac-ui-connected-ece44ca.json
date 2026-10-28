@@ -1,0 +1,60 @@
+{
+  "compactHeight": 680,
+  "compactWidth": 1060,
+  "easyModeRoundtrip": true,
+  "navigationClicks": 17,
+  "qmlErrors": 0,
+  "screenshots": 13,
+  "settingsDropdownRoundtrip": true,
+  "success": true,
+  "commit": "ece44caf261b0cc3d9a15877009db8bac2f4ca00",
+  "ci_run": 40579017366,
+  "artifact_id": 12768539564,
+  "artifact_sha256": "d9585f1017a614d6c3adb80c1ad714d909e4c924fcc81e6e0b1410f2ecab859f",
+  "observed_at_utc": "2026-10-28T21:13:27.705163+00:00",
+  "os": "macOS 27.0.1",
+  "host_arch": "arm64",
+  "qt": "6.8.3",
+  "bundled_default": true,
+  "device_connected": true,
+  "device_firmware": "mntm-012",
+  "device_firmware_commit": "e1784e74",
+  "rpc_version": "0.25",
+  "observations": [
+    "Real firmware, power and SD values visible in native dashboard",
+    "Internal /int region shown as SD-backed for exact pinned Momentum; no duplicate capacity",
+    "Real device display visible in ScreenCanvas",
+    "Files view reached; no file transfer performed",
+    "Easy Mode changed and restored through tool button and settings dropdown",
+    "13 own-window screenshots captured; dashboard, device display and compact layout visually reviewed"
+  ],
+  "hardware_operations_exercised": [
+    "RPC initialization and device information",
+    "RPC power and storage reads",
+    "GUI screen stream start and real display; port reusable after process exit",
+    "Existing initializer automatically synchronized device clock"
+  ],
+  "not_exercised": [
+    "Physical disconnect/reconnect",
+    "Linux hardware",
+    "D-pad button presses",
+    "IR retry or any signal transmission",
+    "NFC helper or card activation",
+    "Firmware update, helper installation, full backup or restore",
+    "Separate screen-stream stop acknowledgement"
+  ],
+  "limitations": [
+    "A01 and A18 remain open; bounded dashboard check only",
+    "App UI review and separate telemetry probe are successive observations, not the exact same sample"
+  ],
+  "local_screenshot_sha256": {
+    "01_dashboard.png": "8a890c88698b830fe143dfb140a53d1ee3b0c3ab5cec7f4738976ef5a16c2e88",
+    "09_screen.png": "af451c55a45ff17853eb16a2dbe69f2ef79e21d17cdbe78166272c68c48b8b71",
+    "10_compact.png": "20aae12a54647f29c404b5405fa1fdb5dd209c7a689492a87a798eed27a24fff"
+  },
+  "normal_app_reopened_after_checks": {
+    "observed_at_utc": "2026-10-28T21:16:12.055556+00:00",
+    "process_running": true,
+    "usb_device_present": true
+  }
+}

@@ -89,4 +89,4 @@ Aktueller Stand siehe die datierten Nachweise weiter unten. Eigenständige Mac-P
 
 ## Freigegebene Oberfläche · Stand 28.10.2026
 
-Die frühere ausstehende Designfreigabe und der eigenständige Mac-Paketstart sind überholt: Nutzerfreigabe am 27.10., Umsetzung und native Mac-/Linux-Prüfung unter [T-0004](../T-0004_approved-ui/05_validation_report.md). Der dortige finale Mac-Bundle-Lauf ist offline; frühere Gerätenachweise nicht auf diesen Lauf übertragen. Gemeinsamer Verbindungsbesitzer, produktive Live-UI und vollständige Kernabnahme bleiben offen.
+Die frühere ausstehende Designfreigabe und der eigenständige Mac-Paketstart sind überholt: Nutzerfreigabe am 27.10., Umsetzung und native Mac-/Linux-Prüfung unter [T-0004](../T-0004_approved-ui/05_validation_report.md). Nach dem getrennt erhaltenen Offline-Lauf wurde das finale Bundle dort inzwischen auch mit echtem Flipper geprüft: Dashboardwerte und Bildschirmstream bestätigt. Physisches Abziehen/Wiederverbinden, Tasten und Linux-Hardware noch offen. Gemeinsamer Verbindungsbesitzer, produktive Live-UI und vollständige Kernabnahme bleiben offen.

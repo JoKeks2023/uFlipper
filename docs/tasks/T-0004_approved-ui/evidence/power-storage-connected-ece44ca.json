@@ -1,0 +1,113 @@
+{
+  "connected": true,
+  "device": {
+    "firmwareBranch": "mntm-012",
+    "firmwareCommit": "e1784e74",
+    "firmwareVersion": "mntm-012",
+    "hardwareTarget": "f7",
+    "model": "",
+    "rpcMajor": 0,
+    "rpcMinor": 25
+  },
+  "power": {
+    "available": true,
+    "error": "",
+    "formatSupported": true,
+    "metrics": {
+      "battery.current": {
+        "available": true,
+        "unit": "mA",
+        "value": 0
+      },
+      "battery.health": {
+        "available": true,
+        "unit": "%",
+        "value": 100
+      },
+      "battery.temp": {
+        "available": true,
+        "unit": "°C",
+        "value": 20
+      },
+      "battery.voltage": {
+        "available": true,
+        "unit": "mV",
+        "value": 3913
+      },
+      "capacity.design": {
+        "available": true,
+        "unit": "mAh",
+        "value": 2100
+      },
+      "capacity.full": {
+        "available": true,
+        "unit": "mAh",
+        "value": 2100
+      },
+      "capacity.remain": {
+        "available": true,
+        "unit": "mAh",
+        "value": 2066
+      },
+      "charge.level": {
+        "available": true,
+        "unit": "%",
+        "value": 99
+      },
+      "charge.state": {
+        "available": true,
+        "value": "discharging"
+      },
+      "charge.voltage.limit": {
+        "available": true,
+        "unit": "mV",
+        "value": 4208
+      }
+    },
+    "observedAt": "2026-10-28T21:13:58.175Z",
+    "pending": false,
+    "raw": {
+      "battery.current": "0",
+      "battery.health": "100",
+      "battery.temp": "20",
+      "battery.voltage": "3913",
+      "capacity.design": "2100",
+      "capacity.full": "2100",
+      "capacity.remain": "2066",
+      "charge.level": "99",
+      "charge.state": "discharging",
+      "charge.voltage.limit": "4208",
+      "format.major": "2",
+      "format.minor": "1"
+    },
+    "stale": false
+  },
+  "storage": {
+    "/ext": {
+      "available": true,
+      "error": "",
+      "freeBytes": 61280550912,
+      "observedAt": "2026-10-28T21:13:58.122Z",
+      "stale": false,
+      "totalBytes": 62502895616,
+      "usedBytes": 1222344704
+    },
+    "/int": {
+      "available": true,
+      "error": "",
+      "freeBytes": 61280550912,
+      "observedAt": "2026-10-28T21:13:58.114Z",
+      "stale": false,
+      "totalBytes": 62502895616,
+      "usedBytes": 1222344704
+    }
+  },
+  "provenance": {
+    "commit": "ece44caf261b0cc3d9a15877009db8bac2f4ca00",
+    "artifact_id": 12768539564,
+    "observed_at_utc": "2026-10-28T21:13:58.192996+00:00",
+    "device_name_removed": true,
+    "mode": "default power probe; no helper or card flags",
+    "note": "Read after native UI review completed and released the port; no concurrent device owners. /int and /ext are the same backing SD filesystem on this exact Momentum; not two independent capacities."
+  }
+}

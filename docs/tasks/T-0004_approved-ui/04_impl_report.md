@@ -1,6 +1,6 @@
 # Umsetzung
 
-Oberflächenbauschritt implementiert und nativ geprüft; abschließender Gerätenachweis des finalen Bundles noch offen. Freigabe der drei Entwürfe aus T-0003 liegt vor.
+Oberflächenbauschritt implementiert und nativ geprüft; begrenzter Gerätenachweis des finalen Bundles am 28.10. bestanden. Vollständige A01/A18-Abnahme bleibt offen. Freigabe der drei Entwürfe aus T-0003 liegt vor.
 
 - Seitenleiste und resizierbare Arbeitsfläche, Echtwerte-Dashboard inklusive Speichergrößen, IR-/Werkzeugansicht, fünf Settings-Bereiche implementiert. Datei- und Bildschirmfunktionen eingebunden. Nicht angeschlossene Funktionen explizit gekennzeichnet.
 - Aufnahme-/Backupkataloge werden lesend abgefragt; Testsicherungen als solche ausgewiesen. Easy Mode speichert die echte Einstellung. Navigation/Schließen während Dateiübertragung gesperrt.
@@ -15,3 +15,5 @@ Oberflächenbauschritt implementiert und nativ geprüft; abschließender Geräte
 - Fertiges Universal-Bundle auf Apple Silicon mit Standardressourcen gestartet; 17 reale QtTest-Klickschritte und 13 Renderbilder, Easy-Mode-Rundläufe in beiden Ansichten bestanden. Offline-Zustand sichtbar ohne erfundene Messwerte.
 - `/int` bei exakt bekanntem Momentum-Stand korrekt als SD-gestützten Datenbereich bezeichnet. Bei unbekannter Firmware nur logische RPC-Dateisystemkapazität benennen, keine physische Flashgröße behaupten.
 - Nächster fachlicher Schritt bleibt M2: UI, Live-Aufträge, MCP und Reader an einen gemeinsamen Verbindungsbesitzer anbinden. GUI-Live-Empfang, vollständiges Backup, Firmware-Bibliothek, alle Cloud-Adapter, MCP, weitere Layouts und Systemreader sind noch nicht fertig. IR-Wiederholung auf Nutzerwunsch vertagt; NFC-Kartennachweis wartet auf passende Testkarte.
+
+- Ergänzung nach erneuter USB-Verbindung: finales Bundle `ece44ca` mit echtem Flipper gestartet, Dashboardwerte und Bildschirmstream visuell bestätigt, erneut 17 Klickschritte erfolgreich. Anschließend separate Power-/Storage-Rohwerte gesichert. Kein IR-/NFC-Test und keine Helfer-/Firmwareinstallation. Details und Grenzen im Prüfbericht.
