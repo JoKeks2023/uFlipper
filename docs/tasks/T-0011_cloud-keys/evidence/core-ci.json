@@ -1,0 +1,16 @@
+{
+  "source": "f84242a108082e73972d1f48221ee283b17bb1dd",
+  "ciRun": 40934565445,
+  "mac": {
+    "jobId": 123661811964,
+    "tests": 4,
+    "failed": 0,
+    "keyEnvelopeSeconds": 0.62
+  },
+  "linux": {
+    "jobId": 123661812026,
+    "tests": 4,
+    "failed": 0,
+    "keyEnvelopeSeconds": 0.2
+  }
+}
