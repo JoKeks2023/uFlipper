@@ -10,3 +10,6 @@ Win32
 
 /helpers/*/dist/
 /helpers/*/.vscode/
+
+__pycache__/
+*.py[cod]

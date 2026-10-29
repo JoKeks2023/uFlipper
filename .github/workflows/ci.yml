@@ -109,6 +109,14 @@ jobs:
           make -j4 qrc_qmake_qmake_qm_files.cpp
           test -s .qm/en_US.qm
           make -j2 application.o uireview.o nfcreview.o backupreview.o
+      - name: Empty and truncated storage transfer contracts before full build
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/storage-read-tests"
+          cd "$RUNNER_TEMP/storage-read-tests"
+          qmake "$GITHUB_WORKSPACE/tests/qt/storage_read_tests.pro"
+          make -j2
+          ./uflipper_storage_read_tests
       - name: NFC session lifecycle and recording contracts before full build
         shell: bash
         run: |
