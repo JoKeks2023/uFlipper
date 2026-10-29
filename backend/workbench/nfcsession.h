@@ -44,6 +44,7 @@ class NfcSession : public QObject {
     void helperState(bool started);
     void receive(const QByteArray &frame);
     void rejectStart(const QString &reason);
+    void cancelBeforeStart();
     void transportFailed(const QString &reason);
     Q_INVOKABLE void stop();
     Q_INVOKABLE void openRecording(const QString &id);
@@ -59,14 +60,14 @@ class NfcSession : public QObject {
     void finalize(bool stopped);
     void record(const QByteArray &bytes, UFlipper::RecordType type);
     void readCard(const QByteArray &payload);
-    void addResponse(const QByteArray &payload, int sequence);
+    void addResponse(const QByteArray &payload, int sequence, quint64 monotonicNs = 0);
     QString root_, identity_, recordingId_, job_, state_ = QStringLiteral("idle"), error_;
     QVariantMap card_;
     QVariantList responses_;
     UFlipper::OperationCoordinator jobs_;
     std::unique_ptr<UFlipper::CaptureStore> store_;
     QTimer deadline_, retry_;
-    quint64 token_ = 0;
+    quint64 token_ = 0, lastRecordNs_ = 0;
     uint8_t sequence_ = 0;
     int pending_ = -1;
     bool online_ = false, active_ = false, uncertain_ = false, verified_ = false;

@@ -1,6 +1,7 @@
 #include "filemanager.h"
 
 #include <QFile>
+#include <memory>
 #include <QDebug>
 #include <QTimer>
 #include <QQueue>
@@ -313,11 +314,12 @@ void FileManager::setNewDirectoryIndex(int newIndex)
 
 void FileManager::listCurrentPath()
 {
-    if(m_device.isNull()) {
+    if(m_deviceAccessBlocked || m_device.isNull()) {
         return;
 
     } else if(isRoot()) {
         auto *operation = m_device->rpc()->storageInfo(QByteArrayLiteral("/ext"));
+        trackPending(operation);
 
         connect(operation, &AbstractOperation::finished, this, [=]() {
             if(operation->isError()) {
@@ -333,6 +335,7 @@ void FileManager::listCurrentPath()
 
     } else {
         auto *operation = m_device->rpc()->storageList(currentPath().toLocal8Bit());
+        trackPending(operation);
 
         connect(operation, &AbstractOperation::finished, this, [=]() {
             if(operation->isError()) {
@@ -421,8 +424,24 @@ void FileManager::setModelData(const FileInfoList &newData)
     endResetModel();
 }
 
+void FileManager::trackPending(AbstractOperation *operation)
+{
+    ++m_pendingOperations;
+    emit operationPendingChanged();
+    auto completed = std::make_shared<bool>(false);
+    auto finish = [this, completed] {
+        if(*completed) return;
+        *completed = true;
+        --m_pendingOperations;
+        emit operationPendingChanged();
+    };
+    connect(operation, &AbstractOperation::finished, this, finish);
+    connect(operation, &QObject::destroyed, this, finish);
+}
+
 void FileManager::registerOperation(AbstractOperation *operation)
 {
+    trackPending(operation);
     setBusy(true);
     m_device->deviceState()->setProgress(-1.0);
 

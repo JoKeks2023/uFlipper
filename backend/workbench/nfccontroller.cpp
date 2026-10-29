@@ -69,7 +69,7 @@ void NfcController::dispatch(int command, const QByteArray &frame, quint64 token
         checkHelper(token);
     } else if (command == ExitHelper) {
         if (!helperStartSent_) {
-            helperState(false); acknowledge(token); // Canceled during preflight; no app start was sent.
+            cancelBeforeStart(); // No app start was sent; do not fabricate a device broadcast.
         } else watch(device_->rpc()->appExit(), token);
     } else watch(device_->rpc()->appExchange(frame), token);
 }

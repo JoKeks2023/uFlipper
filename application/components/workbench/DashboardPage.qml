@@ -60,8 +60,10 @@ WorkbenchSplit {
     WorkbenchRule {}
     WorkbenchLabel { text: qsTr("Aktuelle Arbeit"); font.pixelSize: 21 }
     WorkbenchFact { label: qsTr("Gerät"); value: Backend.deviceState ? Backend.deviceState.statusString || qsTr("Bereit") : qsTr("Wartet auf USB-Verbindung") }
+    WorkbenchFact { visible: Backend.nfc.blocked; label: qsTr("NFC"); value: Backend.nfc.active ? qsTr("Lesesitzung aktiv · Aufnahme läuft") : qsTr("Stop nicht bestätigt · Flipper neu verbinden") }
     RowLayout {
         spacing: 8
+        WorkbenchButton { visible: Backend.nfc.blocked; text: qsTr("NFC-Sitzung öffnen"); onClicked: dashboard.navigate("nfc") }
         WorkbenchButton { text: qsTr("Gerätebildschirm"); enabled: !!Backend.deviceState && !Backend.deviceState.isRecoveryMode; onClicked: dashboard.navigate("screen") }
         WorkbenchButton { text: qsTr("Dateien öffnen"); enabled: Backend.backendState === ApplicationBackend.Ready; onClicked: dashboard.navigate("library") }
     }

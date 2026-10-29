@@ -77,6 +77,7 @@ void NfcSession::record(const QByteArray &bytes, UFlipper::RecordType type) {
         std::chrono::steady_clock::now().time_since_epoch()).count();
     if (!store_) throw std::runtime_error("Recording is unavailable");
     store_->append(recordingId_.toStdString(), bytes.constData(), size_t(bytes.size()), now, type);
+    lastRecordNs_ = now;
 }
 void NfcSession::issue(int command, const QByteArray &payload) {
     if (!active_) return;
@@ -186,13 +187,13 @@ void NfcSession::readCard(const QByteArray &payload) {
     card_ = {{"protocol", "ISO14443-4A / ISO-DEP"}, {"uid", QString::fromLatin1(payload.mid(1, length).toHex(' '))},
              {"frameLimit", limit}};
 }
-void NfcSession::addResponse(const QByteArray &payload, int sequence) {
+void NfcSession::addResponse(const QByteArray &payload, int sequence, quint64 monotonicNs) {
     if (payload.size() < 2) throw std::runtime_error("APDU response lacks a status word");
     if (responses_.size() >= 2) return;
     responses_.append(QVariantMap{{"command", "SELECT PPSE"}, {"sequence", sequence},
         {"statusWord", QString::fromLatin1(payload.right(2).toHex()).toUpper()}, {"bytes", payload.size()},
         {"hex", QString::fromLatin1(payload.toHex(' '))},
-        {"observedAt", QDateTime::currentDateTimeUtc().toString(Qt::ISODateWithMs)}});
+        {"hostMonotonicNs", QString::number(monotonicNs ? monotonicNs : lastRecordNs_)}});
 }
 void NfcSession::stop() {
     if (!active_ || pending_ == ExitHelper) return;
@@ -208,6 +209,12 @@ void NfcSession::rejectStart(const QString &reason) {
     if (!active_ || pending_ != StartHelper) return;
     error_ = reason;
     finalize(true); // The transport guarantees that no app start was sent.
+}
+void NfcSession::cancelBeforeStart() {
+    if (!active_ || pending_ != ExitHelper) return;
+    try { record("Canceled during preflight; helper start was not sent", UFlipper::RecordType::Status); }
+    catch (const std::exception &error) { error_ = QString::fromUtf8(error.what()); }
+    finalize(true);
 }
 void NfcSession::transportFailed(const QString &reason) {
     if (!active_) return;
@@ -269,7 +276,8 @@ void NfcSession::openRecording(const QString &id) {
                 throw std::runtime_error("Invalid saved NFC response");
             if (b[5] != UfNfcOk) continue;
             if (b[3] == (Activate | 0x80)) readCard(bytes.mid(8));
-            if (b[3] == (Transceive | 0x80)) addResponse(bytes.mid(8), b[4]);
+            if (b[3] == (Transceive | 0x80)) addResponse(bytes.mid(8), b[4],
+                qFromLittleEndian<quint64>(reinterpret_cast<const uchar *>(header.constData() + 1)));
         }
         verified_ = true;
         state_ = "saved";

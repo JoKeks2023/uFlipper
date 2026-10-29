@@ -52,7 +52,7 @@ ApplicationBackend::ApplicationBackend(QObject *parent):
 #endif
 
     m_nfc = new NfcController(m_deviceRegistry, m_screenStreamer, [this] {
-        return (m_backendState == BackendState::Ready || m_backendState == BackendState::ScreenStreaming) && !m_fileManager->isBusy();
+        return (m_backendState == BackendState::Ready || m_backendState == BackendState::ScreenStreaming) && !m_fileManager->operationPending();
     }, this);
     connect(m_nfc, &NfcSession::recordingSaved, m_workbench, &WorkbenchData::refresh);
     connect(m_nfc, &NfcSession::changed, this, [this] {
@@ -60,7 +60,7 @@ ApplicationBackend::ApplicationBackend(QObject *parent):
         m_fileManager->setDeviceAccessBlocked(m_nfc->blocked());
         m_screenStreamer->setDeviceAccessBlocked(m_nfc->blocked());
     });
-    connect(m_fileManager, &FileManager::isBusyChanged, m_nfc, &NfcController::conditionsChanged);
+    connect(m_fileManager, &FileManager::operationPendingChanged, m_nfc, &NfcController::conditionsChanged);
     initLibraryPaths();
     initConnections();
     connect(this, &ApplicationBackend::backendStateChanged, this, [this] {
@@ -225,6 +225,7 @@ void ApplicationBackend::stopFullScreenStreaming()
 
 void ApplicationBackend::refreshStorageInfo()
 {
+    if(m_nfc->blocked()) return;
     device()->refreshStorageInfo();
 }
 

@@ -1,6 +1,8 @@
 #include "workbench/nfcsession.h"
 #include <QCoreApplication>
 #include <QFile>
+#include <QEventLoop>
+#include <QTimer>
 #include <QTemporaryDir>
 #include <QVariantMap>
 #include <stdexcept>
@@ -55,8 +57,10 @@ void completedAndReopened(const QString &root) {
     h.ack();h.reply({});h.stopped();
     require(h.session.state()=="completed" && h.session.recordingVerified(),"Completed recording not verified");
     const auto id=h.session.recordingId();
+    const auto originalTimes=h.session.responses();
     h.session.openRecording(id);
     require(h.session.state()=="saved" && h.session.responses().size()==2 && h.session.card().value("uid").toString()=="01 02 03 04", "Saved session did not reopen");
+    require(h.session.responses()==originalTimes,"Reopening changed original response times or data");
     QFile corrupt(h.session.recordingUrl().toLocalFile()+"/events.bin");
     require(corrupt.open(QIODevice::Append),"Cannot corrupt test fixture"); corrupt.write("bad");corrupt.close();
     h.session.openRecording(id);
@@ -75,6 +79,12 @@ void stopAndStaleAck(const QString &root) {
     require(h.session.begin({}),"Rejected preflight retained resource lease");
     h.session.rejectStart("test cleanup");
 }
+void cancelDuringPreflight(const QString &root) {
+    Harness h(root);h.session.begin({});
+    require(h.current().command==NfcSession::StartHelper,"No preflight request");
+    h.session.stop();h.session.cancelBeforeStart();
+    require(!h.session.active() && h.session.stopConfirmed() && h.session.recordingVerified(),"Preflight cancellation did not finish without starting hardware");
+}
 void disconnectAndFailedTransport(const QString &root) {
     Harness h(root);h.session.begin({});h.info();
     h.session.setConnection("test-device",false);
@@ -90,6 +100,22 @@ void disconnectAndFailedTransport(const QString &root) {
     h.session.setConnection("test-device",false);h.session.setConnection("test-device",true);
     require(h.session.available(),"Reconnect did not clear uncertain device generation");
 }
+void responseAndStopTimeout(const QString &root) {
+    Harness h(root);h.session.begin({});h.info();
+    QEventLoop response;
+    auto connection=QObject::connect(&h.session,&NfcSession::commandRequested,[&](int command,const QByteArray &,quint64) {
+        if(command==NfcSession::ExitHelper) response.quit();
+    });
+    QTimer::singleShot(6500,&response,&QEventLoop::quit);
+    response.exec();QObject::disconnect(connection);
+    require(h.current().command==NfcSession::ExitHelper && !h.session.error().isEmpty(),"Missing card response did not request Stop");
+    QEventLoop stopping;
+    connection=QObject::connect(&h.session,&NfcSession::changed,[&] {if(!h.session.active())stopping.quit();});
+    QTimer::singleShot(6500,&stopping,&QEventLoop::quit);
+    stopping.exec();QObject::disconnect(connection);
+    require(!h.session.active() && h.session.blocked() && !h.session.stopConfirmed() && h.session.recordingVerified(),
+            "Stop timeout released hardware or lost interrupted recording");
+}
 void unavailableRecording(const QString &root) {
     QFile file(root);require(file.open(QIODevice::WriteOnly),"Cannot create fixture file");file.write("file");file.close();
     Harness h(root);
@@ -102,8 +128,10 @@ int main(int argc,char **argv) {
         QTemporaryDir tmp;require(tmp.isValid(),"No fixture folder");
         completedAndReopened(tmp.path()+"/complete");
         stopAndStaleAck(tmp.path()+"/stop");
+        cancelDuringPreflight(tmp.path()+"/preflight");
         disconnectAndFailedTransport(tmp.path()+"/disconnect");
         unavailableRecording(tmp.path()+"/file");
+        responseAndStopTimeout(tmp.path()+"/timeout");
         return 0;
     } catch(const std::exception &e) { qCritical("NFC session test: %s",e.what());return 1; }
 }

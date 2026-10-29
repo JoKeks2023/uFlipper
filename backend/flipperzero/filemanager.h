@@ -23,6 +23,7 @@ class FileManager : public QAbstractListModel, public Failable
 {
     Q_OBJECT
     Q_PROPERTY(bool isBusy READ isBusy NOTIFY isBusyChanged)
+    Q_PROPERTY(bool operationPending READ operationPending NOTIFY operationPendingChanged)
     Q_PROPERTY(bool isRoot READ isRoot NOTIFY currentPathChanged)
     Q_PROPERTY(bool canGoBack READ canGoBack NOTIFY currentPathChanged)
     Q_PROPERTY(bool canGoForward READ canGoForward NOTIFY currentPathChanged)
@@ -67,6 +68,7 @@ public:
 
     // Properties
     bool isBusy() const;
+    bool operationPending() const { return m_pendingOperations > 0; }
     bool isRoot() const;
     bool canGoBack() const;
     bool canGoForward() const;
@@ -80,6 +82,7 @@ public:
 
 signals:
     void isBusyChanged();
+    void operationPendingChanged();
     void currentPathChanged();
     void newDirectoryIndexChanged();
     void errorOccured();
@@ -90,6 +93,8 @@ private slots:
 private:
     bool checkDevice();
     bool m_deviceAccessBlocked = false;
+    int m_pendingOperations = 0;
+    void trackPending(AbstractOperation *operation);
 
     void setBusy(bool busy);
     void setNewDirectoryIndex(int newIndex);

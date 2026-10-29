@@ -98,6 +98,7 @@ Item {
             Rectangle { width: 7; height: 7; radius: 4; color: Backend.deviceState && Backend.deviceState.isOnline ? Theme.color.lightgreen : Theme.color.mediumorange1 }
             WorkbenchLabel { text: Backend.deviceState && Backend.deviceState.isOnline ? Backend.deviceState.isRecoveryMode ? qsTr("Wiederherstellungsmodus") : qsTr("USB verbunden") : Backend.isQueryInProgress ? qsTr("Gerät wird gelesen …") : qsTr("Nicht verbunden"); color: Backend.deviceState && Backend.deviceState.isOnline ? Theme.color.lightgreen : Theme.color.lightorange2; font.pixelSize: 15 }
             Item { Layout.fillWidth: true }
+            WorkbenchButton { text: Backend.nfc.active ? qsTr("NFC-Sitzung läuft") : qsTr("NFC-Stop ungeklärt"); visible: Backend.nfc.blocked; onClicked: shell.navigate("nfc") }
             WorkbenchButton { text: qsTr("Aktualisieren"); enabled: !shell.busy; onClicked: { Backend.telemetry.refresh(); Backend.workbench.refresh() } }
         }
     }

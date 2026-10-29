@@ -7,4 +7,6 @@
 - Konkurrierende Bildschirm-/Datei-/Firmwareansichten fragen vor dem Stop nach und warten auf Bestätigung. Backend-Sperren verhindern parallele Eingaben und Dateiaktionen auch unabhängig von der Navigation.
 - Native Prüfoptionen `--review-nfc DIR` und optional `--review-nfc-card` klicken die echte Oberfläche. Kein automatischer Gerätetest in CI und kein Simulator.
 
+Dateizugriffe werden anhand tatsächlich laufender Operationen gesperrt; die bisherige 500-ms-Verzögerung der Fortschrittsanzeige wird nicht als Gerätesperre verwendet. Die NFC-Sitzung bleibt in Verbindungsleiste und Dashboard sichtbar. Beim Wiederöffnen bleiben die ursprünglichen monotonen Antwortzeitpunkte erhalten.
+
 Validierung läuft; Umsetzung noch nicht abgenommen.
