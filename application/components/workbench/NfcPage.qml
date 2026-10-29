@@ -6,9 +6,15 @@ WorkbenchSplit {
     objectName: "nfcPage"
     readonly property var session: Backend.nfc
     readonly property var saved: Backend.workbench.recordings.filter(function(item) { return item.kind.indexOf("nfc.iso14443-4a.") === 0 })
-    property string selectedMode: "ppse"
+    property string selectedMode: page.session.mode === "reader" && Qt.platform.os !== "osx" ? "ppse" : page.session.mode
     readonly property bool readerMode: selectedMode === "reader"
     readonly property var labels: ({idle:qsTr("Bereit"), starting:qsTr("Helfer wird geprüft und gestartet …"), searching:qsTr("Warte auf Karte"), reading:qsTr("Karte wird gelesen …"), stopping:qsTr("Wird gestoppt …"), completed:qsTr("Lesetest abgeschlossen"), stopped:qsTr("Gestoppt"), interrupted:qsTr("Unterbrochen"), uncertain:qsTr("Stop nicht bestätigt"), saved:qsTr("Gespeicherte Sitzung"), ready:qsTr("Karte für andere Programme bereit"), "powered-off":qsTr("Karte abgeschaltet"), "stopping-card":qsTr("Karte wird zurückgesetzt …")})
+    Connections {
+        target: page.session
+        function onChanged() {
+            if (page.session.state === "saved") page.selectedMode = page.session.mode === "reader" && Qt.platform.os !== "osx" ? "ppse" : page.session.mode
+        }
+    }
     WorkbenchTitle { title: qsTr("NFC"); subtitle: qsTr("ISO-DEP · Karten lesen, NDEF auswerten und Sitzungen speichern.") }
     WorkbenchHint {
         visible: Preferences.easyMode
@@ -76,6 +82,7 @@ WorkbenchSplit {
             objectName: "nfc-mode"
             Layout.fillWidth: true; enabled: !page.session.blocked
             textRole: "label"; valueRole: "key"
+            currentIndex: page.selectedMode === "ndef" ? 1 : page.selectedMode === "reader" && Qt.platform.os === "osx" ? 2 : 0
             model: Qt.platform.os === "osx" ? [{key:"ppse",label:qsTr("EMV / PPSE")},{key:"ndef",label:qsTr("NDEF · Type 4A")},{key:"reader",label:qsTr("Mac-Systemreader")}] : [{key:"ppse",label:qsTr("EMV / PPSE")},{key:"ndef",label:qsTr("NDEF · Type 4A")}]
             onActivated: page.selectedMode = currentValue
         },

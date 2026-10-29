@@ -60,7 +60,7 @@ bool NfcSession::begin(const QVariantMap &metadata, const QString &mode) {
         recordingId_ = QString::fromStdString(store_->begin(kind.toStdString(),
                               QJsonDocument::fromVariant(meta).toJson(QJsonDocument::Compact).toStdString()));
         auto request = jobs_.request(kind.toStdString(), UFlipper::Control | UFlipper::DeviceApp | UFlipper::Nfc,
-                                     UFlipper::Origin::Ui, true, true);
+                                     mode_ == "reader" ? UFlipper::Origin::Reader : UFlipper::Origin::Ui, true, true);
         if (request.decision != UFlipper::Decision::Granted)
             throw std::runtime_error("Device resources are not available");
         job_ = QString::fromStdString(request.id);
@@ -366,8 +366,14 @@ void NfcSession::openRecording(const QString &id) {
                 responseLabel_ = mode_ == "ppse" ? "SELECT PPSE" : mode_ == "ndef" && ndef_ ? QString::fromStdString(ndef_->label()) : "PC/SC APDU";
                 addResponse(bytes.mid(8), b[4], qFromLittleEndian<quint64>(reinterpret_cast<const uchar *>(header.constData() + 1)));
                 if (mode_ == "ndef" && ndef_) {
-                    ndef_->accept(UFlipper::NfcBytes(bytes.begin()+8, bytes.end()));
-                    if (ndef_->complete()) readNdefRecords();
+                    try {
+                        ndef_->accept(UFlipper::NfcBytes(bytes.begin()+8, bytes.end()));
+                        if (ndef_->complete()) readNdefRecords();
+                    } catch (const std::exception &) {
+                        if (object.value("state").toString() != "interrupted") throw;
+                        // A failed card read is still an intact original recording.
+                        ndef_.reset(); ndefRecords_.clear();
+                    }
                 }
             }
         }

@@ -158,6 +158,12 @@ void ndefReadAndReplay(const QString &root) {
     const auto original=h.session.responses();const auto id=h.session.recordingId();h.session.openRecording(id);
     require(h.session.recordingVerified() && h.session.mode()=="ndef" && h.session.responses()==original && h.session.ndefRecords()[0].toMap().value("content")=="Hi","NDEF replay lost records or original times");
 }
+void failedNdefStillReopens(const QString &root) {
+    Harness h(root);h.session.begin({},"ndef");h.info();h.ack();h.reply(QByteArray::fromHex("0401020304f000"));
+    h.ack();h.reply(QByteArray::fromHex("6a82"));h.stopped();
+    const auto id=h.session.recordingId();h.session.openRecording(id);
+    require(h.session.state()=="saved" && h.session.recordingVerified() && h.session.responses().size()==1 && !h.session.error().isEmpty(),"Failed NDEF card read lost its intact original response on reopen");
+}
 void readerSession(const QString &root) {
     Harness h(root);require(h.session.begin({},"reader"),"Reader start failed");h.info();h.ack();h.reply(QByteArray::fromHex("0401020304f000"));
     require(h.session.readerReady() && h.current().command==NfcSession::Activate,"Reader sent an unsolicited APDU");
@@ -210,6 +216,7 @@ int main(int argc,char **argv) {
     try {
         QTemporaryDir tmp;require(tmp.isValid(),"No fixture folder");
         ndefReadAndReplay(tmp.path()+"/ndef");
+        failedNdefStillReopens(tmp.path()+"/ndef-failed");
         readerSession(tmp.path()+"/reader");
         readerLoopback(tmp.path()+"/loopback");
         unchangedConnectionIsNotAnEvent(tmp.path()+"/connection");

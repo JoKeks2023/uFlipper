@@ -108,7 +108,18 @@ jobs:
           qmake "$GITHUB_WORKSPACE/application/application.pro"
           make -j4 qrc_qmake_qmake_qm_files.cpp
           test -s .qm/en_US.qm
-          make -j2 application.o uireview.o
+          make -j2 application.o uireview.o nfcreview.o
+      - name: NFC session lifecycle and recording contracts before full build
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/nfc-early-core" "$RUNNER_TEMP/nfc-tests"
+          cd "$RUNNER_TEMP/nfc-early-core"
+          qmake "$GITHUB_WORKSPACE/workbench/workbench.pro"
+          make -j2
+          cd "$RUNNER_TEMP/nfc-tests"
+          qmake "$GITHUB_WORKSPACE/tests/qt/nfc_session_tests.pro" "CORE_BUILD=$RUNNER_TEMP"
+          make -j2
+          ./uflipper_nfc_session_tests
       - name: Build macOS Universal
         if: runner.os == 'macOS'
         env:
@@ -127,15 +138,6 @@ jobs:
           make -j2
           plugin=$(python3 -c 'import pathlib,sys; print(next(p for p in pathlib.Path(sys.argv[1]).glob("*flipperproto0*") if p.suffix in (".so", ".dylib")))' "$desktop_build/plugins")
           ./uflipper_protocol_tests "$plugin"
-      - name: NFC session lifecycle and recording contracts
-        shell: bash
-        run: |
-          if [[ "$RUNNER_OS" == "macOS" ]]; then desktop_build="$GITHUB_WORKSPACE/build_mac"; else desktop_build="$GITHUB_WORKSPACE/build"; fi
-          mkdir -p "$RUNNER_TEMP/nfc-tests"
-          cd "$RUNNER_TEMP/nfc-tests"
-          qmake "$GITHUB_WORKSPACE/tests/qt/nfc_session_tests.pro" "CORE_BUILD=$desktop_build"
-          make -j2
-          ./uflipper_nfc_session_tests
       - name: Native UI navigation and screenshots on Linux
         if: runner.os == 'Linux'
         env:
