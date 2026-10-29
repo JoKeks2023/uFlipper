@@ -1,6 +1,6 @@
 # Umsetzung
 
-GitHub [#8](https://github.com/JoKeks2023/uFlipper/issues/8), In Progress; leerer RPC-Dateitransfer [#9](https://github.com/JoKeks2023/uFlipper/issues/9). App-Quellstand `807e62e`.
+GitHub [#8](https://github.com/JoKeks2023/uFlipper/issues/8), In Progress; leerer RPC-Dateitransfer [#9](https://github.com/JoKeks2023/uFlipper/issues/9). Aktuell geprüfter App-Quellstand `b010f9e`; erster Sicherungsprototyp `807e62e`.
 
 - `BackupController` nutzt ausschließlich bestehende DeviceRegistry/RPC-Verbindung. Kein zweiter USB-Besitzer. Dateioperationen, NFC, Bildschirmbedienung und Telemetrie werden während einer Vollsicherung gesperrt beziehungsweise angehalten.
 - `BackupSession`: beide Speicher vorhanden prüfen; rekursives Inventar einschließlich leerer/verborgener Einträge; Inhalte fortlaufend schreiben; Remote-MD5 nach jedem Transfer; abschließendes zweites Inventar und erneuter Remote-Inhaltsvergleich. Keine atomare Dateisystem-Momentaufnahme verfügbar. Bei Änderungen/Fehlern kein Vollständigkeitserfolg.

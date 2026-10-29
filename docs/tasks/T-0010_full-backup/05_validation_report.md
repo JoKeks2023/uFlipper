@@ -1,36 +1,29 @@
-# Validierung
+# Validierung · Stand 29.10.2026
 
-## Bisher beobachtet
+**Geprüfter App-Stand: b010f9e. Kein vollständiges Gerätebackup nachgewiesen; Vollbackup-Start bewusst gesperrt, weil das ungefilterte Inventar fehlt (#13).**
 
-- Lokaler kleiner C++-Build unter macOS/arm64: `ctest` 3/3 erfolgreich (Speicher/Krypto/Aufträge, serieller Ablauf, NDEF). Kein vollständiger lokaler Qt-Build.
-- CI [40929099330](https://github.com/JoKeks2023/uFlipper/actions/runs/40929099330), Quellstand `807e62e`: Kernprüfungen Mac/Linux erfolgreich; frühe Linux-Backupverträge erfolgreich. Erster vollständiger Linux-App-Build erfolgreich; der neue Leerdatei-Protokolltest reproduzierte anschließend einen Nullzeiger-Absturz im vorhandenen StorageReadResponse. Datenlose Antworten werden nun sicher verarbeitet, verkürzte Transfers zurückgewiesen; erneute Gesamtprüfung erforderlich.
-- Backupverträge: vollständige zwei Inventare, zweimaliger Inhaltsvergleich, gestreamte 200.008 Byte, drei Dateien einschließlich leerer Datei, verborgene Datei, leeres Verzeichnis; fehlende SD, Traversal-Pfad, geändertes Inventar/Inhalt, zu großer Datenblock, unbestätigter Transportfehler, Abbruch/späte Antwort und neue Verbindung. Transport wird dabei kontrolliert ersetzt; kein Gerätenachweis.
-- Unabhängiger Python-Prüfer an vorhandener echter `test-subset`-Sicherung `ebffac75238c52629dd5db4501df4e71`: 2 Dateien/172 Byte korrekt; als Vollbackup zurückgewiesen. In separater lokaler Kopie Dateibitfehler und Manifeständerung erkannt. Keine Gerätedateien verändert.
+## Pakete und Softwareverträge
 
-## Noch offen
+- CI [40935865240](https://github.com/JoKeks2023/uFlipper/actions/runs/40935865240): alle 5 Jobs erfolgreich (Desktop Mac/Linux, Kern Mac/Linux, Reader-Komponente ohne Installation). Frühe Backup-/Leerdatei-Verträge, Protokollprüfungen und native Paketstarts erfolgreich.
+- Kontrollierter Backupadapter: zweimaliges vollständiges Inventar und Inhaltsvergleich; 200.008 Byte/3 Dateien einschließlich leerer und verborgener Datei plus leerem Verzeichnis. Fehlende SD, Traversal, geändertes Inventar/Inhalt, überschrittener Datenblock, unbestätigter Transportfehler, Abbruch/späte Antwort, Wiederverbindung und Startwiederherstellung geprüft. Dies ersetzt keinen ungefilterten Geräteadapter.
+- Unabhängiger Python-Prüfer: bestehende echte Testsicherung `ebffac75238c52629dd5db4501df4e71`, 2 Dateien/172 Byte korrekt; als Vollbackup zurückgewiesen. Dateibitfehler/Manifeständerung in separaten lokalen Kopien erkannt. Gerätedateien dabei unverändert.
+- Mac-Artefakt 12924848854: Archiv `9bac48755299f40f77068e27b292530642ec2606a573356a53eb3cde5ca4608e`; Binary `68aa6a24e7518307638037d4f4a1a4ff769d6eb64fe30fb88eb6296eea466557`. Universal x86_64/arm64, Bundle-ID `com.jorisconrad.flipperzeroutil`, strenge Codesignprüfung erfolgreich.
 
-Native UI und vollständige Gerätesicherung am Flipper tatsächlich ausführen; Abschlussdaten unabhängig prüfen; Mac-/Linux-Paketierung und UI-Prüfungen abschließen. Der vorherige abgegrenzte Restore-Test unter T-0003 ersetzt diesen Nachweis nicht. Kein Release, keine Kernabnahme.
+## Tatsächlich am M1-Mac und Flipper beobachtet
 
-## Korrigierter Desktop-Stand f66d0ee
+- Native Paketbackend-Diagnose mit separater lokaler QML: `backendReady=true`, `nfcCanStart=true`, `fullBackupCanStart=false`; Inventarbegründung vorhanden. Kein Bildschirmseitenwechsel als Start-Workaround, kein NFC-Feld und kein Backup gestartet. Das ist ein Backend-Diagnosenachweis, kein vollständiger Backup-Produktablauf.
+- Danach normale Produktoberfläche: 19 Klicks, 15 Screenshots, Easy-Mode-/Einstellungs-Dropdown-Rundlauf und 1060×680-Kompaktansicht; 0 erfasste QML-Fehler. Dashboard und Backup-Seite selbst visuell geprüft.
+- Geprüftes Paket unter `build_mac/uFlipper.app` geöffnet; Vorversion unter `build_mac/previous-before-backup-b010f9e/` erhalten. [Sanitisierte Evidenz](evidence/mac-native-b010f9e.json). Lokale Originale: `build_mac/backup-gate-b010f9e/`.
+- Linux-Oberfläche f66d0ee ebenfalls tatsächlich durchlaufen: 19 Klicks, 15 Screenshots, 0 erfasste QML-Fehler; kein angeschlossenes Linux-Gerät. [Ergebnis](evidence/linux-ui-f66d0ee.json). Der neue Sperrstand b010f9e hat dieselben CI-UI-Prüfungen bestanden.
 
-CI [40931426982](https://github.com/JoKeks2023/uFlipper/actions/runs/40931426982): vollständiger Linux-Build, frühe Backup-/Leerdatei-Verträge, App-RPC-Prüfungen und nativer Start erfolgreich. UI tatsächlich durchlaufen: 19 Klicks, 15 Screenshots, 0 erfasste QML-Fehler; Backup-Seite visuell angesehen. Kein angeschlossenes Linux-Gerät. [Ergebnis](evidence/linux-ui-f66d0ee.json). Mac-Universal-Paket noch in Prüfung.
+## Gefundene und behobene Softwarefehler
 
-## Erster nativer Geräteversuch
+- #9: erster Leerdatei-Protokolltest reproduzierte einen Nullzeiger-Absturz im vorhandenen StorageReadResponse. Datenlose Antworten werden nun sicher verarbeitet, verkürzte Transfers zurückgewiesen; frühe und vollständige Protokolltests grün.
+- #10: verspäteter Queue-Rückruf durfte eine geschlossene RPC-Sitzung wieder als Idle melden. Geschlossene Sitzung, wiederholter Stop und späte Daten bleiben geschlossen; Stop leert die Queue und trennt den Port.
+- #12: erster realer Startversuch mit f66d0ee fand eine Startblockade trotz erfolgreichem RPC-Handshake. Ready hing am optionalen Bildschirmstream, dessen vorzeitiger Start gesperrt war. B010f9e bindet Ready an den tatsächlichen aktuellen Gerätehandshake; oben genannter nativer Nachweis erfolgreich. Der erste Versuch begann kein Backup und gilt nicht als bestandener Abbruchtest.
 
-CI-Stand f66d0ee: alle 5 Jobs erfolgreich. Mac-Artefakt 12923686938, SHA-256 `aceff4151ae2a982636c424834b808bf71c3d8cd8068e79e0a13c3855861c839`; Binary `2a1fb5531a38ac04f71a65e1c10dee540088525ff96e7a7ff3984a2a3af23463`, Universal x86_64/arm64, strenge Codesignprüfung und Bundle-ID korrekt.
+## Offenes Vollständigkeitsgate
 
-Echter Flipper erkannt, RPC-Handshakes erfolgreich. Danach wurde die Backup-Schaltfläche nicht freigegeben: Backend-Ready hing bisher am optionalen Bildschirmstream, dessen vorzeitiger Start durch die neue Offline-Zugriffssperre verhindert wurde. Keine Sicherung begonnen; eigenen wartenden Test beendet. [#12](https://github.com/JoKeks2023/uFlipper/issues/12): Ready direkt an den aktuellen Gerätehandshake gebunden; neuer Paket-/Gerätetest erforderlich. CI-Erfolg war hier ausdrücklich kein Funktionsnachweis.
+Die gepinnte Momentum-RPC-Dateiliste filtert nicht-ASCII-Namen. Zwei gleiche gefilterte Listen beweisen daher keine vollständige SD-Sicherung. Nicht behauptet wird, dass auf der konkreten SD tatsächlich solche Dateien fehlen. Ein ungefilterter, Ende/Lesefehler unterscheidender Inventaradapter bleibt erforderlich; SDK-Befund und Quellen unter [Umsetzung](04_impl_report.md). Kein neuer Helfer gebaut/installiert, keine Firmwareänderung.
 
-## Vollständigkeitsgate nach Quellenprüfung
-
-Nicht behauptet: dass auf der konkreten SD tatsächlich nicht-ASCII-Dateien fehlen. Belegt: der vorhandene RPC-Inventarweg kann deren Abwesenheit nicht nachweisen. Native Vollbackup-Freigabe deshalb gesperrt, bis ein ungefilterter, Fehler/Ende unterscheidender Inventaradapter beobachtet ist. Kein vollständiger Gerätebackup-Erfolg; kein Release. Neue UI-/Protokoll-Gate-Prüfung folgt.
-
-## Korrigiertes Mac-Paket und tatsächlicher Gerätestart
-
-- Quelle `b010f9ec561f9d7cdf29a4fbf37faf8e225e4ee2`, CI [40935865240](https://github.com/JoKeks2023/uFlipper/actions/runs/40935865240): alle fünf Jobs erfolgreich, einschließlich vollständigem Mac-/Linux-Build, Speicher-/NFC-/Protokollverträgen und nativen Startprüfungen.
-- Mac-Artefakt 12924848854: Archiv SHA-256 `9bac48755299f40f77068e27b292530642ec2606a573356a53eb3cde5ca4608e`; Binary `68aa6a24e7518307638037d4f4a1a4ff769d6eb64fe30fb88eb6296eea466557`. Universal x86_64/arm64, Bundle-ID korrekt, strenge Codesignprüfung erfolgreich.
-- Reales M1-Gerät mit angeschlossenem Flipper: lokale Diagnose-QML mit unverändertem Paketbackend prüfte `backendReady=true`, `nfcCanStart=true`, `fullBackupCanStart=false` und die sichtbare Inventarbegründung. Kein Bildschirmseitenwechsel als Start-Workaround nötig; kein NFC-Feld und kein Backup gestartet. Dies ist ein Backend-Diagnosenachweis mit separater QML, kein kompletter Produktablauf.
-- Anschließend normale Produktoberfläche tatsächlich durchlaufen: 19 Klicks, 15 Screenshots, Easy-Mode- und Einstellungs-Dropdown-Rundlauf, kompakte 1060×680-Ansicht, 0 erfasste QML-Fehler. Dashboard und Backup-Seite selbst visuell geprüft. Lokale Originale unter `build_mac/backup-gate-b010f9e/`; Gerätebezeichnung nicht in die Repo-Evidenz übernommen.
-- Geprüftes Paket nach `build_mac/uFlipper.app` übernommen, Vorversion unter `build_mac/previous-before-backup-b010f9e/` erhalten. [Sanitisierte Evidenz](evidence/mac-native-b010f9e.json).
-
-Weiterhin **kein vollständiges Gerätebackup**, kein Produkt-Restore und keine automatische Vollbackup-Vorkette nachgewiesen. Das Vollständigkeitsgate ist kein Abschluss von A15. Reader-Systemkomponente nicht installiert; keine neue Helferversion und keine Firmwareänderung.
+Weiterhin offen: tatsächlicher Vollbackup-/Abbruch-/Fehlernachweis am Gerät, Produkt-Restore samt Kompatibilitätsvorschau und frische automatische Vollbackup-Vorkette. Der frühere abgegrenzte Restore-Test unter T-0003 ersetzt A15 nicht. Mac-Systemreader nicht installiert, vertagter IR-Test nicht gestartet. Kein Release und keine Kernabnahme.
