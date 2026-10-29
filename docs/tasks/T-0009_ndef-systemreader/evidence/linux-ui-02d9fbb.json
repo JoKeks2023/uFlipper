@@ -1,0 +1,15 @@
+{
+  "commit": "02d9fbb303d660934d3b802687e88d9784495f07",
+  "ci_run": 40884130592,
+  "device_connected": false,
+  "result": {
+    "compactHeight": 680,
+    "compactWidth": 1060,
+    "easyModeRoundtrip": true,
+    "navigationClicks": 18,
+    "qmlErrors": 0,
+    "screenshots": 14,
+    "settingsDropdownRoundtrip": true,
+    "success": true
+  }
+}

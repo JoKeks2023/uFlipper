@@ -1,0 +1,27 @@
+{
+  "official_version": "0.27.1",
+  "dmg_sha256": "61c2c7b9329a65e43a34151016530d54859561d8fbbe7a723911119abf0ccd7f",
+  "installer_signature": "Apple notarized Developer ID Installer Raul Metsma (L7897KTAHV)",
+  "installed": false,
+  "relocation": "Copied official tool/library; changed only libopensc loader path and ad-hoc resigned copied executable; no OpenSC logic modified.",
+  "original_binary_sha256": "e97a5d3b7520a2e6a670130840fd1bdb673cc12f7fc1b5632d853c9191cbb601",
+  "relocated_binary_sha256": "affd21b72b4a16d1757b46cc4dea9c48d8196b5186afd39ab98b6be689c577ad",
+  "baseline": [
+    {
+      "args": [
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "OpenSC-0.27.1, rev: 1986898, commit-time: 2026-03-31 13:22:04 +0200\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "--list-readers"
+      ],
+      "exit_code": 0,
+      "stdout": "No smart card readers found.\n",
+      "stderr": ""
+    }
+  ]
+}

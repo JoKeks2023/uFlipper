@@ -1,0 +1,17 @@
+{
+  "success": true,
+  "binary_sha256": "f7d21ecee82ba42a5322c802e16d92ea3e2c4b40db245aae9917d9a7e6fbff13",
+  "wire_requests": [
+    "04",
+    "01",
+    "04",
+    "00a4040000",
+    "02",
+    "04",
+    "00",
+    "04"
+  ],
+  "synthetic_peer": true,
+  "os_registration": false,
+  "independent_pcsc_client": false
+}
