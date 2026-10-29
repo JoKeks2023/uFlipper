@@ -283,7 +283,7 @@ void ProtobufSession::stopSession()
 void ProtobufSession::onSerialPortReadyRead()
 {
     if(!isSessionUp()) {
-        m_serialPort->clear();
+        if(m_serialPort) m_serialPort->clear();
         return;
 #if !defined(QT_STATIC)
     } else if(!m_loader->isLoaded()) {
@@ -326,6 +326,7 @@ void ProtobufSession::onSerialPortBytesWriten(qint64 nbytes)
 
 void ProtobufSession::onSerialPortErrorOccured()
 {
+    if(!m_serialPort) return;
     qCInfo(LOG_SESSION) << "Serial connection was lost.";
 
     disconnect(m_serialPort, &QSerialPort::readyRead, this, &ProtobufSession::onSerialPortReadyRead);
@@ -398,6 +399,7 @@ void ProtobufSession::writeToPort()
 
 void ProtobufSession::doStopSession()
 {
+    if(!isSessionUp()) return; // A second queued stop is harmless.
     qCInfo(LOG_SESSION) << "Stopping RPC session...";
     clearOperationQueue();
 
@@ -406,9 +408,12 @@ void ProtobufSession::doStopSession()
     }
 
     if(m_serialPort) {
+        QObject::disconnect(m_serialPort, nullptr, this, nullptr);
         m_serialPort->close();
         m_serialPort->deleteLater();
+        m_serialPort = nullptr;
     }
+    m_receivedData.clear();
 
     unloadProtobufPlugin();
 

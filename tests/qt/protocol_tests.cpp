@@ -52,6 +52,8 @@ int main(int argc, char **argv) {
         Flipper::Zero::ProtobufSession stopped(QSerialPortInfo{});
         QTimer::singleShot(0,&stopped,[&] {
             require(QMetaObject::invokeMethod(&stopped,"processQueue",Qt::DirectConnection),"Missing queue slot");
+            require(QMetaObject::invokeMethod(&stopped,"doStopSession",Qt::DirectConnection),"Missing stop slot");
+            require(QMetaObject::invokeMethod(&stopped,"onSerialPortReadyRead",Qt::DirectConnection),"Missing data slot");
         });
         QCoreApplication::processEvents();
         require(!stopped.isSessionUp(),"Queued callback reopened a stopped RPC session");
