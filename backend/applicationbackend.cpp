@@ -298,7 +298,16 @@ void ApplicationBackend::onCurrentDeviceChanged()
 
         if(!deviceState()->isRecoveryMode()) {
             connect(m_screenStreamer, &ScreenStreamer::streamStateChanged, this, &ApplicationBackend::onScreenStreamerStateChanged);
-            m_screenStreamer->start();
+            const QPointer<FlipperZero> expected = device();
+            const auto rpcReady = [this, expected] {
+                if(!expected || device() != expected || !expected->rpc()->isSessionUp()) return;
+                // Readiness belongs to the device handshake, not an optional screen.
+                // Screen access may have been blocked while RPC was initializing.
+                if(m_backendState == BackendState::WaitingForDevices) setBackendState(BackendState::Ready);
+                if(m_backendState == BackendState::Ready) m_screenStreamer->start();
+            };
+            connect(device()->rpc(), &ProtobufSession::sessionStateChanged, this, rpcReady);
+            rpcReady();
 
         } else {
             setBackendState(BackendState::Ready);

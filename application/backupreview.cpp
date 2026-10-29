@@ -45,6 +45,7 @@ class Review:public QObject {
         if(busy_)return;busy_=true;
         try {
             require(QDateTime::currentMSecsSinceEpoch()<deadline_,"Backup review timed out");auto*b=backend_.backup();
+            require(step_ != 0 || QDateTime::currentMSecsSinceEpoch()<deadline_-7140000,"Connected backup startup did not become ready within 60 seconds");
             if(step_==0 && b->canStart()){click("nav-backups");++step_;}
             else if(step_==1 && find(window_->contentItem(),"backup-start")){screenshot("01_backup_idle");click("backup-start");++step_;}
             else if(step_==2 && b->active()) {id_=b->backupId();screenshot("02_backup_running");click("nav-library");++step_;}
@@ -64,7 +65,7 @@ class Review:public QObject {
         }catch(const std::exception&e) {
             timer_.stop();QFile f(directory_+"/failure.json");auto*b=backend_.backup();
             if(f.open(QIODevice::WriteOnly))f.write(QJsonDocument(QJsonObject{{"failure",e.what()},{"step",step_},{"state",b->state()},
-                {"error",b->error()},{"backupId",b->backupId()},{"filesDone",b->filesDone()},{"bytesDone",double(b->bytesDone())},
+                {"error",b->error()},{"backendState",int(backend_.backendState())},{"backupId",b->backupId()},{"filesDone",b->filesDone()},{"bytesDone",double(b->bytesDone())},
                 {"filesTotal",b->filesTotal()},{"bytesTotal",double(b->bytesTotal())},{"qmlWarnings",warnings_.join("\n")}}).toJson());
             b->cancel();QTimer::singleShot(3000,this,[]{QCoreApplication::exit(1);});
         }
