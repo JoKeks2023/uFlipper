@@ -61,6 +61,7 @@ ApplicationBackend::ApplicationBackend(QObject *parent):
                !m_fileManager->operationPending() && !m_nfc->blocked();
     }, this);
     connect(m_backup, &BackupSession::saved, m_workbench, &WorkbenchData::refresh);
+    m_workbench->refresh(); // Include startup recovery of abandoned backups.
     const auto accessChanged = [this] {
         const bool blocked = m_nfc->blocked() || m_backup->blocked();
         m_telemetry->setPollingEnabled(!blocked && (m_backendState == BackendState::Ready || m_backendState == BackendState::ScreenStreaming));

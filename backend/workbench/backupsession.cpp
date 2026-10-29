@@ -25,7 +25,13 @@ class BackupSession::Sink : public QIODevice {
  private:
     BackupSession &session_;
 };
-BackupSession::BackupSession(QString root,QObject *parent) : QObject(parent),root_(std::move(root)),sink_(new Sink(*this)) {}
+BackupSession::BackupSession(QString root,QObject *parent) : QObject(parent),root_(std::move(root)),sink_(new Sink(*this)) {
+    // Reclassify abandoned writing entries at startup, before the next backup.
+    if(QFileInfo::exists(root_+"/backups/catalog.sqlite")) {
+        try {UFlipper::BackupStore recovery(root_.toStdString());}
+        catch(const std::exception &e){error_=QString::fromUtf8(e.what());state_="interrupted";}
+    }
+}
 BackupSession::~BackupSession() {
     if (verification_) { verification_->wait(); delete verification_; verification_=nullptr; }
     if (active_ && store_) {try {store_->interrupt(id_.toStdString(),"Application closed during full backup");}catch(...) {}}

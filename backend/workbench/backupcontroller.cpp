@@ -44,8 +44,6 @@ void BackupController::connectionChanged() {
 void BackupController::start() {
     if(!canStart())return;
     const auto &info=device_->deviceState()->deviceInfo();
-    // The stream stop is queued on the same transport before inventory requests.
-    screen_->stop();
     begin({{"deviceName",info.name},{"firmwareVersion",info.firmware.version},{"firmwareCommit",info.firmware.commit},
            {"hardwareTarget",info.hardware.target},{"rpcMajor",info.protobuf.versionMajor},{"rpcMinor",info.protobuf.versionMinor},
            {"startedAt",QDateTime::currentDateTimeUtc().toString(Qt::ISODateWithMs)},
@@ -55,6 +53,9 @@ void BackupController::dispatch(int command,const QString &path,quint64 token) {
     if(!device_ || !device_->rpc()->isSessionUp()) {failed(token,tr("Die Geräteverbindung ist nicht verfügbar."));return;}
     auto *rpc=device_->rpc();
     if(command==StorageInfo) {
+        // Local storage and the catalog are ready before the first device action.
+        // Stop the stream through this same owner before listing storage.
+        if(path=="/int")screen_->stop();
         auto *op=rpc->storageInfo(path.toUtf8());watch(op,token,[this,op,token]{storageInfo(token,op->isPresent());});
     } else if(command==List) {
         auto *op=rpc->storageList(path.toUtf8());watch(op,token,[this,op,token] {

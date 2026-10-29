@@ -42,7 +42,9 @@ void StorageReadOperation::feedResponse(QObject *response)
     } else if(!processResponse(response)) {
         finishWithError(BackendError::ProtocolError, QStringLiteral("Operation finished with error: %1").arg(mainResponse->errorString()));
     } else if(qobject_cast<StorageReadResponseInterface*>(response) && !mainResponse->hasNext()) {
-        finish();
+        if(m_fileSizeReceived != m_fileSizeTotal) {
+            finishWithError(BackendError::DataError, QStringLiteral("File transfer length differs from device stat"));
+        } else finish();
     } else {
         startTimeout();
     }

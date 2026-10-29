@@ -107,7 +107,14 @@ int main(int argc, char **argv) {
         require(bool(emptyChunk),"Empty read fixture did not decode");emptyRead.feedResponse(emptyChunk.get());
         require(emptyRead.isFinished() && !emptyRead.isError() && std::isfinite(emptyRead.progress()) && emptyRead.progress()==100 && emptyFile.data().isEmpty(),
                 "Zero-byte file read produced invalid progress or incomplete output");
-        qInfo() << "PASS: zero-byte storage read; App-RPC bounds, binary data, state broadcasts and command errors";
+        QBuffer shortFile;
+        Flipper::Zero::StorageReadOperation shortRead(1,"/ext/short",&shortFile);
+        shortRead.start();shortRead.encodeRequest(encoder);
+        auto threeByteStat=decode("090801ca01040a021803");
+        require(bool(threeByteStat),"Three-byte stat fixture did not decode");shortRead.feedResponse(threeByteStat.get());shortRead.encodeRequest(encoder);
+        shortRead.feedResponse(emptyChunk.get());
+        require(shortRead.isFinished() && shortRead.isError(),"Truncated file transfer was accepted");
+        qInfo() << "PASS: zero-byte and truncated storage reads; App-RPC bounds, binary data, state broadcasts and command errors";
         return 0;
     } catch (const std::exception &error) {
         qCritical() << error.what();

@@ -84,6 +84,13 @@ void cancellation(const QString &path) {
     h.session.setConnection("fixture",false);require(!h.session.active() && h.session.state()=="cancelled","Closed transport did not finish cancellation");
     h.session.setConnection("fixture",true);require(h.session.begin({}),"Fresh handshake did not permit next backup");h.session.setConnection("fixture",false);
 }
+void startupRecovery(const QString &path) {
+    std::string id;
+    {UFlipper::BackupStore store(path.toStdString());id=store.begin(UFlipper::BackupScope::FullDevice,"{}");store.addDirectory(id,"/int");}
+    BackupSession session(path);
+    UFlipper::BackupStore inspect(path.toStdString());
+    require(inspect.get(id).state==UFlipper::BackupState::Interrupted && !session.active(),"App startup left an abandoned backup marked writing");
+}
 void unavailable(const QString &path) {
     QFile file(path);require(file.open(QIODevice::WriteOnly),"Cannot create non-directory fixture");file.close();
     Harness h(path);require(!h.session.begin({}) && h.requests.empty() && !h.session.error().isEmpty(),"Device accessed before local storage was writable");
@@ -92,6 +99,6 @@ void unavailable(const QString &path) {
 int main(int argc,char**argv) {
     QCoreApplication app(argc,argv);QTemporaryDir root;
     try {require(root.isValid(),"Cannot create test directory");complete(root.path()+"/complete");for(int i=0;i<6;++i)rejection(root.path()+"/reject"+QString::number(i),i);
-        cancellation(root.path()+"/cancel");unavailable(root.path()+"/file");qInfo()<<"PASS: full inventory, streamed content, empty/hidden entries, changed inventory/digest, missing SD, unsafe path, unwritable sink, uncertain transport, cancellation and reconnect";return 0;
+        cancellation(root.path()+"/cancel");startupRecovery(root.path()+"/recovery");unavailable(root.path()+"/file");qInfo()<<"PASS: full inventory, streamed content, empty/hidden entries, changed inventory/digest, missing SD, unsafe path, unwritable sink, uncertain transport, cancellation and reconnect";return 0;
     }catch(const std::exception &e){qCritical()<<e.what();return 1;}
 }

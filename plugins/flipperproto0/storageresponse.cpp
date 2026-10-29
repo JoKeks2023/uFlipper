@@ -60,7 +60,8 @@ bool StorageReadResponse::hasFile() const
 const StorageFile StorageReadResponse::file() const
 {
     const auto &f = message().content.storage_read_response.file;
-    return {(StorageFile::FileType)f.type, {f.name}, {(const char*)f.data->bytes, f.data->size}, f.size};
+    const QByteArray data = f.data ? QByteArray(reinterpret_cast<const char *>(f.data->bytes), f.data->size) : QByteArray();
+    return {(StorageFile::FileType)f.type, {f.name}, data, f.size};
 }
 
 StorageMd5SumResponse::StorageMd5SumResponse(MessageWrapper &wrapper, QObject *parent):

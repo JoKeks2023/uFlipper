@@ -4,7 +4,7 @@ Portable C++17 building blocks for the Qt application and local integrations. Th
 
 - `OperationCoordinator`: one generation of device ownership, explicit conflict decisions, stop acknowledgement and uncertain outcomes. An unconfirmed failure retains hardware ownership.
 - `CaptureStore`: SQLite catalog, exclusive process lease, bounded binary records, SHA256 verification, recoverable interrupted recordings. Recordings are not queued in RAM.
-- `BackupStore`: versioned manifests and streamed payloads, two required inventories for a full-device backup, explicit test-subset scope and corruption/crash checks. Remote inventory traversal and product restore are not connected yet.
+- `BackupStore`: versioned manifests and streamed payloads, two required inventories for a full-device backup, explicit test-subset scope and corruption/crash checks. The native `BackupController` now traverses both storage roots through the existing RPC owner; `BackupSession` streams files, checks remote MD5 immediately and after a second inventory, then verifies local payloads on a worker. Full-device runtime verification is tracked under T-0010. Product restore and the fresh automatic maintenance preflight remain unconnected.
 - `FileCrypto`: libsodium authenticated streams, Argon2id derivation and versioned recovery-key encoding. This module is not yet a complete cloud key-management implementation.
 
 ## Isolated checks
@@ -39,3 +39,9 @@ With the pinned `3rdparty/nanopb` submodule initialized, the small CMake build a
 - `uflipper_backup_fixture_probe --port PATH --store DIRECTORY`: creates a fresh random directory below `/ext/uflipper-tests/`, writes two own fixtures plus an empty directory, reads and verifies an original tests-only backup, changes the files, creates a second verified backup before restoring, restores from original payloads and compares all bytes read back from the device. It removes only this invocation's test directory after success; failures retain it for diagnosis. No caller-supplied device path is accepted. This cannot satisfy the full-backup firmware preflight.
 
 Both probes persist bounded raw RPC traces in the recording catalog. Backup payloads and manifests stay in the separate backup catalog. The Qt `uFlipper-probe` is built only with the desktop application; its optional card test requires an appropriate ISO-DEP Type 4A NDEF test card and is not an independent PC/SC-client proof.
+
+## Independent backup verification
+
+After the native app has finished a backup, run `python3 scripts/backup/verify_backup.py BACKUP_DIRECTORY --expect-full` from the repository root. This read-only development check independently compares catalog and manifest, hashes each payload with bounded buffers and checks both root confirmations. It never opens the device or changes backup state. A test-subset backup is explicitly rejected by `--expect-full`.
+
+Remote comparisons detect changes across the two verification passes; the device interface does not offer an atomic filesystem snapshot. Changes during transfer cause an interrupted backup rather than a verified result.
