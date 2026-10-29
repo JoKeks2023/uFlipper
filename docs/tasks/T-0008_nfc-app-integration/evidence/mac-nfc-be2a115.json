@@ -1,0 +1,362 @@
+{
+  "commit": "be2a11593fedefcfd86644a5427b592635f60e79",
+  "ci_run": 40875576511,
+  "ci_jobs": {
+    "core_macos": 123453406661,
+    "desktop_macos": 123453406967,
+    "core_linux": 123453406981,
+    "desktop_linux": 123453407093
+  },
+  "mac_artifact": {
+    "id": 12898389808,
+    "archive_sha256": "d4e3e5e80cb3f6f3748f8f38a39eb85bfaa642bf10d82d69908360631ba5de95",
+    "binary_sha256": "a87ec3cd5716e91b3379acde4e01131dc0b6d0532f5144b29145a5a8de64fc90",
+    "architectures": [
+      "x86_64",
+      "arm64"
+    ],
+    "bundle_id": "com.jorisconrad.flipperzeroutil",
+    "strict_codesign_verified": true,
+    "installed_binary_matches_tested_binary": true,
+    "normal_launch_and_usb_ownership_observed": true
+  },
+  "device": {
+    "firmwareCommit": "e1784e74",
+    "firmwareVersion": "mntm-012",
+    "hardwareTarget": "f7",
+    "helperVersion": "0.1.0",
+    "helperSha256": "ab0bcae111b085a8cf79ef9c5dd423331f0ae86519228cb0ed79624470e0d632",
+    "rpcMajor": 0,
+    "rpcMinor": 25
+  },
+  "tests": {
+    "no-card": {
+      "native_ui_result": {
+        "cardTest": false,
+        "clicks": 8,
+        "finishedAt": "2026-10-29T13:06:59.833Z",
+        "qmlWarnings": 0,
+        "recordingId": "9ec3d5d1ffeb7a63c5f317b0baa6cd05",
+        "recordingVerified": true,
+        "responseCount": 0,
+        "success": true
+      },
+      "click_trace": [
+        {
+          "active": false,
+          "canStart": true,
+          "control": "nav-nfc",
+          "nfcState": "idle",
+          "x": 92,
+          "y": 428
+        },
+        {
+          "active": true,
+          "canStart": false,
+          "control": "nfc-start",
+          "nfcState": "starting",
+          "x": 880,
+          "y": 324
+        },
+        {
+          "active": true,
+          "canStart": false,
+          "control": "nav-screen",
+          "nfcState": "searching",
+          "x": 92,
+          "y": 148
+        },
+        {
+          "active": true,
+          "canStart": false,
+          "control": "nfc-keep-reading",
+          "nfcState": "searching",
+          "x": 675.390625,
+          "y": 505.5
+        },
+        {
+          "active": true,
+          "canStart": false,
+          "control": "nav-library",
+          "nfcState": "searching",
+          "x": 92,
+          "y": 188
+        },
+        {
+          "active": true,
+          "canStart": false,
+          "control": "nfc-confirm-stop",
+          "nfcState": "stopping",
+          "x": 511.390625,
+          "y": 505.5
+        },
+        {
+          "active": false,
+          "canStart": true,
+          "control": "nav-nfc",
+          "nfcState": "stopped",
+          "x": 92,
+          "y": 428
+        },
+        {
+          "active": false,
+          "canStart": true,
+          "control": "nfc-open-9ec3d5d1ffeb7a63c5f317b0baa6cd05",
+          "nfcState": "saved",
+          "x": 872,
+          "y": 636
+        }
+      ],
+      "capture": {
+        "state": "completed",
+        "reason": "User stop confirmed",
+        "bytes": 321,
+        "sha256": "cd39f71bd04830eabc4ab93fc9d82c49abbe8e7e20fb86d25065d1a8c4aeb1dd",
+        "independent_sha256_match": true,
+        "frames": [
+          {
+            "record_type": 2,
+            "host_monotonic_ns": "1435381528179083",
+            "event": "helper-start"
+          },
+          {
+            "record_type": 2,
+            "host_monotonic_ns": "1435381673525875",
+            "event": "helper-started"
+          },
+          {
+            "record_type": 2,
+            "host_monotonic_ns": "1435381673549958",
+            "opcode": 1,
+            "sequence": 1,
+            "status": 0,
+            "payload_bytes": 0
+          },
+          {
+            "record_type": 0,
+            "host_monotonic_ns": "1435381684647375",
+            "opcode": 129,
+            "sequence": 1,
+            "status": 0,
+            "payload_bytes": 43
+          },
+          {
+            "record_type": 2,
+            "host_monotonic_ns": "1435381684693625",
+            "opcode": 2,
+            "sequence": 2,
+            "status": 0,
+            "payload_bytes": 0
+          },
+          {
+            "record_type": 0,
+            "host_monotonic_ns": "1435381697145125",
+            "opcode": 130,
+            "sequence": 2,
+            "status": 3,
+            "payload_bytes": 0
+          },
+          {
+            "record_type": 2,
+            "host_monotonic_ns": "1435381989273625",
+            "opcode": 2,
+            "sequence": 3,
+            "status": 0,
+            "payload_bytes": 0
+          },
+          {
+            "record_type": 0,
+            "host_monotonic_ns": "1435382000552125",
+            "opcode": 130,
+            "sequence": 3,
+            "status": 3,
+            "payload_bytes": 0
+          },
+          {
+            "record_type": 2,
+            "host_monotonic_ns": "1435382200906416",
+            "opcode": 2,
+            "sequence": 4,
+            "status": 0,
+            "payload_bytes": 0
+          },
+          {
+            "record_type": 0,
+            "host_monotonic_ns": "1435382212562083",
+            "opcode": 130,
+            "sequence": 4,
+            "status": 3,
+            "payload_bytes": 0
+          },
+          {
+            "record_type": 2,
+            "host_monotonic_ns": "1435382426520333",
+            "event": "helper-exit"
+          },
+          {
+            "record_type": 2,
+            "host_monotonic_ns": "1435382535981500",
+            "event": "helper-closed"
+          }
+        ]
+      }
+    },
+    "card": {
+      "native_ui_result": {
+        "cardTest": true,
+        "clicks": 3,
+        "finishedAt": "2026-10-29T13:08:48.773Z",
+        "qmlWarnings": 0,
+        "recordingId": "84876db145e5aa53b5c946feb79363ca",
+        "recordingVerified": true,
+        "responseCount": 2,
+        "success": true
+      },
+      "click_trace": [
+        {
+          "active": false,
+          "canStart": true,
+          "control": "nav-nfc",
+          "nfcState": "completed",
+          "x": 92,
+          "y": 428
+        },
+        {
+          "active": true,
+          "canStart": false,
+          "control": "nfc-start",
+          "nfcState": "starting",
+          "x": 880,
+          "y": 324
+        },
+        {
+          "active": false,
+          "canStart": true,
+          "control": "nfc-open-84876db145e5aa53b5c946feb79363ca",
+          "nfcState": "saved",
+          "x": 872,
+          "y": 756
+        }
+      ],
+      "capture": {
+        "state": "completed",
+        "reason": "PPSE read complete; helper stop confirmed",
+        "bytes": 502,
+        "sha256": "a6836c7385565220961ff2697712830fdfba9e5f20643a5bdf344c4f4e61e786",
+        "independent_sha256_match": true,
+        "frames": [
+          {
+            "record_type": 2,
+            "host_monotonic_ns": "1435490951315125",
+            "event": "helper-start"
+          },
+          {
+            "record_type": 2,
+            "host_monotonic_ns": "1435491192020541",
+            "event": "helper-started"
+          },
+          {
+            "record_type": 2,
+            "host_monotonic_ns": "1435491192052166",
+            "opcode": 1,
+            "sequence": 6,
+            "status": 0,
+            "payload_bytes": 0
+          },
+          {
+            "record_type": 0,
+            "host_monotonic_ns": "1435491203217583",
+            "opcode": 129,
+            "sequence": 6,
+            "status": 0,
+            "payload_bytes": 43
+          },
+          {
+            "record_type": 2,
+            "host_monotonic_ns": "1435491203295125",
+            "opcode": 2,
+            "sequence": 7,
+            "status": 0,
+            "payload_bytes": 0
+          },
+          {
+            "record_type": 0,
+            "host_monotonic_ns": "1435491220236291",
+            "opcode": 130,
+            "sequence": 7,
+            "status": 0,
+            "payload_bytes": 7
+          },
+          {
+            "record_type": 2,
+            "host_monotonic_ns": "1435491220335250",
+            "opcode": 3,
+            "sequence": 8,
+            "status": 0,
+            "payload_bytes": 20,
+            "exact_ppse_command": true
+          },
+          {
+            "record_type": 0,
+            "host_monotonic_ns": "1435491234296375",
+            "opcode": 131,
+            "sequence": 8,
+            "status": 0,
+            "payload_bytes": 46,
+            "status_word": "9000"
+          },
+          {
+            "record_type": 2,
+            "host_monotonic_ns": "1435491234385916",
+            "opcode": 3,
+            "sequence": 9,
+            "status": 0,
+            "payload_bytes": 20,
+            "exact_ppse_command": true
+          },
+          {
+            "record_type": 0,
+            "host_monotonic_ns": "1435491249947000",
+            "opcode": 131,
+            "sequence": 9,
+            "status": 0,
+            "payload_bytes": 46,
+            "status_word": "9000"
+          },
+          {
+            "record_type": 2,
+            "host_monotonic_ns": "1435491250060083",
+            "opcode": 4,
+            "sequence": 10,
+            "status": 0,
+            "payload_bytes": 0
+          },
+          {
+            "record_type": 0,
+            "host_monotonic_ns": "1435491313033416",
+            "opcode": 132,
+            "sequence": 10,
+            "status": 0,
+            "payload_bytes": 0
+          },
+          {
+            "record_type": 2,
+            "host_monotonic_ns": "1435491313113708",
+            "event": "helper-exit"
+          },
+          {
+            "record_type": 2,
+            "host_monotonic_ns": "1435491415198333",
+            "event": "helper-closed"
+          }
+        ]
+      }
+    }
+  },
+  "privacy": "Card UID, response payloads and screenshots omitted; originals remain local.",
+  "limits": [
+    "SELECT PPSE twice only",
+    "No general card reader, NDEF, dependent APDU or PC/SC acceptance",
+    "Fault cases verified in Qt contracts, not all forced on physical hardware"
+  ]
+}
