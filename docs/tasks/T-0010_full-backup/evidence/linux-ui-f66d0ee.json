@@ -1,0 +1,15 @@
+{
+  "compactHeight": 680,
+  "compactWidth": 1060,
+  "easyModeRoundtrip": true,
+  "navigationClicks": 19,
+  "qmlErrors": 0,
+  "screenshots": 15,
+  "settingsDropdownRoundtrip": true,
+  "success": true,
+  "source": "f66d0eeb74894703afaa223d51b19371bf027e67",
+  "ciRun": 40931426982,
+  "artifactId": 12921684277,
+  "artifactSha256": "dc298273135fc684c935164ee361fb9b05f0b996b0d593b7415b7a1a03434fdd",
+  "deviceConnected": false
+}

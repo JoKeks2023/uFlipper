@@ -1,0 +1,12 @@
+{
+  "success": true,
+  "methods": [
+    "password",
+    "recovery"
+  ],
+  "envelopeBytes": 133,
+  "headerBytes": 85,
+  "modifiedMetadataRejected": true,
+  "verification": "independent-python-parser-and-libsodium-ffi",
+  "realUserData": false
+}
