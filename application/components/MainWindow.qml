@@ -11,6 +11,17 @@ Item {
     anchors.fill: parent
     property string currentPage: "dashboard"
     property bool showLogs: false
+    property string pendingPage: ""
+    property bool quitAfterNfcStop: false
+    function navigate(page) {
+        if (Backend.nfc.blocked && ["screen", "library", "firmware"].indexOf(page) >= 0) {
+            if (!Backend.nfc.active) { nfcBlocked.open(); return }
+            pendingPage = page
+            nfcConflict.open()
+            return
+        }
+        currentPage = page
+    }
     readonly property bool maintenance: Backend.backendState > ApplicationBackend.ScreenStreaming && Backend.backendState < ApplicationBackend.Finished
     readonly property bool busy: maintenance || Backend.fileManager.isBusy
     readonly property bool resultVisible: Backend.backendState >= ApplicationBackend.Finished
@@ -66,14 +77,14 @@ Item {
                                 objectName: "nav-" + modelData.key
                                 text: modelData.title; navigation: true; checked: shell.currentPage === modelData.key
                                 enabled: !shell.busy; Layout.fillWidth: true
-                                onClicked: shell.currentPage = modelData.key
+                                onClicked: shell.navigate(modelData.key)
                             }
                         }
                     }
                 }
             }
             WorkbenchRule {}
-            WorkbenchButton { objectName: "nav-settings"; text: qsTr("Einstellungen"); navigation: true; checked: shell.currentPage === "settings"; Layout.fillWidth: true; enabled: !shell.busy; onClicked: shell.currentPage = "settings" }
+            WorkbenchButton { objectName: "nav-settings"; text: qsTr("Einstellungen"); navigation: true; checked: shell.currentPage === "settings"; Layout.fillWidth: true; enabled: !shell.busy; onClicked: shell.navigate("settings") }
         }
     }
     Rectangle {
@@ -98,6 +109,7 @@ Item {
             anchors.fill: parent; visible: !shell.maintenance && !shell.resultVisible
             sourceComponent: {
                 if (shell.currentPage === "dashboard") return dashboardComponent
+                if (shell.currentPage === "nfc") return nfcComponent
                 if (shell.currentPage === "settings") return settingsComponent
                 if (shell.currentPage === "screen") return screenComponent
                 if (shell.currentPage === "library") return filesComponent
@@ -106,7 +118,7 @@ Item {
                 return toolComponent
             }
         }
-        Connections { target: pageLoader.item; ignoreUnknownSignals: true; function onNavigate(page) { shell.currentPage = page } }
+        Connections { target: pageLoader.item; ignoreUnknownSignals: true; function onNavigate(page) { shell.navigate(page) } }
         Item {
             anchors.centerIn: parent; width: Math.min(800, parent.width - 16); height: 394
             visible: shell.maintenance || shell.resultVisible
@@ -136,6 +148,37 @@ Item {
     }
     MessageDialog { id: blocked; parent: shell; radius: 0 }
     Connections { target: Backend; function onOperationBlocked(reason) { blocked.openWithMessage(null, {title: qsTr("Vollbackup erforderlich"), message: reason}) } }
+    Dialog {
+        id: nfcConflict; objectName: "nfcConflictDialog"; parent: shell
+        anchors.centerIn: parent; modal: true; title: qsTr("NFC-Sitzung beenden?")
+        contentItem: ColumnLayout {
+            spacing: 16
+            WorkbenchLabel { Layout.preferredWidth: 400; Layout.fillWidth: true; wrapMode: Text.Wrap; text: qsTr("Für diese Geräteansicht muss der NFC-Lesetest beendet werden. Die Aufnahme bleibt gespeichert.") }
+            RowLayout {
+                spacing: 16
+                WorkbenchButton { objectName: "nfc-confirm-stop"; text: qsTr("Stoppen und wechseln"); onClicked: { nfcConflict.close(); Backend.nfc.stop() } }
+                WorkbenchButton { objectName: "nfc-keep-reading"; text: qsTr("Weiterlesen"); onClicked: { shell.pendingPage = ""; nfcConflict.close() } }
+            }
+        }
+        onRejected: shell.pendingPage = ""
+    }
+    Dialog {
+        id: nfcBlocked; parent: shell; anchors.centerIn: parent; modal: true
+        title: qsTr("Geräte-Stop nicht bestätigt")
+        standardButtons: Dialog.Ok
+        contentItem: WorkbenchLabel { width: 400; wrapMode: Text.Wrap; text: qsTr("Bitte den Flipper neu verbinden, bevor eine andere Geräteaktion beginnt. Die unterbrochene Aufnahme bleibt erhalten.") }
+    }
+    Connections {
+        target: Backend.nfc
+        function onChanged() {
+            if (!Backend.nfc.active && shell.pendingPage.length > 0) {
+                if (Backend.nfc.stopConfirmed && !Backend.nfc.blocked) shell.currentPage = shell.pendingPage
+                shell.pendingPage = ""
+            }
+            if (!Backend.nfc.active && shell.quitAfterNfcStop) shell.Window.window.close()
+        }
+    }
+    Component { id: nfcComponent; NfcPage {} }
     Component { id: dashboardComponent; DashboardPage {} }
     Component { id: settingsComponent; SettingsPage {} }
     Component { id: screenComponent; ScreenPage {} }

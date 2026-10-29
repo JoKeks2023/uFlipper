@@ -1,7 +1,9 @@
 #include "uireview.h"
+#include "nfcreview.h"
 #include <QQmlError>
 #include <QFileInfo>
 #include "workbench/workbenchdata.h"
+#include "workbench/nfccontroller.h"
 #include "application.h"
 #include "workbench/devicetelemetry.h"
 
@@ -49,6 +51,7 @@ Application::Application(int &argc, char **argv):
     initStyles();
     initFonts();
     initGUI();
+    if(!m_nfcReviewDirectory.isEmpty()) QTimer::singleShot(7000, this, [this] { runNfcReview(m_engine, m_backend, m_nfcReviewDirectory, m_nfcReviewCard); });
     if(!m_uiReviewDirectory.isEmpty()) QTimer::singleShot(7000, this, [this] { runUiReview(m_engine, m_uiReviewDirectory); });
 
     qCInfo(LOG_APP).noquote() << APP_NAME << "version" << APP_VERSION << "commit"
@@ -138,6 +141,9 @@ void Application::initCommandOptions()
     parser.addOption(smokeTest);
     const QCommandLineOption uiReview(QStringLiteral("review-ui"), QStringLiteral("Exercise native UI navigation and save screenshots"), QStringLiteral("directory"));
     parser.addOption(uiReview);
+    const QCommandLineOption nfcReview("review-nfc", "Exercise native NFC Start/Stop and saved sessions on a connected device", "directory");
+    const QCommandLineOption nfcCard("review-nfc-card", "Use the user-presented card during the NFC UI review");
+    parser.addOption(nfcReview);parser.addOption(nfcCard);
     const QCommandLineOption uiSource(QStringLiteral("ui-source"), QStringLiteral("Load a local development QML entry file"), QStringLiteral("file"));
     parser.addOption(uiSource);
     parser.addVersionOption();
@@ -147,6 +153,10 @@ void Application::initCommandOptions()
 
     if(parser.isSet(smokeTest)) QTimer::singleShot(3000, this, [] { QCoreApplication::quit(); });
     m_uiReviewDirectory = parser.value(uiReview);
+    m_nfcReviewDirectory = parser.value(nfcReview);
+    m_nfcReviewCard = parser.isSet(nfcCard);
+    if((!m_nfcReviewDirectory.isEmpty() && (!m_uiReviewDirectory.isEmpty() || parser.isSet(smokeTest))) ||
+       (m_nfcReviewCard && m_nfcReviewDirectory.isEmpty())) parser.showHelp(2);
     if (parser.isSet(uiSource)) {
         m_uiSourceFile = QFileInfo(parser.value(uiSource)).canonicalFilePath();
         if(m_uiSourceFile.isEmpty() || !QFileInfo(m_uiSourceFile).isFile()) parser.showHelp(2);
@@ -206,6 +216,7 @@ void Application::initQmlTypes()
 
     qmlRegisterUncreatableType<BackendError>("QFlipper", 1, 0, "BackendError", QStringLiteral("This class is only a enum container"));
     qmlRegisterUncreatableType<InputEvent>("QFlipper", 1, 0, "InputEvent", QStringLiteral("This class is only a enum container"));
+    qmlRegisterUncreatableType<NfcController>("QFlipper", 1, 0, "NfcController", QStringLiteral("NFC is owned by the backend"));
     qmlRegisterUncreatableType<WorkbenchData>("QFlipper", 1, 0, "WorkbenchData", QStringLiteral("Workbench data is owned by the backend"));
     qmlRegisterUncreatableType<DeviceTelemetry>("QFlipper", 1, 0, "DeviceTelemetry", QStringLiteral("Device telemetry is owned by the backend"));
     qmlRegisterUncreatableType<ApplicationBackend>("QFlipper", 1, 0, "ApplicationBackend", QStringLiteral("This class is meant to be created from c++"));

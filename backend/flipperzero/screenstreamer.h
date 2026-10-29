@@ -34,6 +34,7 @@ public:
     ScreenStreamer(QObject *parent = nullptr);
 
     void setDevice(FlipperZero *device);
+    void setDeviceAccessBlocked(bool blocked) { m_deviceAccessBlocked = blocked; }
     Q_INVOKABLE void sendInputEvent(InputEvent::Key key, InputEvent::Type type);
 
     bool isEnabled() const;
@@ -62,6 +63,7 @@ private:
     void setStreamState(StreamState newState);
     void setScreenFrame(const ScreenFrame &frame);
 
+    bool m_deviceAccessBlocked = false;
     StreamState m_streamState;
     ScreenFrame m_screenData;
     FlipperZero *m_device;

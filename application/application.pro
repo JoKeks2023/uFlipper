@@ -7,7 +7,7 @@ DESTDIR = $$OUT_PWD/..
 
 CONFIG += c++17
 
-SOURCES += uireview.cpp \
+SOURCES += nfcreview.cpp uireview.cpp \
         application.cpp \
         applicationupdater.cpp \
         applicationupdateregistry.cpp \
@@ -93,7 +93,7 @@ DEPENDPATH += \
     $$PWD/../dfu \
     $$PWD/../backend
 
-HEADERS += \
+HEADERS += nfcreview.h \
     application.h \
     applicationupdater.h \
     applicationupdateregistry.h \
@@ -124,3 +124,7 @@ unix:!macx {
     target.path = $$DESTDIR/$$NAME
     INSTALLS += target
 }
+
+CONFIG += link_pkgconfig
+PKGCONFIG += libsodium sqlite3
+LIBS += -L$$OUT_PWD/../ -luflipper-core

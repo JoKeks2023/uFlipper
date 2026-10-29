@@ -1,4 +1,5 @@
 #include "workbench/workbenchdata.h"
+#include "workbench/nfccontroller.h"
 #include "applicationbackend.h"
 #include "workbench/devicetelemetry.h"
 
@@ -50,10 +51,21 @@ ApplicationBackend::ApplicationBackend(QObject *parent):
     registerComparators();
 #endif
 
+    m_nfc = new NfcController(m_deviceRegistry, m_screenStreamer, [this] {
+        return (m_backendState == BackendState::Ready || m_backendState == BackendState::ScreenStreaming) && !m_fileManager->isBusy();
+    }, this);
+    connect(m_nfc, &NfcSession::recordingSaved, m_workbench, &WorkbenchData::refresh);
+    connect(m_nfc, &NfcSession::changed, this, [this] {
+        m_telemetry->setPollingEnabled(!m_nfc->blocked() && (m_backendState == BackendState::Ready || m_backendState == BackendState::ScreenStreaming));
+        m_fileManager->setDeviceAccessBlocked(m_nfc->blocked());
+        m_screenStreamer->setDeviceAccessBlocked(m_nfc->blocked());
+    });
+    connect(m_fileManager, &FileManager::isBusyChanged, m_nfc, &NfcController::conditionsChanged);
     initLibraryPaths();
     initConnections();
     connect(this, &ApplicationBackend::backendStateChanged, this, [this] {
-        m_telemetry->setPollingEnabled(m_backendState == BackendState::Ready || m_backendState == BackendState::ScreenStreaming);
+        m_telemetry->setPollingEnabled(!m_nfc->blocked() && (m_backendState == BackendState::Ready || m_backendState == BackendState::ScreenStreaming));
+        m_nfc->conditionsChanged();
     });
 }
 
@@ -158,6 +170,7 @@ void ApplicationBackend::mainAction()
 
 void ApplicationBackend::createBackup(const QUrl &backupUrl)
 {
+    if(m_nfc->blocked()) return;
     setBackendState(BackendState::CreatingBackup);
     device()->createBackup(backupUrl);
 }
@@ -171,6 +184,7 @@ void ApplicationBackend::restoreBackup(const QUrl &backupUrl)
 
 void ApplicationBackend::factoryReset()
 {
+    if(m_nfc->blocked()) return;
     setBackendState(BackendState::FactoryResetting);
     device()->factoryReset();
 }
@@ -184,6 +198,7 @@ void ApplicationBackend::installFirmware(const QUrl &fileUrl)
 
 void ApplicationBackend::installWirelessStack(const QUrl &fileUrl)
 {
+    if(m_nfc->blocked()) return;
     if(!requireFullBackupPreflight()) return;
     setBackendState(BackendState::InstallingWirelessStack);
     device()->installWirelessStack(fileUrl);
@@ -191,6 +206,7 @@ void ApplicationBackend::installWirelessStack(const QUrl &fileUrl)
 
 void ApplicationBackend::installFUS(const QUrl &fileUrl, uint32_t address)
 {
+    if(m_nfc->blocked()) return;
     if(!requireFullBackupPreflight()) return;
     setBackendState(BackendState::InstallingFUS);
     device()->installFUS(fileUrl, address);
@@ -198,6 +214,7 @@ void ApplicationBackend::installFUS(const QUrl &fileUrl, uint32_t address)
 
 void ApplicationBackend::startFullScreenStreaming()
 {
+    if(m_nfc->blocked()) return;
     setBackendState(BackendState::ScreenStreaming);
 }
 
@@ -422,6 +439,7 @@ void ApplicationBackend::registerMetaTypes()
     qRegisterMetaType<Flipper::Zero::StorageInfo>("Flipper::Zero::StorageInfo");
 
     qRegisterMetaType<Flipper::FlipperZero*>("Flipper::FlipperZero*");
+    qRegisterMetaType<NfcController*>("NfcController*");
     qRegisterMetaType<WorkbenchData*>("WorkbenchData*");
     qRegisterMetaType<DeviceTelemetry*>("DeviceTelemetry*");
     qRegisterMetaType<Flipper::Zero::DeviceState*>("Flipper::Zero::DeviceState*");

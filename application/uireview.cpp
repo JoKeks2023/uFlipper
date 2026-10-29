@@ -49,6 +49,7 @@ class Review : public QObject {
                   {"tool-tab-1", "infrared", "11_ir_controls"},
                   {"tool-tab-2", "infrared", "12_ir_library"},
                   {"tool-tab-0", "infrared", ""},
+                  {"nav-nfc", "nfc", "14_nfc"},
                   {"nav-settings", "settings", "03_settings"},
                   {"easy-mode-preference", "settings", ""},
                   {"easy-mode-preference", "settings", ""},

@@ -272,6 +272,7 @@ void FileManager::onBusyTimerTimeout()
 
 bool FileManager::checkDevice()
 {
+    if(m_deviceAccessBlocked) return false;
     bool ret = !m_device.isNull();
 
     if(!ret) {

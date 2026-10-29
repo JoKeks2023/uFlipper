@@ -73,6 +73,7 @@ void ScreenStreamer::setDevice(FlipperZero *device)
 
 void ScreenStreamer::sendInputEvent(InputEvent::Key key, InputEvent::Type type)
 {
+    if(m_deviceAccessBlocked || !m_device || !m_device->rpc()->isSessionUp()) return;
     auto *operation = m_device->rpc()->guiSendInput(key, type);
 
     connect(operation, &AbstractOperation::finished, this, [=]() {
@@ -118,6 +119,7 @@ const ScreenFrame &ScreenStreamer::screenFrame() const
 
 void ScreenStreamer::start()
 {
+    if(m_deviceAccessBlocked) return;
     if(!m_device) {
         return;
     } else if(m_streamState != StreamState::Stopped) {

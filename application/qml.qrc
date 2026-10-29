@@ -11,6 +11,7 @@
         <file>components/workbench/ScreenPage.qml</file>
         <file>components/workbench/SettingsPage.qml</file>
         <file>components/workbench/ToolPage.qml</file>
+        <file>components/workbench/NfcPage.qml</file>
         <file>components/workbench/WorkbenchButton.qml</file>
         <file>components/workbench/WorkbenchFact.qml</file>
         <file>components/workbench/WorkbenchHint.qml</file>

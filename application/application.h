@@ -74,7 +74,8 @@ private:
     ApplicationBackend m_backend;
     QQmlApplicationEngine m_engine;
 
-    QString m_uiReviewDirectory, m_uiSourceFile;
+    QString m_uiReviewDirectory, m_uiSourceFile, m_nfcReviewDirectory;
+    bool m_nfcReviewCard = false;
     bool m_isDeveloperMode;
     UpdateStatus m_updateStatus;
 };

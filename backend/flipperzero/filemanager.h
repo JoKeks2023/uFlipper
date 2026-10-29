@@ -42,6 +42,7 @@ public:
     FileManager(QObject *parent = nullptr);
 
     void setDevice(FlipperZero *device);
+    void setDeviceAccessBlocked(bool blocked) { m_deviceAccessBlocked = blocked; }
 
     // Methods to call from Qml
     Q_INVOKABLE void reset();
@@ -88,6 +89,7 @@ private slots:
 
 private:
     bool checkDevice();
+    bool m_deviceAccessBlocked = false;
 
     void setBusy(bool busy);
     void setNewDirectoryIndex(int newIndex);
