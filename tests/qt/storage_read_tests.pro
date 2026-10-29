@@ -1,12 +1,16 @@
 # Exercise the production encoder/decoder without building the desktop app.
-include(../../plugins/flipperproto0/flipperproto0.pro)
+QT = core
 TEMPLATE = app
 TARGET = uflipper_storage_read_tests
-DESTDIR = $$OUT_PWD
-CONFIG -= plugin app_bundle
-CONFIG += console
-LIBS -= -L$$OUT_PWD/../../3rdparty/ -l3rdparty
-INCLUDEPATH += $$PWD/../../backend $$PWD/../../plugins/flipperproto0
+CONFIG += console c++17
+CONFIG -= app_bundle
+DEFINES += PB_ENABLE_MALLOC
+INCLUDEPATH += $$PWD/../../backend $$PWD/../../plugins/flipperproto0 \
+    $$PWD/../../plugins/protobufinterface $$PWD/../../3rdparty/nanopb
+SOURCES += $$files($$PWD/../../plugins/flipperproto0/*.cpp) \
+    $$files($$PWD/../../plugins/flipperproto0/messages/*.c)
+HEADERS += $$files($$PWD/../../plugins/flipperproto0/*.h)
+macx: QMAKE_MACOSX_DEPLOYMENT_TARGET = 13.0
 SOURCES += storage_read_tests.cpp \
     $$PWD/../../backend/abstractoperation.cpp \
     $$PWD/../../backend/failable.cpp \
