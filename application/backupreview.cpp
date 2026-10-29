@@ -53,6 +53,7 @@ class Review:public QObject {
             else if(step_==4 && !cancel_ && !b->active()) {require(b->verified(),qPrintable("Full backup failed: "+b->error()));step_=5;}
             else if(step_==5 && !b->active()) {
                 require(cancel_?b->state()=="cancelled":b->verified(),"Incorrect backup final state");
+                require(!cancel_ || !b->canStart(),"Cancelled transport became available without a fresh handshake");
                 require(warnings_.isEmpty(),qPrintable(warnings_.join("\n")));screenshot("04_backup_result");
                 const QJsonObject result{{"success",true},{"cancelTest",cancel_},{"clicks",clicks_},{"backupId",id_},
                     {"state",b->state()},{"verified",b->verified()},{"bytesDone",double(b->bytesDone())},{"bytesTotal",double(b->bytesTotal())},

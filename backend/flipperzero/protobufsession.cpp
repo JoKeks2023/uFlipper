@@ -337,6 +337,10 @@ void ProtobufSession::onSerialPortErrorOccured()
 
 void ProtobufSession::processQueue()
 {
+    // A completion callback can already be queued when doStopSession closes USB.
+    // It must not resurrect a stopped session as Idle or start a stale operation.
+    if(!isSessionUp()) return;
+
     if(m_queue.isEmpty()) {
         setSessionState(Idle);
         return;

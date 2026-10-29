@@ -12,8 +12,8 @@ WorkbenchSplit {
         verifying: qsTr("Lokale Sicherung prüfen"), verified: qsTr("Vollbackup geprüft"), stopping: qsTr("Verbindung schließen"),
         cancelled: qsTr("Abgebrochen · unvollständig"), interrupted: qsTr("Unterbrochen · unvollständig"), uncertain: qsTr("Geräteverbindung ungeklärt")})
     function size(bytes) { return bytes >= 1048576 ? (bytes / 1048576).toFixed(1) + " MiB" : Math.round(bytes / 1024) + " KiB" }
-    WorkbenchTitle { title: qsTr("Backups"); subtitle: qsTr("Interner Speicher und gesamte SD-Karte – mit Prüfung von Inhalt und Vollständigkeit.") }
-    WorkbenchHint { text: qsTr("Die Sicherung liest alle über die Geräteschnittstelle erreichbaren Dateien einschließlich Apps, Ressourcen und leerer Ordner. Firmwareänderungen und Wiederherstellung bleiben bis zum geprüften automatischen Gesamtablauf angehalten.") }
+    WorkbenchTitle { title: qsTr("Backups"); subtitle: qsTr("Interne Daten (/int) und gesamte SD-Karte (/ext) – mit Inhaltsprüfung.") }
+    WorkbenchHint { text: qsTr("Die Sicherung liest alle über die Geräteschnittstelle erreichbaren Dateien einschließlich Apps, Ressourcen und leerer Ordner. Momentum kann /int auf die SD-Karte umleiten; ein physisches Flash-Abbild ist nicht enthalten. Firmwareänderungen und Wiederherstellung bleiben bis zum geprüften automatischen Gesamtablauf angehalten.") }
     RowLayout {
         Layout.fillWidth: true; spacing: 16
         WorkbenchButton { objectName: "backup-start"; text: qsTr("Vollbackup erstellen"); primary: true; enabled: session.canStart && !Backend.nfc.blocked; onClicked: session.start() }

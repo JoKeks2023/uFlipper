@@ -47,7 +47,8 @@ void BackupController::start() {
     begin({{"deviceName",info.name},{"firmwareVersion",info.firmware.version},{"firmwareCommit",info.firmware.commit},
            {"hardwareTarget",info.hardware.target},{"rpcMajor",info.protobuf.versionMajor},{"rpcMinor",info.protobuf.versionMinor},
            {"startedAt",QDateTime::currentDateTimeUtc().toString(Qt::ISODateWithMs)},
-           {"contentVerification","remote-md5-before-and-after-inventory;local-sha256"}});
+           {"contentVerification","remote-md5-before-and-after-inventory;local-sha256"},
+           {"storageScope","RPC /int and /ext; firmware aliases retained; no raw flash image"}});
 }
 void BackupController::dispatch(int command,const QString &path,quint64 token) {
     if(!device_ || !device_->rpc()->isSessionUp()) {failed(token,tr("Die Geräteverbindung ist nicht verfügbar."));return;}

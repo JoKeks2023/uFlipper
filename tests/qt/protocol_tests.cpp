@@ -1,6 +1,9 @@
 #include "appresponseinterface.h"
 #include "applicationbackend.h"
 #include "logger.h"
+#include "flipperzero/protobufsession.h"
+#include <QSerialPortInfo>
+#include <QTimer>
 #include "flipperzero/rpc/storagereadoperation.h"
 #include <QBuffer>
 #include <cmath>
@@ -46,6 +49,12 @@ int main(int argc, char **argv) {
         require(!NfcController::approvedHelperTarget("e1784e74", "7") &&
                 !NfcController::approvedHelperTarget("other-firmware", "f7"),
                 "Unapproved firmware/target accepted for helper");
+        Flipper::Zero::ProtobufSession stopped(QSerialPortInfo{});
+        QTimer::singleShot(0,&stopped,[&] {
+            require(QMetaObject::invokeMethod(&stopped,"processQueue",Qt::DirectConnection),"Missing queue slot");
+        });
+        QCoreApplication::processEvents();
+        require(!stopped.isSessionUp(),"Queued callback reopened a stopped RPC session");
         ApplicationBackend guarded;
         int blocked=0;
         QObject::connect(&guarded,&ApplicationBackend::operationBlocked,[&](const QString& why) {

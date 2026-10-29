@@ -11,3 +11,6 @@ GitHub [#8](https://github.com/JoKeks2023/uFlipper/issues/8), In Progress; leere
 - Bestehende Firmware-/Restore-Sperre bleibt: ein manuelles Vollbackup ersetzt keinen frischen, automatischen Sicherheitsablauf samt Kompatibilitätsprüfung.
 
 Reader-Installation, fehlende NDEF-Testkarte und verschobener IR-Test werden nicht zum pauschalen Stopp der übrigen Umsetzung. Website-Arbeit unverändert.
+
+- Abbruchbedingter RPC-Altfehler [#10](https://github.com/JoKeks2023/uFlipper/issues/10): bereits eingeplanter Queue-Callback darf einen geschlossenen Transport nicht wieder als Idle markieren. Guard und reproduzierbarer Callback-Test ergänzt.
+- `/int` kann bei Momentum auf SD liegen (bereits unter T-0004 belegt). Umfang in Oberfläche/Metadaten ausdrücklich auf RPC-Dateibereiche begrenzt, kein Rohabbild der physischen Firmware behauptet.

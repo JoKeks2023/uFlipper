@@ -21,6 +21,7 @@
 
 #include "flipperzero/flipperzero.h"
 #include "flipperzero/devicestate.h"
+#include "flipperzero/protobufsession.h"
 #include "flipperzero/assetmanifest.h"
 #include "flipperzero/screenstreamer.h"
 
@@ -63,7 +64,7 @@ ApplicationBackend::ApplicationBackend(QObject *parent):
     connect(m_backup, &BackupSession::saved, m_workbench, &WorkbenchData::refresh);
     m_workbench->refresh(); // Include startup recovery of abandoned backups.
     const auto accessChanged = [this] {
-        const bool blocked = m_nfc->blocked() || m_backup->blocked();
+        const bool blocked = m_nfc->blocked() || m_backup->blocked() || !device() || !device()->rpc()->isSessionUp();
         m_telemetry->setPollingEnabled(!blocked && (m_backendState == BackendState::Ready || m_backendState == BackendState::ScreenStreaming));
         m_fileManager->setDeviceAccessBlocked(blocked);
         m_screenStreamer->setDeviceAccessBlocked(blocked);
