@@ -45,3 +45,11 @@ Both probes persist bounded raw RPC traces in the recording catalog. Backup payl
 After the native app has finished a backup, run `python3 scripts/backup/verify_backup.py BACKUP_DIRECTORY --expect-full` from the repository root. This read-only development check independently compares catalog and manifest, hashes each payload with bounded buffers and checks both root confirmations. It never opens the device or changes backup state. A test-subset backup is explicitly rejected by `--expect-full`.
 
 Remote comparisons detect changes across the two verification passes; the device interface does not offer an atomic filesystem snapshot. Changes during transfer cause an interrupted backup rather than a verified result.
+
+## Data-key envelope format 1 (isolated core)
+
+`KeyEnvelope` wraps a random 32-byte file-data key independently of its password or random recovery key. The 133-byte envelope contains an 85-byte authenticated header followed by 32 encrypted key bytes and a 16-byte authentication tag (XChaCha20-Poly1305). Header offsets: magic `UFKEY\0\0\1` at 0, method at 8, data-key ID at 9, big-endian Argon2 operations at 25 (8 bytes), memory at 33 (8), algorithm at 41 (4), salt at 45 (16), nonce at 61 (24). Method 1 uses Argon2id13; method 2 has zero KDF fields/salt and uses a separate random recovery key.
+
+Created password envelopes use 2 operations and 64 MiB. Reading rejects unknown versions/methods/algorithms, trailing/truncated data and KDF requests outside 2–6 operations / 64–256 MiB before allocating KDF memory. `inspect` returns untrusted metadata; only successful `unlock` authenticates it. The expected data-key ID must be supplied independently. Unwrapped keys use a move-only wiping owner.
+
+Password rewrapping retains the data key, so existing file ciphertext stays valid. An old retained envelope remains usable with its old secret; revoking that access requires a new data key and re-encrypting affected files. Cloud catalog revisions, OS credential storage and product configuration are still separate work. No cloud connection is activated by this module.
