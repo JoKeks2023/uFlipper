@@ -1,0 +1,82 @@
+{
+  "format": 1,
+  "started_utc": "2026-10-29T11:46:12.534000+00:00",
+  "ended_utc": "2026-10-29T11:46:32.434000+00:00",
+  "platform": {
+    "os": "macOS",
+    "version": "27.0.1",
+    "architecture": "arm64"
+  },
+  "device_firmware_commit": "e1784e74",
+  "counterpart": "User-provided iPhone with Apple Pay authorised by the user",
+  "test_result": {
+    "recording_id": "92a914a1d85fc2ea8e13e9831dfb1fb0",
+    "helper": "uf-nfc/0.1.0;iso14443-4a;short-apdu;max=240",
+    "started": true,
+    "info_verified": true,
+    "stop_confirmed": true,
+    "rpc_closed": true,
+    "recording_verified": true,
+    "card_activated": true,
+    "apdu_round_trips": 2,
+    "error": "",
+    "dependent_apdus_proven": false,
+    "pcsc_verified": false,
+    "ppse_results": [
+      {
+        "status_word": "9000",
+        "response_bytes": 46
+      },
+      {
+        "status_word": "9000",
+        "response_bytes": 46
+      }
+    ]
+  },
+  "default_lifecycle_regression": {
+    "recording_id": "03573c049396985c02e7f1b34f475ca2",
+    "helper": "uf-nfc/0.1.0;iso14443-4a;short-apdu;max=240",
+    "started": true,
+    "info_verified": true,
+    "stop_confirmed": true,
+    "rpc_closed": true,
+    "recording_verified": true,
+    "card_activated": false,
+    "apdu_round_trips": 0,
+    "error": "",
+    "dependent_apdus_proven": false,
+    "pcsc_verified": false,
+    "ppse_results": []
+  },
+  "capture": {
+    "state": "completed",
+    "bytes": 12535,
+    "sha256": "15552ace81fbb055c587393252cd5eb37981d8914e82241d0be311b105d8bf46",
+    "gap_records": 0,
+    "raw_data_committed": false
+  },
+  "fixed_ppse_command_count": 2,
+  "no_activation_between_apdus": true,
+  "core_tests": {
+    "core_contract": "passed",
+    "serial_contract": "passed"
+  },
+  "limits": [
+    "Two identical SELECT PPSE operations do not prove dependent card state",
+    "No NDEF test performed",
+    "No PC/SC integration or independent client tested",
+    "No helper installation or firmware change"
+  ],
+  "helper_commands": {
+    "info": 1,
+    "activation_attempts": 159,
+    "transceive": 2,
+    "deactivate": 1,
+    "final_opcodes": [
+      3,
+      3,
+      4
+    ]
+  },
+  "tested_probe_binary_sha256": "724bf70e629223cea28b3c4b756cfb82cf7a059a9b40e65046b53634d7223214"
+}

@@ -90,3 +90,7 @@ Aktueller Stand siehe die datierten Nachweise weiter unten. Eigenständige Mac-P
 ## Freigegebene Oberfläche · Stand 28.10.2026
 
 Die frühere ausstehende Designfreigabe und der eigenständige Mac-Paketstart sind überholt: Nutzerfreigabe am 27.10., Umsetzung und native Mac-/Linux-Prüfung unter [T-0004](../T-0004_approved-ui/05_validation_report.md). Nach dem getrennt erhaltenen Offline-Lauf wurde das finale Bundle dort inzwischen auch mit echtem Flipper geprüft: Dashboardwerte und Bildschirmstream bestätigt. Physisches Abziehen/Wiederverbinden, Tasten und Linux-Hardware noch offen. Gemeinsamer Verbindungsbesitzer, produktive Live-UI und vollständige Kernabnahme bleiben offen.
+
+## 29.10.2026 · Ergänzender Apple-Pay-Test
+
+Auf ausdrücklichen Nutzerwunsch das eigene Apple-Pay-iPhone als Gegenstelle getestet: ISO14443-4A-Aktivierung und zwei PPSE-SELECT-Antworten mit je 46 Bytes/`9000`, danach bestätigtes Deaktivieren, AppExit/AppClosed und RPC-Ende; Aufnahmeintegrität geprüft. Unveränderter bereits freigegebener Helfer 0.1.0. Vollständiger Befund unter [T-0007](../T-0007_nfc-apple-pay/05_validation_report.md). Zwei gleiche SELECTs ersetzen weder den Nachweis abhängiger Kommandos noch PC/SC-/NDEF-Abnahme.
