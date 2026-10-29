@@ -7,11 +7,14 @@
 #include <QVariantList>
 #include <QVariantMap>
 #include <memory>
+#include "../../workbench/core/ndef.h"
 
 // Protocol/session state is independent of the Qt serial transport. Commands use
 // the existing application connection; tests can supply acknowledgements directly.
 class NfcSession : public QObject {
     Q_OBJECT
+    Q_PROPERTY(QString mode READ mode NOTIFY changed)
+    Q_PROPERTY(QVariantList ndefRecords READ ndefRecords NOTIFY changed)
     Q_PROPERTY(bool active READ active NOTIFY changed)
     Q_PROPERTY(bool available READ available NOTIFY changed)
     Q_PROPERTY(bool blocked READ blocked NOTIFY changed)
@@ -27,6 +30,11 @@ class NfcSession : public QObject {
     Q_ENUM(Command)
     explicit NfcSession(const QString &root, QObject *parent = nullptr);
     ~NfcSession() override;
+    QString mode() const { return mode_; }
+    QVariantList ndefRecords() const { return ndefRecords_; }
+    bool readerReady() const { return active_ && mode_ == "reader" && state_ == "ready" && pending_ == -1; }
+    bool readerTransmit(const QByteArray &apdu);
+    bool readerPower(bool on, bool reset = false);
     bool active() const { return active_; }
     bool available() const { return online_ && !active_ && !uncertain_; }
     bool blocked() const { return active_ || uncertain_; }
@@ -39,7 +47,7 @@ class NfcSession : public QObject {
     QVariantList responses() const { return responses_; }
     quint64 commandToken() const { return token_; }
     void setConnection(const QString &identity, bool online);
-    bool begin(const QVariantMap &metadata);
+    bool begin(const QVariantMap &metadata, const QString &mode = "ppse");
     void acknowledge(quint64 token, const QString &error = {});
     void helperState(bool started);
     void receive(const QByteArray &frame);
@@ -53,6 +61,7 @@ class NfcSession : public QObject {
     void changed();
     void commandRequested(int command, const QByteArray &frame, quint64 token);
     void recordingSaved();
+    void readerResponse(const QByteArray &response);
   private:
     void issue(int command, const QByteArray &payload = {});
     void advance();
@@ -60,10 +69,14 @@ class NfcSession : public QObject {
     void finalize(bool stopped);
     void record(const QByteArray &bytes, UFlipper::RecordType type);
     void readCard(const QByteArray &payload);
+    void readNdefRecords();
     void addResponse(const QByteArray &payload, int sequence, quint64 monotonicNs = 0);
     QString root_, identity_, recordingId_, job_, state_ = QStringLiteral("idle"), error_;
     QVariantMap card_;
-    QVariantList responses_;
+    QVariantList responses_, ndefRecords_;
+    QString mode_ = "ppse", responseLabel_;
+    std::unique_ptr<UFlipper::Type4NdefReader> ndef_;
+    bool readComplete_ = false, readerPowerOn_ = true;
     UFlipper::OperationCoordinator jobs_;
     std::unique_ptr<UFlipper::CaptureStore> store_;
     QTimer deadline_, retry_;

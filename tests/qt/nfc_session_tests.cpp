@@ -1,4 +1,9 @@
 #include "workbench/nfcsession.h"
+#include "workbench/viccbridge.h"
+#include <QTcpSocket>
+#include <QHostAddress>
+#include <QElapsedTimer>
+#include <QThread>
 #include <QCoreApplication>
 #include <QFile>
 #include <QEventLoop>
@@ -7,6 +12,7 @@
 #include <QVariantMap>
 #include <stdexcept>
 #include <vector>
+#include <functional>
 namespace {
 void require(bool value, const char *reason) { if (!value) throw std::runtime_error(reason); }
 struct Sent { int command; QByteArray frame; quint64 token; };
@@ -123,6 +129,76 @@ void responseAndStopTimeout(const QString &root) {
     require(!h.session.active() && h.session.blocked() && !h.session.stopConfirmed() && h.session.recordingVerified(),
             "Stop timeout released hardware or lost interrupted recording");
 }
+void ndefReadAndReplay(const QString &root) {
+    Harness h(root);require(h.session.begin({},"ndef"),"NDEF start failed");h.info();
+    h.ack();h.reply(QByteArray::fromHex("0401020304f000"));
+    QByteArray selected,cc=QByteArray::fromHex("000f20008000ff0406e1047fff00ff"),message=QByteArray::fromHex("d101055402656e4869");
+    QByteArray file=QByteArray::fromHex("0009")+message;bool application=false;
+    int commands=0;
+    while(h.current().command==NfcSession::Transceive) {
+        require(++commands<20,"Unbounded NDEF read");
+        const auto apdu=h.current().frame.mid(8);QByteArray response;
+        if(apdu==QByteArray::fromHex("00a4040007d276000085010100"))application=true;
+        else {
+            require(application,"NDEF file access before application selection");
+            if(apdu.startsWith(QByteArray::fromHex("00a4000c02")))selected=apdu.right(2);
+            else {
+                require(apdu.size()==5 && apdu[1]==char(0xb0),"NDEF used a write or unknown command");
+                require(selected==QByteArray::fromHex("e103") || selected==QByteArray::fromHex("e104"),"NDEF read without selected file");
+                const auto &data=selected==QByteArray::fromHex("e103")?cc:file;
+                const int offset=(uint8_t(apdu[2])<<8)|uint8_t(apdu[3]),count=uint8_t(apdu[4]);
+                require(offset+count<=data.size(),"NDEF read outside selected file");response=data.mid(offset,count);
+            }
+        }
+        h.ack();h.reply(response+QByteArray::fromHex("9000"));
+    }
+    require(h.current().command==NfcSession::Deactivate && h.session.ndefRecords().size()==1,"NDEF did not finish with parsed records");
+    require(h.session.ndefRecords()[0].toMap().value("content")=="Hi","NDEF text not decoded");
+    h.ack();h.reply({});h.stopped();require(h.session.state()=="completed","NDEF completion not reported");
+    const auto original=h.session.responses();const auto id=h.session.recordingId();h.session.openRecording(id);
+    require(h.session.recordingVerified() && h.session.mode()=="ndef" && h.session.responses()==original && h.session.ndefRecords()[0].toMap().value("content")=="Hi","NDEF replay lost records or original times");
+}
+void readerSession(const QString &root) {
+    Harness h(root);require(h.session.begin({},"reader"),"Reader start failed");h.info();h.ack();h.reply(QByteArray::fromHex("0401020304f000"));
+    require(h.session.readerReady() && h.current().command==NfcSession::Activate,"Reader sent an unsolicited APDU");
+    QByteArray delivered;QObject::connect(&h.session,&NfcSession::readerResponse,[&](const QByteArray &b){delivered=b;});
+    require(h.session.readerTransmit(QByteArray::fromHex("00a4040000")),"Reader APDU not accepted");
+    require(!h.session.readerTransmit(QByteArray::fromHex("00b0000002")),"Concurrent reader APDU accepted");
+    h.reply(QByteArray::fromHex("6a82"));require(delivered.isEmpty(),"Reader reply bypassed transport ACK");h.ack();
+    require(delivered==QByteArray::fromHex("6a82") && h.session.readerReady(),"Card status was fabricated or treated as transport failure");
+    require(h.session.readerPower(false),"Reader power off rejected");h.ack();h.reply({});
+    require(h.session.state()=="powered-off" && h.session.card().isEmpty(),"Power off retained card state");
+    require(h.session.readerPower(true),"Reader power on rejected");h.ack();h.reply(QByteArray::fromHex("0401020304f000"));
+    require(h.session.readerPower(true,true),"Reader reset rejected");h.ack();h.reply({});
+    require(h.current().command==NfcSession::Activate,"Reset did not reactivate card");h.ack();h.reply(QByteArray::fromHex("0401020304f000"));
+    h.session.stop();h.stopped();require(h.session.recordingVerified(),"Reader recording lost");
+    h.session.openRecording(h.session.recordingId());require(h.session.mode()=="reader" && h.session.responses()[0].toMap().value("statusWord")=="6A82","Reader replay did not preserve card status");
+}
+void spinUntil(const std::function<bool()> &done) {
+    QElapsedTimer elapsed;elapsed.start();
+    while(!done() && elapsed.elapsed()<2000) {QCoreApplication::processEvents();QThread::msleep(1);}
+    require(done(),"Loopback reader contract timed out");
+}
+QByteArray readFrame(QTcpSocket &socket) {
+    spinUntil([&]{return socket.bytesAvailable()>=2;});const auto size=socket.read(2);
+    const auto n=(uint8_t(size[0])<<8)|uint8_t(size[1]);spinUntil([&]{return socket.bytesAvailable()>=n;});return socket.read(n);
+}
+QByteArray framed(const QByteArray &bytes) {QByteArray result;result.append(char(bytes.size()>>8));result.append(char(bytes.size()));return result+bytes;}
+void readerLoopback(const QString &root) {
+    Harness h(root);h.session.begin({},"reader");h.info();h.ack();h.reply(QByteArray::fromHex("0401020304f000"));
+    ViccBridge bridge(h.session);require(bridge.start(0),"Cannot bind local reader contract endpoint");
+    QTcpSocket socket;socket.connectToHost(QHostAddress::LocalHost,bridge.port());spinUntil([&]{return socket.state()==QAbstractSocket::ConnectedState;});
+    // Driver contract peer is a test fixture, not an independent PC/SC proof.
+    socket.write(QByteArray::fromHex("00"));socket.flush();QCoreApplication::processEvents();
+    socket.write(QByteArray::fromHex("0104"));
+    require(readFrame(socket)==QByteArray::fromHex("3b800181"),"Fragmented VICC ATR request failed");
+    const auto apdu=QByteArray::fromHex("00a4040000");socket.write(framed(apdu));
+    spinUntil([&]{return h.current().command==NfcSession::Transceive;});require(h.current().frame.mid(8)==apdu,"Bridge changed external APDU");
+    h.ack();h.reply(QByteArray::fromHex("6a82"));require(readFrame(socket)==QByteArray::fromHex("6a82"),"Bridge did not pass original response");
+    socket.write(QByteArray::fromHex("0101"));
+    spinUntil([&]{return h.current().command==NfcSession::ExitHelper;});
+    require(!bridge.error().isEmpty(),"Oversized reader frame was accepted");h.stopped();
+}
 void unavailableRecording(const QString &root) {
     QFile file(root);require(file.open(QIODevice::WriteOnly),"Cannot create fixture file");file.write("file");file.close();
     Harness h(root);
@@ -133,6 +209,9 @@ int main(int argc,char **argv) {
     QCoreApplication app(argc,argv);
     try {
         QTemporaryDir tmp;require(tmp.isValid(),"No fixture folder");
+        ndefReadAndReplay(tmp.path()+"/ndef");
+        readerSession(tmp.path()+"/reader");
+        readerLoopback(tmp.path()+"/loopback");
         unchangedConnectionIsNotAnEvent(tmp.path()+"/connection");
         completedAndReopened(tmp.path()+"/complete");
         stopAndStaleAck(tmp.path()+"/stop");

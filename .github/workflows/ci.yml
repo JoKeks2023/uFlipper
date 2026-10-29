@@ -103,7 +103,7 @@ jobs:
           make -j2 main.o
           cd "$RUNNER_TEMP/telemetry-compile"
           qmake "$GITHUB_WORKSPACE/backend/backend.pro"
-          make -j2 devicetelemetry.o powersnapshot.o workbenchdata.o nfcsession.o nfccontroller.o applicationbackend.o preferences.o logger.o
+          make -j2 viccbridge.o devicetelemetry.o powersnapshot.o workbenchdata.o nfcsession.o nfccontroller.o applicationbackend.o preferences.o logger.o
           cd "$RUNNER_TEMP/ui-compile"
           qmake "$GITHUB_WORKSPACE/application/application.pro"
           make -j4 qrc_qmake_qmake_qm_files.cpp
@@ -180,4 +180,21 @@ jobs:
             build_mac/uFlipper.app.zip
             build/uFlipper-linux-test.tar.gz
           if-no-files-found: error
+          retention-days: 14
+
+  mac-reader:
+    runs-on: macos-15-intel
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build experimental local reader component without installing it
+        run: python3 scripts/reader/build_macos_reader.py "$RUNNER_TEMP/mac-reader"
+      - name: Reader component contract, no OS registration
+        run: python3 scripts/reader/test_driver_contract.py "$RUNNER_TEMP/mac-reader"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: uFlipper-mac-reader-experimental
+          path: |
+            ${{ runner.temp }}/mac-reader/uFlipperReader-test.zip
+            ${{ runner.temp }}/mac-reader/manifest.json
+            ${{ runner.temp }}/mac-reader/contract-result.json
           retention-days: 14

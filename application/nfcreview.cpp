@@ -24,8 +24,8 @@ QQuickItem *findItem(QQuickItem *item, const QString &name) {
 }
 class NfcReview : public QObject {
  public:
-    NfcReview(QQmlApplicationEngine &engine, ApplicationBackend &backend, QString directory, bool card)
-        : QObject(&engine), backend_(backend), directory_(std::move(directory)), card_(card) {
+    NfcReview(QQmlApplicationEngine &engine, ApplicationBackend &backend, QString directory, bool card, QString mode)
+        : QObject(&engine), backend_(backend), directory_(std::move(directory)), mode_(std::move(mode)), card_(card) {
         window_=qobject_cast<QQuickWindow *>(engine.rootObjects().value(0));
         if (!window_ || !QDir().mkpath(directory_)) throw std::runtime_error("Cannot initialize NFC UI review");
         connect(&engine,&QQmlApplicationEngine::warnings,this,[this](const QList<QQmlError> &warnings) {
@@ -65,6 +65,14 @@ class NfcReview : public QObject {
             require(QDateTime::currentMSecsSinceEpoch()<deadline_,"NFC review timed out");
             auto *nfc=backend_.nfc();
             if(step_==0 && nfc->canStart()) { click("nav-nfc");++step_; }
+            else if(step_==1 && !modeSelected_ && mode_!="ppse") {
+                click("nfc-mode");
+                QTest::keyClick(window_,Qt::Key_Down);
+                if(mode_=="reader")QTest::keyClick(window_,Qt::Key_Down);
+                QTest::keyClick(window_,Qt::Key_Return);
+                require(findItem(window_->contentItem(),"nfcPage")->property("selectedMode").toString()==mode_,"Mode dropdown did not select requested NFC mode");
+                modeSelected_=true;
+            }
             else if(step_==1 && findItem(window_->contentItem(),"nfc-start")) { screenshot("01_nfc_idle");click("nfc-start");++step_; }
             else if(step_==2 && card_ && !nfc->active()) {
                 require(nfc->state()=="completed" && nfc->responses().size()==2 && nfc->stopConfirmed() && nfc->recordingVerified(),"Card read did not complete with verified recording and Stop");
@@ -79,7 +87,7 @@ class NfcReview : public QObject {
             else if(step_==7) {
                 require(nfc->state()=="saved" && nfc->recordingVerified(),"Saved session did not reopen");
                 require(errors_.isEmpty(),"QML warnings during NFC review");screenshot("04_nfc_saved");
-                QJsonObject result{{"success",true},{"cardTest",card_},{"clicks",clicks_},{"recordingId",recording_},
+                QJsonObject result{{"success",true},{"cardTest",card_},{"mode",mode_},{"clicks",clicks_},{"recordingId",recording_},
                     {"responseCount",nfc->responses().size()},{"recordingVerified",true},{"qmlWarnings",errors_.size()},
                     {"finishedAt",QDateTime::currentDateTimeUtc().toString(Qt::ISODateWithMs)}};
                 QFile file(directory_+"/result.json");require(file.open(QIODevice::WriteOnly),"Cannot save result");file.write(QJsonDocument(result).toJson());
@@ -95,11 +103,11 @@ class NfcReview : public QObject {
         }
         busy_=false;
     }
-    ApplicationBackend &backend_;QString directory_,recording_;QStringList errors_;QQuickWindow *window_=nullptr;
-    QTimer timer_;qint64 deadline_;int step_=0,clicks_=0;bool card_=false,busy_=false;
+    ApplicationBackend &backend_;QString directory_,recording_,mode_;QStringList errors_;QQuickWindow *window_=nullptr;
+    QTimer timer_;qint64 deadline_;int step_=0,clicks_=0;bool card_=false,busy_=false,modeSelected_=false;
 };
 }
-void runNfcReview(QQmlApplicationEngine &engine,ApplicationBackend &backend,const QString &directory,bool card) {
-    try {new NfcReview(engine,backend,directory,card);}
+void runNfcReview(QQmlApplicationEngine &engine,ApplicationBackend &backend,const QString &directory,bool card,const QString &mode) {
+    try {new NfcReview(engine,backend,directory,card,mode);}
     catch(const std::exception &e) {qCritical("NFC review: %s",e.what());QCoreApplication::exit(1);}
 }

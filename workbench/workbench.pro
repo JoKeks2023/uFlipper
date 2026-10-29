@@ -8,3 +8,6 @@ INCLUDEPATH += $$PWD/core
 SOURCES += core/operation_coordinator.cpp core/capture_store.cpp core/file_crypto.cpp core/backup_store.cpp core/serial_console.cpp core/receive_status.cpp
 HEADERS += core/operation_coordinator.h core/capture_store.h core/file_crypto.h core/io_utils.h core/sqlite_utils.h core/backup_store.h core/serial_console.h core/receive_status.h
 macx: QMAKE_MACOSX_DEPLOYMENT_TARGET = 13.0
+
+SOURCES += core/ndef.cpp
+HEADERS += core/ndef.h

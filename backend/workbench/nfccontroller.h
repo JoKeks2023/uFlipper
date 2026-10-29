@@ -4,15 +4,18 @@
 #include <functional>
 namespace Flipper { class DeviceRegistry; class FlipperZero; namespace Zero { class ScreenStreamer; } }
 class AbstractOperation;
+class ViccBridge;
 class NfcController : public NfcSession {
     Q_OBJECT
+    Q_PROPERTY(QString readerStatus READ readerStatus NOTIFY changed)
     Q_PROPERTY(bool canStart READ canStart NOTIFY changed)
   public:
     NfcController(Flipper::DeviceRegistry *registry, Flipper::Zero::ScreenStreamer *screen,
                   std::function<bool()> idle, QObject *parent = nullptr);
     bool canStart() const;
     static bool approvedHelperTarget(const QString &commit, const QString &target);
-    Q_INVOKABLE void start();
+    Q_INVOKABLE void start(const QString &mode = "ppse");
+    QString readerStatus() const;
     void conditionsChanged() { emit changed(); }
   private:
     void attach();
@@ -26,4 +29,5 @@ class NfcController : public NfcSession {
     QPointer<Flipper::FlipperZero> device_;
     QList<QMetaObject::Connection> connections_;
     bool helperStartSent_ = false;
+    ViccBridge *reader_;
 };

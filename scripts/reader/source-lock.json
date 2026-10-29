@@ -1,0 +1,42 @@
+{
+  "vsmartcard_commit": "93286a90d2411120ae17299f9902e1fdd8954185",
+  "pcsc_headers_commit": "8926ecb11ece8f1d2faf9296117869d366ecc6dc",
+  "files": {
+    "COPYING": {
+      "url": "https://raw.githubusercontent.com/frankmorgner/vsmartcard/93286a90d2411120ae17299f9902e1fdd8954185/virtualsmartcard/COPYING",
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    "headers/reader.h": {
+      "url": "https://raw.githubusercontent.com/LudovicRousseau/PCSC/8926ecb11ece8f1d2faf9296117869d366ecc6dc/src/PCSC/reader.h",
+      "sha256": "46ca2757a4ccb75b11f16503ef274aed4b70a06e257e71db2efe9d81ce9967e5"
+    },
+    "headers/ifdhandler.h": {
+      "url": "https://raw.githubusercontent.com/LudovicRousseau/PCSC/8926ecb11ece8f1d2faf9296117869d366ecc6dc/src/PCSC/ifdhandler.h",
+      "sha256": "da95805e71c8d2c95eaa5fabb98efd1601b76181f28709d0a6e8b1cf6ee0afd4"
+    },
+    "src/ifd-vpcd/ifd-vpcd.c": {
+      "url": "https://raw.githubusercontent.com/frankmorgner/vsmartcard/93286a90d2411120ae17299f9902e1fdd8954185/virtualsmartcard/src/ifd-vpcd/ifd-vpcd.c",
+      "sha256": "588225fcfd27ce851ba5fa826b4c8edf7d85c1ff3fad716cec19bbf04e1abe70"
+    },
+    "src/ifd-vpcd/ifd-vpcd.h": {
+      "url": "https://raw.githubusercontent.com/frankmorgner/vsmartcard/93286a90d2411120ae17299f9902e1fdd8954185/virtualsmartcard/src/ifd-vpcd/ifd-vpcd.h",
+      "sha256": "23a17452725c5f76ef10623899c5ea55a8a7b1e8df2e8e034453d3f34ba9f485"
+    },
+    "src/vpcd/vpcd.c": {
+      "url": "https://raw.githubusercontent.com/frankmorgner/vsmartcard/93286a90d2411120ae17299f9902e1fdd8954185/virtualsmartcard/src/vpcd/vpcd.c",
+      "sha256": "39b3bbde78b270168309eaba326e1a44859c399c6a9781f00bdec1a234625573"
+    },
+    "src/vpcd/lock.h": {
+      "url": "https://raw.githubusercontent.com/frankmorgner/vsmartcard/93286a90d2411120ae17299f9902e1fdd8954185/virtualsmartcard/src/vpcd/lock.h",
+      "sha256": "40fed5fd5beab71b5a512a775000dc171e7e203a31646c10abb97b635b1a8293"
+    },
+    "src/vpcd/vpcd.h": {
+      "url": "https://raw.githubusercontent.com/frankmorgner/vsmartcard/93286a90d2411120ae17299f9902e1fdd8954185/virtualsmartcard/src/vpcd/vpcd.h",
+      "sha256": "596841c08b2e8ea42dc96e09cd1edafc33dae2042327a0286c7958a6e6941eca"
+    },
+    "src/vpcd/lock.c": {
+      "url": "https://raw.githubusercontent.com/frankmorgner/vsmartcard/93286a90d2411120ae17299f9902e1fdd8954185/virtualsmartcard/src/vpcd/lock.c",
+      "sha256": "b7290669ef5577d88fbfba5461f7aac033c55367f0c02fd4142c08e9b29fcd12"
+    }
+  }
+}

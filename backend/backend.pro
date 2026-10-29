@@ -8,7 +8,7 @@ CONFIG += c++17
 
 include(../qflipper_common.pri)
 
-SOURCES += workbench/nfcsession.cpp workbench/nfccontroller.cpp workbench/workbenchdata.cpp workbench/devicetelemetry.cpp workbench/powersnapshot.cpp flipperzero/rpc/appoperation.cpp \
+SOURCES += workbench/viccbridge.cpp workbench/nfcsession.cpp workbench/nfccontroller.cpp workbench/workbenchdata.cpp workbench/devicetelemetry.cpp workbench/powersnapshot.cpp flipperzero/rpc/appoperation.cpp \
     abstractoperation.cpp \
     abstractoperationhelper.cpp \
     abstractoperationrunner.cpp \
@@ -111,7 +111,7 @@ SOURCES += workbench/nfcsession.cpp workbench/nfccontroller.cpp workbench/workbe
     updateregistry.cpp \
     versioninfo.cpp
 
-HEADERS += workbench/nfcsession.h workbench/nfccontroller.h workbench/workbenchdata.h workbench/devicetelemetry.h workbench/powersnapshot.h flipperzero/rpc/appoperation.h \
+HEADERS += workbench/viccbridge.h workbench/nfcsession.h workbench/nfccontroller.h workbench/workbenchdata.h workbench/devicetelemetry.h workbench/powersnapshot.h flipperzero/rpc/appoperation.h \
     abstractoperation.h \
     abstractoperationhelper.h \
     abstractoperationrunner.h \

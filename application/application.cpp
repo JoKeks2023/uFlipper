@@ -51,7 +51,7 @@ Application::Application(int &argc, char **argv):
     initStyles();
     initFonts();
     initGUI();
-    if(!m_nfcReviewDirectory.isEmpty()) QTimer::singleShot(7000, this, [this] { runNfcReview(m_engine, m_backend, m_nfcReviewDirectory, m_nfcReviewCard); });
+    if(!m_nfcReviewDirectory.isEmpty()) QTimer::singleShot(7000, this, [this] { runNfcReview(m_engine, m_backend, m_nfcReviewDirectory, m_nfcReviewCard, m_nfcReviewMode); });
     if(!m_uiReviewDirectory.isEmpty()) QTimer::singleShot(7000, this, [this] { runUiReview(m_engine, m_uiReviewDirectory); });
 
     qCInfo(LOG_APP).noquote() << APP_NAME << "version" << APP_VERSION << "commit"
@@ -144,6 +144,8 @@ void Application::initCommandOptions()
     const QCommandLineOption nfcReview("review-nfc", "Exercise native NFC Start/Stop and saved sessions on a connected device", "directory");
     const QCommandLineOption nfcCard("review-nfc-card", "Use the user-presented card during the NFC UI review");
     parser.addOption(nfcReview);parser.addOption(nfcCard);
+    const QCommandLineOption nfcMode("review-nfc-mode", "NFC UI review mode: ppse, ndef or reader", "mode", "ppse");
+    parser.addOption(nfcMode);
     const QCommandLineOption uiSource(QStringLiteral("ui-source"), QStringLiteral("Load a local development QML entry file"), QStringLiteral("file"));
     parser.addOption(uiSource);
     parser.addVersionOption();
@@ -155,6 +157,9 @@ void Application::initCommandOptions()
     m_uiReviewDirectory = parser.value(uiReview);
     m_nfcReviewDirectory = parser.value(nfcReview);
     m_nfcReviewCard = parser.isSet(nfcCard);
+    m_nfcReviewMode = parser.value(nfcMode);
+    if (m_nfcReviewMode != "ppse" && m_nfcReviewMode != "ndef" && m_nfcReviewMode != "reader") parser.showHelp(2);
+    if (parser.isSet(nfcMode) && m_nfcReviewDirectory.isEmpty()) parser.showHelp(2);
     if((!m_nfcReviewDirectory.isEmpty() && (!m_uiReviewDirectory.isEmpty() || parser.isSet(smokeTest))) ||
        (m_nfcReviewCard && m_nfcReviewDirectory.isEmpty())) parser.showHelp(2);
     if (parser.isSet(uiSource)) {

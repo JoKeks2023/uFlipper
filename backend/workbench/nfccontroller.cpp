@@ -1,4 +1,5 @@
 #include "nfccontroller.h"
+#include "viccbridge.h"
 #include "appresponseinterface.h"
 #include "deviceregistry.h"
 #include "flipperzero/devicestate.h"
@@ -20,6 +21,8 @@ NfcController::NfcController(Flipper::DeviceRegistry *registry, Flipper::Zero::S
       registry_(registry), screen_(screen), idle_(std::move(idle)) {
     connect(registry_, &Flipper::DeviceRegistry::currentDeviceChanged, this, &NfcController::attach);
     connect(this, &NfcSession::commandRequested, this, &NfcController::dispatch);
+    reader_ = new ViccBridge(*this, this);
+    connect(reader_, &ViccBridge::changed, this, &NfcSession::changed);
     attach();
 }
 bool NfcController::approvedHelperTarget(const QString &commit, const QString &target) {
@@ -54,15 +57,21 @@ void NfcController::connectionChanged() {
     setConnection(device_ ? device_->deviceState()->deviceInfo().systemLocation : QString(), online);
     if (!online) helperStartSent_ = false;
 }
-void NfcController::start() {
-    if (!canStart()) return;
+QString NfcController::readerStatus() const { return reader_->status(); }
+void NfcController::start(const QString &mode) {
+    if (!canStart() || (mode != "ppse" && mode != "ndef" && mode != "reader")) return;
+#ifndef Q_OS_MACOS
+    if (mode == "reader") return;
+#endif
+    if (mode == "reader" && !reader_->start()) return;
     const auto &info = device_->deviceState()->deviceInfo();
     helperStartSent_ = false;
-    begin({{"deviceName", info.name}, {"firmwareVersion", info.firmware.version},
+    const bool begun = begin({{"deviceName", info.name}, {"firmwareVersion", info.firmware.version},
            {"firmwareCommit", info.firmware.commit}, {"hardwareTarget", info.hardware.target},
            {"rpcMajor", info.protobuf.versionMajor}, {"rpcMinor", info.protobuf.versionMinor},
            {"startedAt", QDateTime::currentDateTimeUtc().toString(Qt::ISODateWithMs)},
-           {"helperSha256", "ab0bcae111b085a8cf79ef9c5dd423331f0ae86519228cb0ed79624470e0d632"}});
+           {"helperSha256", "ab0bcae111b085a8cf79ef9c5dd423331f0ae86519228cb0ed79624470e0d632"}}, mode);
+    if (!begun && mode == "reader") reader_->stop();
 }
 void NfcController::dispatch(int command, const QByteArray &frame, quint64 token) {
     if (!device_ || !device_->rpc()->isSessionUp()) {
