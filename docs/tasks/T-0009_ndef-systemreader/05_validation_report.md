@@ -13,7 +13,7 @@ Code: `02d9fbb303d660934d3b802687e88d9784495f07`. [CI 40884130592](https://githu
 
 ## Noch offen
 
-Experimentelle Systemkomponente wurde zur ausdrücklichen Installationsfreigabe vorgelegt; noch nicht registriert. NDEF-Karte fehlt laut erneuter Nutzerantwort. Kein vollständiger NDEF-/Systemreader-Abschluss und kein Release.
+Nutzerentscheidung vom 29.10.2026: **Vorerst nur vorbereiten**. Keine Systeminstallation/Registrierung ausführen. Geprüftes Artefakt und Manifest unter `build_mac/reader-prepared-0.1.0/` erhalten; Zielpfad `/usr/local/libexec/SmartCardServices/drivers/uFlipperReader.bundle` ist weiterhin nicht vorhanden. Der systemweite OpenSC-Test bleibt bis zu einer späteren ausdrücklichen Freigabe zurückgestellt. NDEF-Karte fehlt laut erneuter Nutzerantwort. Kein vollständiger NDEF-/Systemreader-Abschluss und kein Release.
 
 ## Native App am realen Mac/Flipper
 
