@@ -16,12 +16,12 @@ WorkbenchSplit {
     WorkbenchHint { text: qsTr("Die Sicherung liest alle über die Geräteschnittstelle erreichbaren Dateien einschließlich Apps, Ressourcen und leerer Ordner. Momentum kann /int auf die SD-Karte umleiten; ein physisches Flash-Abbild ist nicht enthalten. Firmwareänderungen und Wiederherstellung bleiben bis zum geprüften automatischen Gesamtablauf angehalten.") }
     RowLayout {
         Layout.fillWidth: true; spacing: 16
-        WorkbenchButton { objectName: "backup-start"; text: qsTr("Vollbackup erstellen"); primary: true; enabled: session.canStart && !Backend.nfc.blocked; onClicked: session.start() }
+        WorkbenchButton { objectName: "backup-start"; text: session.limitation.length ? qsTr("Vollbackup noch gesperrt") : qsTr("Vollbackup erstellen"); primary: true; enabled: session.canStart && !Backend.nfc.blocked; onClicked: session.start() }
         WorkbenchButton { objectName: "backup-cancel"; text: qsTr("Abbrechen"); visible: session.active; enabled: session.canCancel; onClicked: session.cancel() }
         Item { Layout.fillWidth: true }
         WorkbenchButton { text: qsTr("Datenordner öffnen"); onClicked: Qt.openUrlExternally(Backend.workbench.storageUrl) }
     }
-    WorkbenchLabel { Layout.fillWidth: true; wrapMode: Text.Wrap; visible: !session.canStart && !session.active; opacity: 0.7; text: Backend.nfc.blocked ? qsTr("Zuerst die laufende NFC-Sitzung beenden.") : qsTr("Flipper mit SD-Karte verbinden. Nach einem Abbruch den USB-Stecker kurz neu verbinden; laufende Dateiaktionen zunächst abschließen.") }
+    WorkbenchLabel { Layout.fillWidth: true; wrapMode: Text.Wrap; visible: !session.canStart && !session.active; opacity: 0.7; text: session.limitation.length ? session.limitation : Backend.nfc.blocked ? qsTr("Zuerst die laufende NFC-Sitzung beenden.") : qsTr("Flipper mit SD-Karte verbinden. Nach einem Abbruch den USB-Stecker kurz neu verbinden; laufende Dateiaktionen zunächst abschließen.") }
     WorkbenchRule {}
     WorkbenchFact { label: qsTr("Status"); value: catalog.stateNames[session.state] || session.state }
     WorkbenchFact { label: qsTr("Dateien"); value: session.filesDone + " / " + session.filesTotal }

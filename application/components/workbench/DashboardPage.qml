@@ -99,7 +99,7 @@ WorkbenchSplit {
         WorkbenchFact { label: qsTr("Restkapazität"); value: dashboard.metric("capacity.remain", 1, " mAh") },
         WorkbenchFact { label: qsTr("Letzte Messung"); value: dashboard.power.observedAt ? Qt.formatDateTime(new Date(dashboard.power.observedAt), "hh:mm:ss") + (dashboard.power.stale ? qsTr(" · veraltet") : "") : qsTr("Noch keine Messung") },
         WorkbenchRule {},
-        WorkbenchFact { label: qsTr("Vollbackup"); value: Backend.backup.active ? qsTr("Sicherung läuft") : Backend.backup.verified ? qsTr("Letzte Sitzung geprüft") : qsTr("Lokalen Katalog öffnen") },
+        WorkbenchFact { label: qsTr("Vollbackup"); value: Backend.backup.active ? qsTr("Sicherung läuft") : Backend.backup.verified ? qsTr("Letzte Sitzung geprüft") : Backend.backup.limitation.length ? qsTr("Ungefiltertes Inventar fehlt") : qsTr("Lokalen Katalog öffnen") },
         WorkbenchButton { text: qsTr("Backups ansehen"); Layout.fillWidth: true; onClicked: dashboard.navigate("backups") },
         WorkbenchRule {},
         WorkbenchFact { label: qsTr("Synchronisierung"); value: qsTr("Noch nicht angeschlossen") }

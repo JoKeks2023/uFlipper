@@ -14,3 +14,9 @@ Reader-Installation, fehlende NDEF-Testkarte und verschobener IR-Test werden nic
 
 - Abbruchbedingter RPC-Altfehler [#10](https://github.com/JoKeks2023/uFlipper/issues/10): bereits eingeplanter Queue-Callback darf einen geschlossenen Transport nicht wieder als Idle markieren. Guard und reproduzierbarer Callback-Test ergänzt.
 - `/int` kann bei Momentum auf SD liegen (bereits unter T-0004 belegt). Umfang in Oberfläche/Metadaten ausdrücklich auf RPC-Dateibereiche begrenzt, kein Rohabbild der physischen Firmware behauptet.
+
+## Konkrete Inventarvoraussetzung – Vollbackup bleibt gesperrt
+
+[#13](https://github.com/JoKeks2023/uFlipper/issues/13): Die [geprüfte Momentum-Quelle](https://github.com/Next-Flip/Momentum-Firmware/blob/e1784e7418d8b074e971983ceb6fef0f37e52ae4/applications/services/rpc/rpc_storage.c#L218) filtert nicht-ASCII-Dateinamen aus `storage.list`. Zwei solche Listen können übereinstimmen und trotzdem SD-Inhalte auslassen. Ein reiner RPC-Adapter darf deshalb kein vollständiges Gerätebackup bestätigen. Der native Start bleibt bis zu einem ungefilterten, fehlerbewussten Inventar gesperrt; UI und Protokolltest benennen die Voraussetzung. Keine Umbenennung einer Teilsicherung zu einem Vollbackup.
+
+Geplanter nächster Adapter: lesender SD-Inventarhelfer über den gemeinsamen App-RPC-Besitzer; bytegenaue Namen und eindeutiges Verzeichnisende/Lesefehler. Zunächst vorzubereiten und separat zu prüfen. Jede Installation/Version braucht die vereinbarte ausdrückliche Freigabe. Bisher kein neuer Helfer gebaut oder installiert. Die unveränderte Momentum-Firmware und der NFC-Helfer bleiben erhalten. Host-Speicher-/Verschlüsselungsarbeit läuft unabhängig weiter (T-0011).

@@ -14,6 +14,7 @@
 #include "protobufplugininterface.h"
 #include "workbench/powersnapshot.h"
 #include "workbench/nfccontroller.h"
+#include "workbench/backupcontroller.h"
 #include <QCoreApplication>
 #include <QDebug>
 #include <QPluginLoader>
@@ -58,6 +59,7 @@ int main(int argc, char **argv) {
         QCoreApplication::processEvents();
         require(!stopped.isSessionUp(),"Queued callback reopened a stopped RPC session");
         ApplicationBackend guarded;
+        require(!guarded.backup()->limitation().isEmpty() && !guarded.backup()->canStart(),"Filtered inventory was allowed to certify a full backup");
         int blocked=0;
         QObject::connect(&guarded,&ApplicationBackend::operationBlocked,[&](const QString& why) {
             require(!why.isEmpty(), "backup preflight did not explain the block"); ++blocked;

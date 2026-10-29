@@ -7,9 +7,11 @@ class AbstractOperation;
 class BackupController : public BackupSession {
     Q_OBJECT
     Q_PROPERTY(bool canStart READ canStart NOTIFY changed)
+    Q_PROPERTY(QString limitation READ limitation CONSTANT)
  public:
     BackupController(Flipper::DeviceRegistry *, Flipper::Zero::ScreenStreamer *, std::function<bool()> idle, QObject *parent = nullptr);
     bool canStart() const;
+    QString limitation() const;
     Q_INVOKABLE void start();
     void conditionsChanged() { emit changed(); }
  private:

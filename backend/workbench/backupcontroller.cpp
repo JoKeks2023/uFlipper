@@ -24,8 +24,11 @@ BackupController::BackupController(Flipper::DeviceRegistry *registry, Flipper::Z
     });
     attach();
 }
+QString BackupController::limitation() const {
+    return tr("Vollbackup noch gesperrt: Die Geräte-Dateiliste filtert Dateinamen. Für eine nachweislich vollständige SD-Sicherung fehlt ein ungefiltertes Inventar. Eine zusätzliche Anbindung ist erforderlich; neue SD-Helfer werden erst nach ausdrücklicher Freigabe installiert.");
+}
 bool BackupController::canStart() const {
-    return available() && idle_() && device_ && device_->deviceState()->isOnline() &&
+    return limitation().isEmpty() && available() && idle_() && device_ && device_->deviceState()->isOnline() &&
            !device_->deviceState()->isRecoveryMode() && device_->rpc()->isSessionUp();
 }
 void BackupController::attach() {
