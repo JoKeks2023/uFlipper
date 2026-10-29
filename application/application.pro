@@ -7,7 +7,7 @@ DESTDIR = $$OUT_PWD/..
 
 CONFIG += c++17
 
-SOURCES += nfcreview.cpp uireview.cpp \
+SOURCES += backupreview.cpp nfcreview.cpp uireview.cpp \
         application.cpp \
         applicationupdater.cpp \
         applicationupdateregistry.cpp \
@@ -93,7 +93,7 @@ DEPENDPATH += \
     $$PWD/../dfu \
     $$PWD/../backend
 
-HEADERS += nfcreview.h \
+HEADERS += backupreview.h nfcreview.h \
     application.h \
     applicationupdater.h \
     applicationupdateregistry.h \

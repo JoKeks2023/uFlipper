@@ -57,6 +57,7 @@ class Review : public QObject {
                   {"settings-tab-2", "settings", "05_cloud"},
                   {"settings-tab-3", "settings", "06_integrations"},
                   {"settings-tab-4", "settings", "07_credits"},
+                  {"nav-backups", "backups", "15_backups"},
                   {"nav-library", "library", "08_files"},
                   {"nav-screen", "screen", "09_screen"},
                   {"nav-dashboard", "dashboard", "10_compact"}};

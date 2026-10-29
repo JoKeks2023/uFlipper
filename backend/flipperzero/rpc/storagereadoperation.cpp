@@ -81,7 +81,7 @@ bool StorageReadOperation::processResponse(QObject *response)
             const auto &data = storageReadResponse->file().data;
 
             m_fileSizeReceived += data.size();
-            setProgress(m_fileSizeReceived * 100.0 / m_fileSizeTotal);
+            setProgress(m_fileSizeTotal ? m_fileSizeReceived * 100.0 / m_fileSizeTotal : 100.0);
 
             return m_file->write(data) == data.size();
         }

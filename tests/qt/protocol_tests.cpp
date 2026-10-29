@@ -1,6 +1,9 @@
 #include "appresponseinterface.h"
 #include "applicationbackend.h"
 #include "logger.h"
+#include "flipperzero/rpc/storagereadoperation.h"
+#include <QBuffer>
+#include <cmath>
 #include <QThread>
 #include <thread>
 #include "flipperzero/rpc/appoperation.h"
@@ -95,7 +98,16 @@ int main(int argc, char **argv) {
         Flipper::Zero::AppOperation good(1, Flipper::Zero::AppOperation::Exit, {});
         good.feedResponse(success.get());
         require(good.isFinished() && !good.isError(), "successful app exit failed");
-        qInfo() << "PASS: App-RPC bounds, binary data, state broadcasts and command errors";
+        QBuffer emptyFile;
+        Flipper::Zero::StorageReadOperation emptyRead(1,"/ext/empty",&emptyFile);
+        emptyRead.start();emptyRead.encodeRequest(encoder);
+        auto emptyStat=decode("070801ca01020a00");
+        require(bool(emptyStat),"Empty stat fixture did not decode");emptyRead.feedResponse(emptyStat.get());emptyRead.encodeRequest(encoder);
+        auto emptyChunk=decode("06080152020a00");
+        require(bool(emptyChunk),"Empty read fixture did not decode");emptyRead.feedResponse(emptyChunk.get());
+        require(emptyRead.isFinished() && !emptyRead.isError() && std::isfinite(emptyRead.progress()) && emptyRead.progress()==100 && emptyFile.data().isEmpty(),
+                "Zero-byte file read produced invalid progress or incomplete output");
+        qInfo() << "PASS: zero-byte storage read; App-RPC bounds, binary data, state broadcasts and command errors";
         return 0;
     } catch (const std::exception &error) {
         qCritical() << error.what();

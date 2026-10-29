@@ -13,8 +13,13 @@ Item {
     property bool showLogs: false
     property string pendingPage: ""
     property bool quitAfterNfcStop: false
+    property bool quitAfterBackupStop: false
     function navigate(page) {
-        if (Backend.nfc.blocked && ["screen", "library", "firmware"].indexOf(page) >= 0) {
+        if (Backend.backup.blocked && ["screen", "library", "firmware", "nfc"].indexOf(page) >= 0) {
+            backupConflict.open()
+            return
+        }
+        if (Backend.nfc.blocked && ["screen", "library", "firmware", "backups"].indexOf(page) >= 0) {
             if (!Backend.nfc.active) { nfcBlocked.open(); return }
             pendingPage = page
             nfcConflict.open()
@@ -98,6 +103,7 @@ Item {
             Rectangle { width: 7; height: 7; radius: 4; color: Backend.deviceState && Backend.deviceState.isOnline ? Theme.color.lightgreen : Theme.color.mediumorange1 }
             WorkbenchLabel { text: Backend.deviceState && Backend.deviceState.isOnline ? Backend.deviceState.isRecoveryMode ? qsTr("Wiederherstellungsmodus") : qsTr("USB verbunden") : Backend.isQueryInProgress ? qsTr("Gerät wird gelesen …") : qsTr("Nicht verbunden"); color: Backend.deviceState && Backend.deviceState.isOnline ? Theme.color.lightgreen : Theme.color.lightorange2; font.pixelSize: 15 }
             Item { Layout.fillWidth: true }
+            WorkbenchButton { text: qsTr("Vollbackup läuft"); visible: Backend.backup.active; onClicked: shell.navigate("backups") }
             WorkbenchButton { text: Backend.nfc.active ? qsTr("NFC-Sitzung läuft") : qsTr("NFC-Stop ungeklärt"); visible: Backend.nfc.blocked; onClicked: shell.navigate("nfc") }
             WorkbenchButton { text: qsTr("Aktualisieren"); enabled: !shell.busy; onClicked: { Backend.telemetry.refresh(); Backend.workbench.refresh() } }
         }
@@ -178,6 +184,23 @@ Item {
             }
             if (!Backend.nfc.active && shell.quitAfterNfcStop) shell.Window.window.close()
         }
+    }
+    Dialog {
+        id: backupConflict; objectName: "backupConflictDialog"; parent: shell
+        anchors.centerIn: parent; modal: true; title: qsTr("Sicherung beenden?")
+        contentItem: ColumnLayout {
+            spacing: 16
+            WorkbenchLabel { Layout.preferredWidth: 400; Layout.fillWidth: true; wrapMode: Text.Wrap; text: Backend.backup.canCancel ? qsTr("Diese Geräteansicht benötigt denselben Zugriff. Beim Abbrechen bleibt die unvollständige Sicherung erhalten. Danach den Flipper kurz neu verbinden.") : qsTr("Die Geräteverbindung ist noch belegt oder die lokale Prüfung läuft. Bitte den Abschluss abwarten oder den Flipper neu verbinden.") }
+            RowLayout {
+                spacing: 16
+                WorkbenchButton { objectName: "backup-confirm-stop"; text: qsTr("Sicherung abbrechen"); enabled: Backend.backup.canCancel; onClicked: { backupConflict.close(); Backend.backup.cancel(); shell.currentPage = "backups" } }
+                WorkbenchButton { objectName: "backup-keep-copying"; text: qsTr("Weiter sichern"); onClicked: backupConflict.close() }
+            }
+        }
+    }
+    Connections {
+        target: Backend.backup
+        function onChanged() { if (!Backend.backup.active && shell.quitAfterBackupStop) shell.Window.window.close() }
     }
     Component { id: nfcComponent; NfcPage {} }
     Component { id: dashboardComponent; DashboardPage {} }

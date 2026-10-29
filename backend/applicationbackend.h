@@ -9,6 +9,7 @@
 class DeviceTelemetry;
 class WorkbenchData;
 class NfcController;
+class BackupController;
 
 namespace Flipper {
 class FlipperZero;
@@ -26,6 +27,7 @@ class VirtualDisplay;
 Q_MOC_INCLUDE("workbench/devicetelemetry.h")
 Q_MOC_INCLUDE("workbench/workbenchdata.h")
 Q_MOC_INCLUDE("workbench/nfccontroller.h")
+Q_MOC_INCLUDE("workbench/backupcontroller.h")
 Q_MOC_INCLUDE("flipperzero/devicestate.h")
 Q_MOC_INCLUDE("flipperzero/screenstreamer.h")
 Q_MOC_INCLUDE("flipperzero/virtualdisplay.h")
@@ -36,6 +38,7 @@ class ApplicationBackend : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(NfcController* nfc READ nfc CONSTANT)
+    Q_PROPERTY(BackupController* backup READ backup CONSTANT)
     Q_PROPERTY(WorkbenchData* workbench READ workbench CONSTANT)
     Q_PROPERTY(DeviceTelemetry* telemetry READ telemetry CONSTANT)
     Q_PROPERTY(BackendState backendState READ backendState NOTIFY backendStateChanged)
@@ -83,6 +86,7 @@ public:
     ApplicationBackend(QObject *parent = nullptr);
 
     NfcController* nfc() const { return m_nfc; }
+    BackupController* backup() const { return m_backup; }
     WorkbenchData* workbench() const { return m_workbench; }
     DeviceTelemetry* telemetry() const { return m_telemetry; }
     BackendState backendState() const;
@@ -158,6 +162,7 @@ private:
     Flipper::DeviceRegistry *m_deviceRegistry;
     DeviceTelemetry* m_telemetry;
     NfcController* m_nfc = nullptr;
+    BackupController* m_backup = nullptr;
     WorkbenchData* m_workbench;
     Flipper::UpdateRegistry *m_firmwareUpdateRegistry;
 

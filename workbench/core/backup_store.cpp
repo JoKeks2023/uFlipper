@@ -46,6 +46,7 @@ struct ActiveFile {
     Descriptor file;
     std::string backup, path, blob;
     uint64_t expected = 0, written = 0;
+    crypto_hash_sha256_state digest;
 };
 BackupInfo readInfo(Statement &row) {
     BackupInfo info;
@@ -203,6 +204,7 @@ void BackupStore::beginFile(const std::string &id, const std::string &path, uint
     file->path = path;
     file->blob = randomId();
     file->expected = expected;
+    crypto_hash_sha256_init(&file->digest);
     auto target = impl_->folder(id) / "payload" / file->blob;
     file->file.fd = ::open(target.c_str(), O_CREAT | O_EXCL | O_WRONLY, 0600);
     if (file->file.fd < 0)
@@ -221,6 +223,7 @@ void BackupStore::appendFile(const std::string &id, const void *bytes, size_t si
     if (!file || (!bytes && size) || size > 1024 * 1024 || size > file->expected - file->written)
         throw std::invalid_argument("Invalid backup chunk or file size");
     writeAll(file->file.fd, bytes, size);
+    if (size) crypto_hash_sha256_update(&file->digest, static_cast<const unsigned char *>(bytes), size);
     file->written += size;
 }
 void BackupStore::finishFile(const std::string &id) {
@@ -229,7 +232,13 @@ void BackupStore::finishFile(const std::string &id) {
     if (!file || file->written != file->expected)
         throw std::runtime_error("Backup file is incomplete");
     syncFile(file->file.fd);
-    auto hash = hashFile(impl_->folder(id) / "payload" / file->blob);
+    unsigned char digest[crypto_hash_sha256_BYTES];
+    char hash[crypto_hash_sha256_BYTES * 2 + 1];
+    crypto_hash_sha256_final(&file->digest, digest);
+    sodium_bin2hex(hash, sizeof hash, digest, sizeof digest);
+    // The final verification rereads payloads on a worker; finishing each streamed
+    // file must not reread a large file on the desktop UI thread.
+
     Statement update(impl_->database.value, "UPDATE entries SET ready=1,sha256=? WHERE backup=? AND path=?");
     update.bind(1, hash);
     update.bind(2, id);

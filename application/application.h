@@ -75,6 +75,8 @@ private:
     QQmlApplicationEngine m_engine;
 
     QString m_uiReviewDirectory, m_uiSourceFile, m_nfcReviewDirectory, m_nfcReviewMode = "ppse";
+    QString m_backupReviewDirectory;
+    bool m_backupReviewCancel = false;
     bool m_nfcReviewCard = false;
     bool m_isDeveloperMode;
     UpdateStatus m_updateStatus;

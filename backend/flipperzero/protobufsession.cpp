@@ -395,6 +395,7 @@ void ProtobufSession::writeToPort()
 void ProtobufSession::doStopSession()
 {
     qCInfo(LOG_SESSION) << "Stopping RPC session...";
+    clearOperationQueue();
 
     if(m_currentOperation) {
         m_currentOperation->abort(QStringLiteral("RPC session was stopped with operations still running"));

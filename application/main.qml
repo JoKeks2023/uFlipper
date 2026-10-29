@@ -15,6 +15,12 @@ Window {
     MainWindow { id: mainWindow }
     onClosing: function(close) {
         if (mainWindow.busy) { close.accepted = false; return }
+        if (Backend.backup.active) {
+            close.accepted = false
+            mainWindow.quitAfterBackupStop = true
+            Backend.backup.cancel()
+            return
+        }
         if (Backend.nfc.active) {
             close.accepted = false
             mainWindow.quitAfterNfcStop = true

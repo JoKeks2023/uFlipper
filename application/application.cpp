@@ -1,5 +1,7 @@
 #include "uireview.h"
+#include "backupreview.h"
 #include "nfcreview.h"
+#include "workbench/backupcontroller.h"
 #include <QQmlError>
 #include <QFileInfo>
 #include "workbench/workbenchdata.h"
@@ -52,6 +54,7 @@ Application::Application(int &argc, char **argv):
     initFonts();
     initGUI();
     if(!m_nfcReviewDirectory.isEmpty()) QTimer::singleShot(7000, this, [this] { runNfcReview(m_engine, m_backend, m_nfcReviewDirectory, m_nfcReviewCard, m_nfcReviewMode); });
+    if(!m_backupReviewDirectory.isEmpty()) QTimer::singleShot(7000, this, [this] { runBackupReview(m_engine, m_backend, m_backupReviewDirectory, m_backupReviewCancel); });
     if(!m_uiReviewDirectory.isEmpty()) QTimer::singleShot(7000, this, [this] { runUiReview(m_engine, m_uiReviewDirectory); });
 
     qCInfo(LOG_APP).noquote() << APP_NAME << "version" << APP_VERSION << "commit"
@@ -146,6 +149,9 @@ void Application::initCommandOptions()
     parser.addOption(nfcReview);parser.addOption(nfcCard);
     const QCommandLineOption nfcMode("review-nfc-mode", "NFC UI review mode: ppse, ndef or reader", "mode", "ppse");
     parser.addOption(nfcMode);
+    const QCommandLineOption backupReview("review-backup", "Run a native full-device backup and save runtime evidence", "directory");
+    const QCommandLineOption backupCancel("review-backup-cancel", "Verify full-backup cancellation instead of completion");
+    parser.addOption(backupReview);parser.addOption(backupCancel);
     const QCommandLineOption uiSource(QStringLiteral("ui-source"), QStringLiteral("Load a local development QML entry file"), QStringLiteral("file"));
     parser.addOption(uiSource);
     parser.addVersionOption();
@@ -154,6 +160,9 @@ void Application::initCommandOptions()
     parser.process(*this);
 
     if(parser.isSet(smokeTest)) QTimer::singleShot(3000, this, [] { QCoreApplication::quit(); });
+    m_backupReviewDirectory=parser.value(backupReview);m_backupReviewCancel=parser.isSet(backupCancel);
+    if((!m_backupReviewDirectory.isEmpty() && (parser.isSet(uiReview) || parser.isSet(nfcReview) || parser.isSet(smokeTest))) ||
+       (m_backupReviewCancel && m_backupReviewDirectory.isEmpty()))parser.showHelp(2);
     m_uiReviewDirectory = parser.value(uiReview);
     m_nfcReviewDirectory = parser.value(nfcReview);
     m_nfcReviewCard = parser.isSet(nfcCard);
@@ -221,6 +230,7 @@ void Application::initQmlTypes()
 
     qmlRegisterUncreatableType<BackendError>("QFlipper", 1, 0, "BackendError", QStringLiteral("This class is only a enum container"));
     qmlRegisterUncreatableType<InputEvent>("QFlipper", 1, 0, "InputEvent", QStringLiteral("This class is only a enum container"));
+    qmlRegisterUncreatableType<BackupController>("QFlipper", 1, 0, "BackupController", QStringLiteral("Backups are owned by the backend"));
     qmlRegisterUncreatableType<NfcController>("QFlipper", 1, 0, "NfcController", QStringLiteral("NFC is owned by the backend"));
     qmlRegisterUncreatableType<WorkbenchData>("QFlipper", 1, 0, "WorkbenchData", QStringLiteral("Workbench data is owned by the backend"));
     qmlRegisterUncreatableType<DeviceTelemetry>("QFlipper", 1, 0, "DeviceTelemetry", QStringLiteral("Device telemetry is owned by the backend"));

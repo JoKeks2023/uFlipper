@@ -1,0 +1,11 @@
+QT = core
+TEMPLATE = app
+CONFIG += console c++17 link_pkgconfig
+CONFIG -= app_bundle
+TARGET = uflipper_backup_session_tests
+PKGCONFIG += libsodium sqlite3
+INCLUDEPATH += $$PWD/../../backend
+SOURCES += backup_session_tests.cpp $$PWD/../../backend/workbench/backupsession.cpp
+HEADERS += $$PWD/../../backend/workbench/backupsession.h
+LIBS += -L$$CORE_BUILD -luflipper-core
+macx: QMAKE_MACOSX_DEPLOYMENT_TARGET = 13.0

@@ -23,7 +23,7 @@ WorkbenchSplit {
     RowLayout {
         Layout.fillWidth: true; spacing: 16
         WorkbenchFact { Layout.fillWidth: true; label: qsTr("Sitzung"); value: page.labels[page.session.state] || page.session.state }
-        WorkbenchButton { objectName: "nfc-start"; text: page.selectedMode === "ndef" ? qsTr("NDEF lesen") : page.readerMode ? qsTr("Reader einschalten") : qsTr("Lesetest starten"); enabled: page.session.canStart; onClicked: page.session.start(page.selectedMode) }
+        WorkbenchButton { objectName: "nfc-start"; text: page.selectedMode === "ndef" ? qsTr("NDEF lesen") : page.readerMode ? qsTr("Reader einschalten") : qsTr("Lesetest starten"); enabled: page.session.canStart && !Backend.backup.blocked; onClicked: page.session.start(page.selectedMode) }
         WorkbenchButton { objectName: "nfc-stop"; text: qsTr("Stoppen"); enabled: page.session.active && page.session.state !== "stopping"; onClicked: page.session.stop() }
     }
     WorkbenchHint { visible: page.session.error.length > 0; text: page.session.error }

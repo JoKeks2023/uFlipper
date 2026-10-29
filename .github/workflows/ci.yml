@@ -103,12 +103,12 @@ jobs:
           make -j2 main.o
           cd "$RUNNER_TEMP/telemetry-compile"
           qmake "$GITHUB_WORKSPACE/backend/backend.pro"
-          make -j2 viccbridge.o devicetelemetry.o powersnapshot.o workbenchdata.o nfcsession.o nfccontroller.o applicationbackend.o preferences.o logger.o
+          make -j2 backupsession.o backupcontroller.o viccbridge.o devicetelemetry.o powersnapshot.o workbenchdata.o nfcsession.o nfccontroller.o applicationbackend.o preferences.o logger.o
           cd "$RUNNER_TEMP/ui-compile"
           qmake "$GITHUB_WORKSPACE/application/application.pro"
           make -j4 qrc_qmake_qmake_qm_files.cpp
           test -s .qm/en_US.qm
-          make -j2 application.o uireview.o nfcreview.o
+          make -j2 application.o uireview.o nfcreview.o backupreview.o
       - name: NFC session lifecycle and recording contracts before full build
         shell: bash
         run: |
@@ -120,6 +120,14 @@ jobs:
           qmake "$GITHUB_WORKSPACE/tests/qt/nfc_session_tests.pro" "CORE_BUILD=$RUNNER_TEMP"
           make -j2
           ./uflipper_nfc_session_tests
+      - name: Full backup lifecycle and integrity contracts before full build
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/backup-tests"
+          cd "$RUNNER_TEMP/backup-tests"
+          qmake "$GITHUB_WORKSPACE/tests/qt/backup_session_tests.pro" "CORE_BUILD=$RUNNER_TEMP"
+          make -j2
+          ./uflipper_backup_session_tests
       - name: Build macOS Universal
         if: runner.os == 'macOS'
         env:
