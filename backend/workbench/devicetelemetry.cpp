@@ -128,6 +128,7 @@ void DeviceTelemetry::refresh() {
 }
 
 void DeviceTelemetry::setPollingEnabled(bool enabled) {
+    if (enabled == pollingEnabled_) return;
     pollingEnabled_ = enabled;
     if (enabled)
         refresh();

@@ -57,7 +57,7 @@ WorkbenchSplit {
     details: [
         WorkbenchLabel { text: qsTr("Lesetest"); font.pixelSize: 21 },
         WorkbenchLabel { Layout.fillWidth: true; text: qsTr("Modus"); font.pixelSize: 14; opacity: 0.65 },
-        WorkbenchComboBox { Layout.fillWidth: true; model: [qsTr("EMV-Verzeichnis (PPSE)")]; enabled: false },
+        WorkbenchComboBox { Layout.fillWidth: true; model: [qsTr("EMV / PPSE")]; enabled: false },
         WorkbenchLabel { Layout.fillWidth: true; text: qsTr("ISO14443-4A. Zwei identische Verzeichnisabfragen; keine Zahlung. Allgemeines Karten-Auslesen, NDEF und der Mac-Systemreader folgen separat."); wrapMode: Text.Wrap; font.pixelSize: 14; opacity: 0.75 },
         WorkbenchRule {},
         WorkbenchFact { label: qsTr("Aufzeichnung"); value: page.session.active ? qsTr("Läuft · Originaldaten werden gespeichert") : page.session.recordingVerified ? qsTr("Gespeichert und geprüft") : qsTr("Automatisch vor jedem Start") },

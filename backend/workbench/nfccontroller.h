@@ -11,6 +11,7 @@ class NfcController : public NfcSession {
     NfcController(Flipper::DeviceRegistry *registry, Flipper::Zero::ScreenStreamer *screen,
                   std::function<bool()> idle, QObject *parent = nullptr);
     bool canStart() const;
+    static bool approvedHelperTarget(const QString &commit, const QString &target);
     Q_INVOKABLE void start();
     void conditionsChanged() { emit changed(); }
   private:

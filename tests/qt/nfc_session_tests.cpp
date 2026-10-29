@@ -46,6 +46,13 @@ struct Harness {
         ack(); require(!session.active() && session.stopConfirmed(),"Stop not confirmed");
     }
 };
+void unchangedConnectionIsNotAnEvent(const QString &root) {
+    Harness h(root);
+    int changes=0;
+    QObject::connect(&h.session,&NfcSession::changed,[&]{++changes;});
+    for(int i=0;i<100;++i)h.session.setConnection("test-device",true);
+    require(changes==0 && h.sent.empty(),"Idle/Running transport transitions notified a new device connection");
+}
 void completedAndReopened(const QString &root) {
     Harness h(root);
     require(h.session.begin({{"firmware","fixture"}}),"Cannot start session");
@@ -126,6 +133,7 @@ int main(int argc,char **argv) {
     QCoreApplication app(argc,argv);
     try {
         QTemporaryDir tmp;require(tmp.isValid(),"No fixture folder");
+        unchangedConnectionIsNotAnEvent(tmp.path()+"/connection");
         completedAndReopened(tmp.path()+"/complete");
         stopAndStaleAck(tmp.path()+"/stop");
         cancelDuringPreflight(tmp.path()+"/preflight");

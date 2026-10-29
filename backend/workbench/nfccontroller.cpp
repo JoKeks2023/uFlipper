@@ -22,6 +22,10 @@ NfcController::NfcController(Flipper::DeviceRegistry *registry, Flipper::Zero::S
     connect(this, &NfcSession::commandRequested, this, &NfcController::dispatch);
     attach();
 }
+bool NfcController::approvedHelperTarget(const QString &commit, const QString &target) {
+    // DeviceInfo has already converted the firmware's numeric target to "f7".
+    return commit == "e1784e74" && target == "f7";
+}
 bool NfcController::canStart() const {
     return available() && idle_() && device_ && device_->deviceState()->isOnline() &&
            !device_->deviceState()->isRecoveryMode() && device_->rpc()->isSessionUp();
@@ -75,7 +79,7 @@ void NfcController::dispatch(int command, const QByteArray &frame, quint64 token
 }
 void NfcController::checkHelper(quint64 token) {
     const auto &info = device_->deviceState()->deviceInfo();
-    if (info.firmware.commit != "e1784e74" || info.hardware.target != "7") {
+    if (!approvedHelperTarget(info.firmware.commit, info.hardware.target)) {
         rejectStart(tr("Dieser Helfer ist bisher nur für Momentum mntm-012 (e1784e74), Ziel f7 freigegeben."));
         return;
     }

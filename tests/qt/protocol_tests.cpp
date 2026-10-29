@@ -7,6 +7,7 @@
 #include "mainresponseinterface.h"
 #include "protobufplugininterface.h"
 #include "workbench/powersnapshot.h"
+#include "workbench/nfccontroller.h"
 #include <QCoreApplication>
 #include <QDebug>
 #include <QPluginLoader>
@@ -37,6 +38,11 @@ int main(int argc, char **argv) {
         require(!wrongThread && logger->errorCount() == before + 1 &&
                     logger->logText().contains("worker log fixture"),
                 "worker logging touched UI state or dropped the queued message");
+        // The actual Qt telemetry capture uses "f7", not the SDK's numeric 7.
+        require(NfcController::approvedHelperTarget("e1784e74", "f7"), "Recorded target f7 was incorrectly rejected");
+        require(!NfcController::approvedHelperTarget("e1784e74", "7") &&
+                !NfcController::approvedHelperTarget("other-firmware", "f7"),
+                "Unapproved firmware/target accepted for helper");
         ApplicationBackend guarded;
         int blocked=0;
         QObject::connect(&guarded,&ApplicationBackend::operationBlocked,[&](const QString& why) {

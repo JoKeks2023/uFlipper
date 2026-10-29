@@ -27,6 +27,8 @@ NfcSession::~NfcSession() {
     }
 }
 void NfcSession::setConnection(const QString &identity, bool online) {
+    // Idle/Running RPC transitions are not a new physical connection.
+    if (online == online_ && identity == identity_) return;
     const bool replacement = online && (identity != identity_ || !online_);
     if (active_ && (!online || replacement)) {
         error_ = tr("Geräteverbindung unterbrochen. Die Aufnahme wurde abgeschlossen.");

@@ -52,6 +52,9 @@ class NfcReview : public QObject {
         const auto p=item->mapToScene(QPointF(item->width()/2,item->height()/2));
         require(p.x()>=0 && p.y()>=0 && p.x()<window_->width() && p.y()<window_->height(),"Control outside native viewport");
         QTest::mouseClick(window_,Qt::LeftButton,Qt::NoModifier,p.toPoint(),30);++clicks_;
+        QFile trace(directory_+"/clicks.jsonl");
+        if(trace.open(QIODevice::Append)) trace.write(QJsonDocument(QJsonObject{{"control",name},{"x",p.x()},{"y",p.y()},
+            {"nfcState",backend_.nfc()->state()},{"canStart",backend_.nfc()->canStart()},{"active",backend_.nfc()->active()}}).toJson(QJsonDocument::Compact)+"\n");
     }
     void screenshot(const QString &name) { require(window_->grabWindow().save(directory_+"/"+name+".png"),"Cannot save NFC screenshot"); }
     QString page() { auto *shell=findItem(window_->contentItem(),"workbench");return shell?shell->property("currentPage").toString():QString(); }
@@ -84,6 +87,10 @@ class NfcReview : public QObject {
             }
         } catch(const std::exception &e) {
             timer_.stop();QFile f(directory_+"/failure.txt");if(f.open(QIODevice::WriteOnly))f.write(e.what());
+            QFile state(directory_+"/failure-state.json");
+            if(state.open(QIODevice::WriteOnly))state.write(QJsonDocument(QJsonObject{{"step",step_},{"clicks",clicks_},
+                {"state",backend_.nfc()->state()},{"active",backend_.nfc()->active()},{"canStart",backend_.nfc()->canStart()},
+                {"error",backend_.nfc()->error()},{"qmlWarnings",errors_.join("\n")}}).toJson());
             backend_.nfc()->stop();QTimer::singleShot(5500,this,[]{QCoreApplication::exit(1);});
         }
         busy_=false;
