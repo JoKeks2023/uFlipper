@@ -24,3 +24,13 @@ Echter Flipper erkannt, RPC-Handshakes erfolgreich. Danach wurde die Backup-Scha
 ## Vollständigkeitsgate nach Quellenprüfung
 
 Nicht behauptet: dass auf der konkreten SD tatsächlich nicht-ASCII-Dateien fehlen. Belegt: der vorhandene RPC-Inventarweg kann deren Abwesenheit nicht nachweisen. Native Vollbackup-Freigabe deshalb gesperrt, bis ein ungefilterter, Fehler/Ende unterscheidender Inventaradapter beobachtet ist. Kein vollständiger Gerätebackup-Erfolg; kein Release. Neue UI-/Protokoll-Gate-Prüfung folgt.
+
+## Korrigiertes Mac-Paket und tatsächlicher Gerätestart
+
+- Quelle `b010f9ec561f9d7cdf29a4fbf37faf8e225e4ee2`, CI [40935865240](https://github.com/JoKeks2023/uFlipper/actions/runs/40935865240): alle fünf Jobs erfolgreich, einschließlich vollständigem Mac-/Linux-Build, Speicher-/NFC-/Protokollverträgen und nativen Startprüfungen.
+- Mac-Artefakt 12924848854: Archiv SHA-256 `9bac48755299f40f77068e27b292530642ec2606a573356a53eb3cde5ca4608e`; Binary `68aa6a24e7518307638037d4f4a1a4ff769d6eb64fe30fb88eb6296eea466557`. Universal x86_64/arm64, Bundle-ID korrekt, strenge Codesignprüfung erfolgreich.
+- Reales M1-Gerät mit angeschlossenem Flipper: lokale Diagnose-QML mit unverändertem Paketbackend prüfte `backendReady=true`, `nfcCanStart=true`, `fullBackupCanStart=false` und die sichtbare Inventarbegründung. Kein Bildschirmseitenwechsel als Start-Workaround nötig; kein NFC-Feld und kein Backup gestartet. Dies ist ein Backend-Diagnosenachweis mit separater QML, kein kompletter Produktablauf.
+- Anschließend normale Produktoberfläche tatsächlich durchlaufen: 19 Klicks, 15 Screenshots, Easy-Mode- und Einstellungs-Dropdown-Rundlauf, kompakte 1060×680-Ansicht, 0 erfasste QML-Fehler. Dashboard und Backup-Seite selbst visuell geprüft. Lokale Originale unter `build_mac/backup-gate-b010f9e/`; Gerätebezeichnung nicht in die Repo-Evidenz übernommen.
+- Geprüftes Paket nach `build_mac/uFlipper.app` übernommen, Vorversion unter `build_mac/previous-before-backup-b010f9e/` erhalten. [Sanitisierte Evidenz](evidence/mac-native-b010f9e.json).
+
+Weiterhin **kein vollständiges Gerätebackup**, kein Produkt-Restore und keine automatische Vollbackup-Vorkette nachgewiesen. Das Vollständigkeitsgate ist kein Abschluss von A15. Reader-Systemkomponente nicht installiert; keine neue Helferversion und keine Firmwareänderung.

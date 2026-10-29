@@ -1,0 +1,32 @@
+{
+  "source": "b010f9ec561f9d7cdf29a4fbf37faf8e225e4ee2",
+  "artifactId": 12924848854,
+  "archiveSha256": "9bac48755299f40f77068e27b292530642ec2606a573356a53eb3cde5ca4608e",
+  "binarySha256": "68aa6a24e7518307638037d4f4a1a4ff769d6eb64fe30fb88eb6296eea466557",
+  "architectures": "x86_64 arm64",
+  "codesignStrict": true,
+  "bundleId": "com.jorisconrad.flipperzeroutil",
+  "ciRun": 40935865240,
+  "nativeUi": {
+    "compactHeight": 680,
+    "compactWidth": 1060,
+    "easyModeRoundtrip": true,
+    "navigationClicks": 19,
+    "qmlErrors": 0,
+    "screenshots": 15,
+    "settingsDropdownRoundtrip": true,
+    "success": true
+  },
+  "nativeBackendGate": {
+    "success": true,
+    "backendReady": true,
+    "nfcCanStart": true,
+    "fullBackupCanStart": false,
+    "fullBackupLimitation": "Vollbackup noch gesperrt: Die Geräte-Dateiliste filtert Dateinamen. Für eine nachweislich vollständige SD-Sicherung fehlt ein ungefiltertes Inventar. Eine zusätzliche Anbindung ist erforderlich; neue SD-Helfer werden erst nach ausdrücklicher Freigabe installiert.",
+    "scope": "native backend with local diagnostic QML; no NFC activation or backup start"
+  },
+  "deviceConnected": true,
+  "fullBackupStarted": false,
+  "nfcFieldStarted": false,
+  "checkedAt": "2026-10-29T19:22:58.287159+00:00"
+}
