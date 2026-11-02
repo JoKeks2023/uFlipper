@@ -15,9 +15,11 @@ class NfcController : public NfcSession {
     bool canStart() const;
     static bool approvedHelperTarget(const QString &commit, const QString &target);
     Q_INVOKABLE void start(const QString &mode = "ppse");
+    void startFromMcp(const QString &mode);
     QString readerStatus() const;
     void conditionsChanged() { emit changed(); }
   private:
+    void startWithOrigin(const QString &mode, UFlipper::Origin origin);
     void attach();
     void connectionChanged();
     void dispatch(int command, const QByteArray &frame, quint64 token);

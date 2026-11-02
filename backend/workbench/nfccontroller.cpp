@@ -58,7 +58,9 @@ void NfcController::connectionChanged() {
     if (!online) helperStartSent_ = false;
 }
 QString NfcController::readerStatus() const { return reader_->status(); }
-void NfcController::start(const QString &mode) {
+void NfcController::start(const QString &mode) { startWithOrigin(mode, UFlipper::Origin::Ui); }
+void NfcController::startFromMcp(const QString &mode) { startWithOrigin(mode, UFlipper::Origin::Mcp); }
+void NfcController::startWithOrigin(const QString &mode, UFlipper::Origin origin) {
     if (!canStart() || (mode != "ppse" && mode != "ndef" && mode != "reader")) return;
 #ifndef Q_OS_MACOS
     if (mode == "reader") return;
@@ -70,7 +72,7 @@ void NfcController::start(const QString &mode) {
            {"firmwareCommit", info.firmware.commit}, {"hardwareTarget", info.hardware.target},
            {"rpcMajor", info.protobuf.versionMajor}, {"rpcMinor", info.protobuf.versionMinor},
            {"startedAt", QDateTime::currentDateTimeUtc().toString(Qt::ISODateWithMs)},
-           {"helperSha256", "ab0bcae111b085a8cf79ef9c5dd423331f0ae86519228cb0ed79624470e0d632"}}, mode);
+           {"helperSha256", "ab0bcae111b085a8cf79ef9c5dd423331f0ae86519228cb0ed79624470e0d632"}}, mode, origin);
     if (!begun && mode == "reader") reader_->stop();
 }
 void NfcController::dispatch(int command, const QByteArray &frame, quint64 token) {

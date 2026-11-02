@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import Theme 1.0
 import QFlipper 1.0
+import ".."
 WorkbenchSplit {
     id: settings
     objectName: "settingsPage"
@@ -106,8 +107,28 @@ WorkbenchSplit {
     ColumnLayout {
         visible: settings.tab === 3; Layout.fillWidth: true; spacing: 24
         WorkbenchLabel { text: qsTr("MCP"); font.pixelSize: 21 }
-        WorkbenchFact { label: qsTr("Status"); value: qsTr("Noch nicht angeschlossen · kein MCP-Zugriff aktiv") }
-        WorkbenchHint { text: qsTr("Nach Fertigstellung: bewusste Gesamtfreigabe je Computer, jederzeit widerrufbar. Geräteaktionen verwenden dieselbe Verbindung und Konfliktentscheidung wie die Oberfläche.") }
+        RowLayout {
+            spacing: 16; Layout.fillWidth: true
+            WorkbenchFact { label: qsTr("Zugriff auf diesem Computer"); value: Backend.mcp.enabled ? qsTr("Vollzugriff freigegeben") : qsTr("Ausgeschaltet") }
+            WorkbenchButton {
+                objectName: "mcp-permission"
+                text: Backend.mcp.enabled ? qsTr("Freigabe widerrufen") : qsTr("MCP freigeben …")
+                onClicked: {
+                    if (Backend.mcp.enabled) Backend.mcp.revoke()
+                    else mcpConfirmation.openWithMessage(function() { Backend.mcp.grant() }, {
+                        title: qsTr("MCP auf diesem Computer freigeben?"),
+                        message: qsTr("Lokale MCP-Programme erhalten vollen Zugriff auf die verfügbaren Geräteaktionen und gespeicherten Aufnahmen. Diese Freigabe bleibt auf diesem Computer gespeichert und ist jederzeit widerrufbar. Helferinstallationen und Hardwarekonflikte brauchen weiterhin eine eigene Entscheidung."),
+                        customText: qsTr("Vollzugriff freigeben"), suggestedRole: ConfirmationDialog.RejectRole
+                    })
+                }
+            }
+        }
+        WorkbenchHint { visible: Backend.mcp.error.length > 0; text: Backend.mcp.error }
+        WorkbenchFact { label: qsTr("Verbundene MCP-Programme"); value: Backend.mcp.clients.length ? Backend.mcp.clients.join(", ") : qsTr("Keine") }
+        WorkbenchHint { text: qsTr("Lokaler stdio-Zugang. Gerätestatus, NFC-Lesesitzungen und gespeicherte Aufnahmen sind angeschlossen; weitere Gerätebereiche folgen. Beim Widerruf werden MCP-Aufträge gestoppt und alle MCP-Verbindungen geschlossen. Ein bestätigter Geräte-Stop bleibt im Werkzeug sichtbar.") }
+        WorkbenchButton { text: qsTr("Client-Konfiguration anzeigen"); onClicked: mcpConfiguration.visible = !mcpConfiguration.visible }
+        TextArea { id: mcpConfiguration; visible: false; Layout.fillWidth: true; readOnly: true; selectByMouse: true; wrapMode: TextEdit.WrapAnywhere; text: Backend.mcp.command; font.family: "Share Tech"; font.pixelSize: 14; Accessible.name: qsTr("MCP-Client-Konfiguration") }
+        ConfirmationDialog { id: mcpConfirmation; parent: settings }
         WorkbenchRule {}
         WorkbenchLabel { text: qsTr("NFC-Systemreader"); font.pixelSize: 21 }
         WorkbenchFact { label: qsTr("macOS"); value: qsTr("Integration und unabhängiger Kartentest noch offen") }

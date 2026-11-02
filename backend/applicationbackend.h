@@ -6,6 +6,7 @@
 #include "backenderror.h"
 #include "flipperupdates.h"
 
+namespace Mcp { class LocalGateway; }
 class DeviceTelemetry;
 class WorkbenchData;
 class NfcController;
@@ -24,6 +25,7 @@ class VirtualDisplay;
 }}
 
 #if QT_VERSION >= 0x060000
+Q_MOC_INCLUDE("mcp/localgateway.h")
 Q_MOC_INCLUDE("workbench/devicetelemetry.h")
 Q_MOC_INCLUDE("workbench/workbenchdata.h")
 Q_MOC_INCLUDE("workbench/nfccontroller.h")
@@ -37,6 +39,7 @@ Q_MOC_INCLUDE("flipperzero/filemanager.h")
 class ApplicationBackend : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(Mcp::LocalGateway* mcp READ mcp CONSTANT)
     Q_PROPERTY(NfcController* nfc READ nfc CONSTANT)
     Q_PROPERTY(BackupController* backup READ backup CONSTANT)
     Q_PROPERTY(WorkbenchData* workbench READ workbench CONSTANT)
@@ -85,6 +88,7 @@ public:
 
     ApplicationBackend(QObject *parent = nullptr);
 
+    Mcp::LocalGateway* mcp() const { return m_mcp; }
     NfcController* nfc() const { return m_nfc; }
     BackupController* backup() const { return m_backup; }
     WorkbenchData* workbench() const { return m_workbench; }
@@ -161,6 +165,7 @@ private:
 
     Flipper::DeviceRegistry *m_deviceRegistry;
     DeviceTelemetry* m_telemetry;
+    Mcp::LocalGateway* m_mcp = nullptr;
     NfcController* m_nfc = nullptr;
     BackupController* m_backup = nullptr;
     WorkbenchData* m_workbench;

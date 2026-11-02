@@ -227,3 +227,6 @@ HEADERS += workbench/backupsession.h workbench/backupcontroller.h workbench/vicc
 
 INCLUDEPATH += $$PWD/../dfu \
                $$PWD/../plugins/protobufinterface
+
+SOURCES += mcp/protocol.cpp mcp/localgateway.cpp mcp/nativetools.cpp mcp/stdiorelay.cpp
+HEADERS += mcp/protocol.h mcp/localgateway.h mcp/nativetools.h mcp/stdiorelay.h

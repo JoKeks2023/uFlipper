@@ -13,6 +13,8 @@
 // the existing application connection; tests can supply acknowledgements directly.
 class NfcSession : public QObject {
     Q_OBJECT
+    Q_PROPERTY(QString jobId READ jobId NOTIFY changed)
+    Q_PROPERTY(QString origin READ origin NOTIFY changed)
     Q_PROPERTY(QString mode READ mode NOTIFY changed)
     Q_PROPERTY(QVariantList ndefRecords READ ndefRecords NOTIFY changed)
     Q_PROPERTY(bool active READ active NOTIFY changed)
@@ -47,7 +49,10 @@ class NfcSession : public QObject {
     QVariantList responses() const { return responses_; }
     quint64 commandToken() const { return token_; }
     void setConnection(const QString &identity, bool online);
-    bool begin(const QVariantMap &metadata, const QString &mode = "ppse");
+    bool begin(const QVariantMap &metadata, const QString &mode = "ppse", UFlipper::Origin origin = UFlipper::Origin::Ui);
+    QString jobId() const { return job_; }
+    QString origin() const { return origin_; }
+    QVariantList jobs() const;
     void acknowledge(quint64 token, const QString &error = {});
     void helperState(bool started);
     void receive(const QByteArray &frame);
@@ -74,7 +79,7 @@ class NfcSession : public QObject {
     QString root_, identity_, recordingId_, job_, state_ = QStringLiteral("idle"), error_;
     QVariantMap card_;
     QVariantList responses_, ndefRecords_;
-    QString mode_ = "ppse", responseLabel_;
+    QString mode_ = "ppse", responseLabel_, origin_ = "ui";
     std::unique_ptr<UFlipper::Type4NdefReader> ndef_;
     bool readComplete_ = false, readerPowerOn_ = true;
     UFlipper::OperationCoordinator jobs_;

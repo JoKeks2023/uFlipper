@@ -43,7 +43,7 @@ void NfcSession::setConnection(const QString &identity, bool online) {
     online_ = online;
     emit changed();
 }
-bool NfcSession::begin(const QVariantMap &metadata, const QString &mode) {
+bool NfcSession::begin(const QVariantMap &metadata, const QString &mode, UFlipper::Origin origin) {
     if (!available()) return false;
     if (mode != "ppse" && mode != "ndef" && mode != "reader") return false;
     mode_ = mode; readComplete_ = false; readerPowerOn_ = true; ndef_.reset(); ndefRecords_.clear(); responseLabel_.clear();
@@ -52,6 +52,8 @@ bool NfcSession::begin(const QVariantMap &metadata, const QString &mode) {
     try {
         store_ = std::make_unique<UFlipper::CaptureStore>(root_.toStdString());
         auto meta = metadata;
+        origin_ = origin == UFlipper::Origin::Mcp ? "mcp" : mode == "reader" ? "reader" : "ui";
+        meta.insert("origin", origin_);
         meta.insert("helperVersion", "0.1.0");
         const QString kind = "nfc.iso14443-4a." + mode_;
         meta.insert("mode", "iso14443-4a." + mode_);
@@ -60,7 +62,7 @@ bool NfcSession::begin(const QVariantMap &metadata, const QString &mode) {
         recordingId_ = QString::fromStdString(store_->begin(kind.toStdString(),
                               QJsonDocument::fromVariant(meta).toJson(QJsonDocument::Compact).toStdString()));
         auto request = jobs_.request(kind.toStdString(), UFlipper::Control | UFlipper::DeviceApp | UFlipper::Nfc,
-                                     mode_ == "reader" ? UFlipper::Origin::Reader : UFlipper::Origin::Ui, true, true);
+                                     mode_ == "reader" ? UFlipper::Origin::Reader : origin, true, true);
         if (request.decision != UFlipper::Decision::Granted)
             throw std::runtime_error("Device resources are not available");
         job_ = QString::fromStdString(request.id);
@@ -382,4 +384,19 @@ void NfcSession::openRecording(const QString &id) {
         error_ = object.value("state").toString() == "interrupted" ? object.value("reason").toString() : QString();
     } catch (const std::exception &error) { card_.clear(); responses_.clear(); ndefRecords_.clear(); error_ = QString::fromUtf8(error.what()); state_ = "interrupted"; }
     emit changed();
+}
+
+QVariantList NfcSession::jobs() const {
+    QVariantList result;
+    const auto entries = jobs_.jobs();
+    // Bound status payloads independently of the lifetime of the UI process.
+    const auto first = entries.size() > 40 ? entries.size() - 40 : 0;
+    for (size_t i = first; i < entries.size(); ++i) {
+        const auto &job = entries[i];
+        result.append(QVariantMap{{"jobId", QString::fromStdString(job.id)},
+            {"kind", QString::fromStdString(job.kind)}, {"state", UFlipper::stateName(job.state)},
+            {"origin", job.origin == UFlipper::Origin::Mcp ? "mcp" : job.origin == UFlipper::Origin::Reader ? "reader" : "ui"},
+            {"generation", QVariant::fromValue<qulonglong>(job.generation)}, {"reason", QString::fromStdString(job.reason)}});
+    }
+    return result;
 }

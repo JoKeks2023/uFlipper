@@ -1,0 +1,9 @@
+QT = core network
+TEMPLATE = app
+CONFIG += console c++17
+CONFIG -= app_bundle
+TARGET = uflipper_mcp_tests
+INCLUDEPATH += $$PWD/../../backend
+SOURCES += mcp_tests.cpp $$PWD/../../backend/mcp/protocol.cpp $$PWD/../../backend/mcp/localgateway.cpp $$PWD/../../backend/mcp/stdiorelay.cpp
+HEADERS += $$PWD/../../backend/mcp/protocol.h $$PWD/../../backend/mcp/localgateway.h $$PWD/../../backend/mcp/stdiorelay.h
+macx: QMAKE_MACOSX_DEPLOYMENT_TARGET = 13.0

@@ -1,3 +1,5 @@
+#include "mcp/localgateway.h"
+#include "mcp/nativetools.h"
 #include "workbench/workbenchdata.h"
 #include "workbench/nfccontroller.h"
 #include "workbench/backupcontroller.h"
@@ -63,6 +65,11 @@ ApplicationBackend::ApplicationBackend(QObject *parent):
     }, this);
     connect(m_backup, &BackupSession::saved, m_workbench, &WorkbenchData::refresh);
     m_workbench->refresh(); // Include startup recovery of abandoned backups.
+    m_mcp = new Mcp::LocalGateway(Mcp::nativeTools(), [this](const QString &name, const QJsonObject &args) {
+        return Mcp::nativeCall(this, name, args);
+    }, [this] {
+        if (m_nfc->active() && m_nfc->origin() == "mcp") m_nfc->stop();
+    }, Mcp::localDirectory(), Mcp::machineIdentity(), this);
     const auto accessChanged = [this] {
         const bool blocked = m_nfc->blocked() || m_backup->blocked() || !device() || !device()->rpc()->isSessionUp();
         m_telemetry->setPollingEnabled(!blocked && (m_backendState == BackendState::Ready || m_backendState == BackendState::ScreenStreaming));

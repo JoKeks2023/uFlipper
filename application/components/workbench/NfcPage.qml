@@ -89,6 +89,7 @@ WorkbenchSplit {
         WorkbenchLabel { Layout.fillWidth: true; text: page.selectedMode === "ndef" ? qsTr("Type 4A, Mapping 2, nur lesen. Bis 32.765 Bytes. Texte und URIs werden angezeigt; Originaldaten bleiben vollständig erhalten. Geräteprüfung mit Testkarte steht aus.") : page.readerMode ? qsTr("Experimentelle lokale PC/SC-Bridge. Benötigt eine separat installierte macOS-Reader-Komponente. Noch nicht mit unabhängigem Client abgenommen. Andere Programme können auch schreibende Kartenkommandos senden.") : qsTr("ISO14443-4A. Zwei identische Verzeichnisabfragen; keine Zahlung."); wrapMode: Text.Wrap; font.pixelSize: 14; opacity: 0.75 },
         WorkbenchFact { visible: page.readerMode; Layout.fillWidth: true; label: qsTr("Mac-Bridge"); value: page.session.readerStatus },
         WorkbenchRule {},
+        WorkbenchFact { visible: page.session.jobId.length > 0; label: qsTr("Auftrag · ") + page.session.origin; value: page.session.jobId },
         WorkbenchFact { label: qsTr("Aufzeichnung"); value: page.session.active ? qsTr("Läuft · Originaldaten werden gespeichert") : page.session.recordingVerified ? qsTr("Gespeichert und geprüft") : qsTr("Automatisch vor jedem Start") },
         WorkbenchFact { label: qsTr("Geräte-Stop"); value: page.session.stopConfirmed ? qsTr("Bestätigt") : page.session.active ? qsTr("Sitzung läuft") : "—" },
         WorkbenchButton { text: qsTr("Sitzungsordner öffnen"); Layout.fillWidth: true; enabled: page.session.recordingId.length > 0; onClicked: Qt.openUrlExternally(page.session.recordingUrl()) },

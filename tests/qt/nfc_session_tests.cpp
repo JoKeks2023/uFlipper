@@ -61,7 +61,8 @@ void unchangedConnectionIsNotAnEvent(const QString &root) {
 }
 void completedAndReopened(const QString &root) {
     Harness h(root);
-    require(h.session.begin({{"firmware","fixture"}}),"Cannot start session");
+    require(h.session.begin({{"firmware","fixture"}}, "ppse", UFlipper::Origin::Mcp),"Cannot start session");
+    require(!h.session.jobId().isEmpty() && h.session.origin() == "mcp" && h.session.jobs().last().toMap().value("jobId") == h.session.jobId(), "MCP/UI session handle or origin diverged");
     require(QFile::exists(h.session.recordingUrl().toLocalFile()+"/events.bin"),"App started before recording file exists");
     h.info(); h.card();
     h.ack(); h.reply(QByteArray::fromHex("6f009000"));

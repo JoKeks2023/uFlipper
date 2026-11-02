@@ -103,12 +103,27 @@ jobs:
           make -j2 main.o
           cd "$RUNNER_TEMP/telemetry-compile"
           qmake "$GITHUB_WORKSPACE/backend/backend.pro"
-          make -j2 backupsession.o backupcontroller.o viccbridge.o devicetelemetry.o powersnapshot.o workbenchdata.o nfcsession.o nfccontroller.o applicationbackend.o preferences.o logger.o
+          make -j2 protocol.o localgateway.o nativetools.o stdiorelay.o backupsession.o backupcontroller.o viccbridge.o devicetelemetry.o powersnapshot.o workbenchdata.o nfcsession.o nfccontroller.o applicationbackend.o preferences.o logger.o
           cd "$RUNNER_TEMP/ui-compile"
           qmake "$GITHUB_WORKSPACE/application/application.pro"
           make -j4 qrc_qmake_qmake_qm_files.cpp
           test -s .qm/en_US.qm
-          make -j2 application.o uireview.o nfcreview.o backupreview.o
+          make -j2 main.o application.o uireview.o nfcreview.o backupreview.o
+      - name: Local MCP protocol, permission and independent stdio contracts
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/mcp-tests"
+          cd "$RUNNER_TEMP/mcp-tests"
+          qmake "$GITHUB_WORKSPACE/tests/qt/mcp_tests.pro"
+          make -j2
+          ./uflipper_mcp_tests
+          python3 "$GITHUB_WORKSPACE/tests/mcp/stdio_client.py" "$PWD/uflipper_mcp_tests" | tee mcp-contract-result.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mcp-contracts-${{ matrix.os }}
+          path: ${{ runner.temp }}/mcp-tests/mcp-contract-result.json
+          retention-days: 14
       - name: Empty and truncated storage transfer contracts before full build
         shell: bash
         run: |
