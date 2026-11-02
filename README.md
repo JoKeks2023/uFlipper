@@ -15,6 +15,10 @@ A desktop workbench for Flipper Zero, built on qFlipper. macOS and Linux are the
 
 These are the accepted product goals, **not a claim that every item is already available**. Current implementation and observed results: [foundation task](docs/tasks/T-0003_foundation/00_brief.md). Device capabilities and limits: [function matrix](docs/tasks/T-0002_technical-plan/06_function_matrix.md).
 
+## Local MCP development interface
+
+The native app now includes an opt-in local stdio adapter for device status, NFC job control and saved recording artifacts. Enable it explicitly under **Settings → Integrations**; the app shows the client configuration and supports revoking access. Both MCP revisions `2026-07-28` and `2025-11-25` are covered by independent client contracts. Other device tools and full device acceptance remain in progress. See [setup and limitations](docs/mcp.md) and [validation evidence](docs/tasks/T-0012_mcp/05_validation_report.md).
+
 ## Development
 
 The application uses C++17, Qt 6 and qmake. Portable core checks use a small separate CMake target:

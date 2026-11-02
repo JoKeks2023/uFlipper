@@ -1,0 +1,13 @@
+{
+  "backend": "synthetic; no device",
+  "passed": [
+    "default_denied",
+    "private_files_and_explicit_grant",
+    "wrong_token_denied",
+    "modern_discovery_list_call_and_request_isolation",
+    "legacy_handshake_call_and_eof_shutdown",
+    "malformed_json_protocol_error",
+    "revocation_disconnects_and_denies_reconnect",
+    "other_machine_grant_ignored"
+  ]
+}

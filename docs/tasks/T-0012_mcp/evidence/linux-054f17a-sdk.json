@@ -1,0 +1,21 @@
+{
+  "sdk": "mcp",
+  "sdkVersion": "2.3.0",
+  "backend": "synthetic; no device",
+  "passed": [
+    {
+      "mode": "auto",
+      "version": "2026-07-28",
+      "tools": [
+        "fixture_status"
+      ]
+    },
+    {
+      "mode": "legacy",
+      "version": "2025-11-25",
+      "tools": [
+        "fixture_status"
+      ]
+    }
+  ]
+}
