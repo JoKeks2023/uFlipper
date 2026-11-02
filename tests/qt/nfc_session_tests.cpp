@@ -73,6 +73,7 @@ void completedAndReopened(const QString &root) {
     const auto id=h.session.recordingId();
     const auto originalTimes=h.session.responses();
     h.session.openRecording(id);
+    require(!h.session.jobId().isEmpty() && h.session.origin() == "mcp", "Saved recording lost shared MCP job identity");
     require(h.session.state()=="saved" && h.session.responses().size()==2 && h.session.card().value("uid").toString()=="01 02 03 04", "Saved session did not reopen");
     require(h.session.responses()==originalTimes,"Reopening changed original response times or data");
     QFile corrupt(h.session.recordingUrl().toLocalFile()+"/events.bin");

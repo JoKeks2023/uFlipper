@@ -109,6 +109,9 @@ jobs:
           make -j4 qrc_qmake_qmake_qm_files.cpp
           test -s .qm/en_US.qm
           make -j2 main.o application.o uireview.o nfcreview.o backupreview.o
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
       - name: Local MCP protocol, permission and independent stdio contracts
         shell: bash
         run: |
@@ -118,11 +121,17 @@ jobs:
           make -j2
           ./uflipper_mcp_tests
           python3 "$GITHUB_WORKSPACE/tests/mcp/stdio_client.py" "$PWD/uflipper_mcp_tests" | tee mcp-contract-result.json
+          python3 -m venv "$RUNNER_TEMP/mcp-sdk"
+          "$RUNNER_TEMP/mcp-sdk/bin/python" -m pip install --quiet --disable-pip-version-check 'mcp==2.3.0'
+          "$RUNNER_TEMP/mcp-sdk/bin/python" "$GITHUB_WORKSPACE/tests/mcp/sdk_client.py" "$PWD/uflipper_mcp_tests" | tee mcp-sdk-result.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: mcp-contracts-${{ matrix.os }}
-          path: ${{ runner.temp }}/mcp-tests/mcp-contract-result.json
+          path: |
+            ${{ runner.temp }}/mcp-tests/mcp-contract-result.json
+            ${{ runner.temp }}/mcp-tests/mcp-sdk-result.json
+            ${{ runner.temp }}/mcp-tests/uflipper_mcp_tests
           retention-days: 14
       - name: Empty and truncated storage transfer contracts before full build
         shell: bash

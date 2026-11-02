@@ -96,7 +96,7 @@ QJsonObject Protocol::receive(const QByteArray &line) {
     } else if (method != "ping" && !ready_) {
         return error(id, -32002, "Initialize the legacy client or include modern per-request metadata");
     }
-    if (method == "ping") return result(id, {}, modern);
+    if (method == "ping" && !modern) return result(id, {}, false);
     if (method == "server/discover" && modern)
         return result(id, {{"supportedVersions", versions()}, {"capabilities", capabilities()},
                            {"ttlMs", 0}, {"cacheScope", "private"}}, true);

@@ -117,6 +117,7 @@ void LocalGateway::receive(QLocalSocket *socket) {
     const auto client = clients_.value(socket);
     if (!client) return;
     client->input += socket->readAll();
+    if (client->input.size() > MaxBuffered) { socket->abort(); return; }
     // A bounded frame and bounded output queue also protect the GUI event loop.
     for (int count = 0; count < 16; ++count) {
         const auto newline = client->input.indexOf('\n');

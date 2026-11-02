@@ -3,6 +3,7 @@
 #include <QDateTime>
 #include <QFile>
 #include <QJsonDocument>
+#include <QJsonObject>
 #include <QRegularExpression>
 #include <QtEndian>
 #include <chrono>
@@ -66,6 +67,9 @@ bool NfcSession::begin(const QVariantMap &metadata, const QString &mode, UFlippe
         if (request.decision != UFlipper::Decision::Granted)
             throw std::runtime_error("Device resources are not available");
         job_ = QString::fromStdString(request.id);
+        // Persist the shared handle before issuing any device command.
+        record(QJsonDocument(QJsonObject{{"jobId", job_}, {"origin", origin_}}).toJson(QJsonDocument::Compact),
+               UFlipper::RecordType::Status);
         active_ = true; state_ = "starting";
         issue(StartHelper);
         return true;
@@ -75,6 +79,7 @@ bool NfcSession::begin(const QVariantMap &metadata, const QString &mode, UFlippe
             try { store_->finish(recordingId_.toStdString(), UFlipper::CaptureState::Interrupted, error_.toStdString()); }
             catch (...) {}
         }
+        if (!job_.isEmpty()) jobs_.fail(job_.toStdString(), error_.toStdString(), true);
         store_.reset(); state_ = "interrupted";
         emit changed(); emit recordingSaved();
         return false;
@@ -334,7 +339,7 @@ void NfcSession::openRecording(const QString &id) {
     if (blocked() || !valid.match(id).hasMatch()) return;
     card_.clear(); responses_.clear(); ndefRecords_.clear(); ndef_.reset(); responseLabel_.clear();
     verified_ = false; stopConfirmed_ = false; error_.clear();
-    recordingId_ = id;
+    recordingId_ = id; job_.clear(); origin_.clear();
     try {
         UFlipper::CaptureStore store(root_.toStdString());
         if (!store.verify(id.toStdString())) throw std::runtime_error("Recording integrity check failed");
@@ -355,6 +360,12 @@ void NfcSession::openRecording(const QString &id) {
             if (length > 1024 * 1024) throw std::runtime_error("Recording frame exceeds limit");
             const auto bytes = file.read(length);
             if (bytes.size() != length) throw std::runtime_error("Truncated recording data");
+            if (header[0] == char(UFlipper::RecordType::Status) && bytes.startsWith('{')) {
+                const auto status = QJsonDocument::fromJson(bytes).object();
+                if (status.value("jobId").isString()) {
+                    job_ = status.value("jobId").toString(); origin_ = status.value("origin").toString();
+                }
+            }
             if (header[0] != char(UFlipper::RecordType::Data) || bytes.size() < 8) continue;
             const auto *b = reinterpret_cast<const uint8_t *>(bytes.constData());
             if (b[0] != 'U' || b[1] != 'F' || b[2] != 1 || uf_nfc_payload_size(b) != size_t(bytes.size()-8))
