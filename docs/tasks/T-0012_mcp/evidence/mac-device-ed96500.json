@@ -1,0 +1,25 @@
+{
+  "success": true,
+  "backend": {
+    "ready": true,
+    "backendState": 1,
+    "mcp": false,
+    "clients": [],
+    "nfc": {
+      "jobId": "",
+      "origin": "ui",
+      "active": false,
+      "blocked": false,
+      "state": "idle",
+      "recordingId": "",
+      "verified": false,
+      "stopConfirmed": false,
+      "error": ""
+    },
+    "fullBackupCanStart": false,
+    "firmware": "mntm-012",
+    "firmwareCommit": "e1784e74"
+  },
+  "stdioDefaultDenied": true,
+  "scope": "real product window with diagnostic backend observer; no MCP grant or device actions"
+}

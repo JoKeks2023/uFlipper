@@ -1,0 +1,12 @@
+{
+  "source": "ed9650058746f5562547460df292ec12783f0587",
+  "artifactId": 13169552193,
+  "archiveSha256": "8a2d6cacebf148ed1b76af9198b6cdcbbb1b1952fcd42583b3c15a82cf84c04f",
+  "binarySha256": "abceca9e94f72515edae376b5f346b8cffdbf73c897cbedb40deed90c56fcaf0",
+  "architectures": [
+    "x86_64",
+    "arm64"
+  ],
+  "bundleId": "com.jorisconrad.flipperzeroutil",
+  "codesignStrict": true
+}
