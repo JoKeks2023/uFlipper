@@ -22,3 +22,9 @@ Native App und Freigabedialog auf Mac/Linux praktisch prüfen; echter Nutzerzuga
 - Der separat heruntergeladene Mac-Testhost aus 054f17a ist nur x86_64. Lokaler Start auf dem M1 scheiterte mit `Bad CPU type`; weder Rosetta installiert noch diesen Versuch als bestanden gezählt. Die lokale App-Prüfung erfolgt mit dem Universalpaket.
 
 Geprüfte Downloadarchive: aktuelle Linux-UI 13165573444 `f6c7942f009dc2ce120e2c56191665a33b739ff7313ac234fc27b75e1b0d556a`; aktueller Mac-MCP-Vertrag 13166163185 `a871decfeb27cd63b5171e9751276fa7e78385e1df468a8f3e1578c8d4335ac7`.
+
+## Korrigierter CI-Befund
+
+Der vollständige Maclauf 41494130250 scheiterte beim Universal-Linken. Die neu eingefügte Python-Einrichtung hatte nach den Universal-Abhängigkeiten `PKG_CONFIG_PATH` durch den Pythonpfad ersetzt; qmake wählte danach reine Intel-Homebrew-Bibliotheken für libusb/libsodium. Keine Fehler im MCP-Protokolltest daraus ableiten, aber auch kein fertiges Macpaket behaupten. Eigenständiges Bugticket nach Duplikatcheck angelegt.
+
+Korrektur: Python vor den Plattformabhängigkeiten einrichten. Danach frühe Prüfung der tatsächlich aufgelösten libusb-/libsodium-Prefixe und beider Architekturen in den statischen Bibliotheken. Kleinen Mac-MCP-Testhost ebenfalls universal erzeugen, damit er ohne zusätzliche Übersetzung auf dem M1 ausführbar ist. Neue CI-/Paketprüfung steht aus.
