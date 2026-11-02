@@ -97,6 +97,9 @@ jobs:
           key: ${{ steps.qt-sdk.outputs.cache-primary-key }}
       - name: Configure Qt path
         run: python3 -c 'import pathlib,sys; print(next(pathlib.Path(sys.argv[1]).rglob("qmake")).parent)' "$RUNNER_TEMP/Qt/6.8.3" >> "$GITHUB_PATH"
+      - name: Check Universal dependency resolution before compilation
+        if: runner.os == 'macOS'
+        run: bash scripts/ci/check_macos_universal_dependencies.sh "$RUNNER_TEMP/uflipper-deps/universal"
       - name: Compile new integration paths before the full build
         shell: bash
         run: |
@@ -137,9 +140,6 @@ jobs:
             ${{ runner.temp }}/mcp-tests/mcp-sdk-result.json
             ${{ runner.temp }}/mcp-tests/uflipper_mcp_tests
           retention-days: 14
-      - name: Check Universal dependency resolution after client-test setup
-        if: runner.os == 'macOS'
-        run: bash scripts/ci/check_macos_universal_dependencies.sh "$RUNNER_TEMP/uflipper-deps/universal"
       - name: Empty and truncated storage transfer contracts before full build
         shell: bash
         run: |
@@ -171,7 +171,9 @@ jobs:
         if: runner.os == 'macOS'
         env:
           BUILD_JOBS: 4
-        run: bash build_mac.sh
+        run: |
+          bash scripts/ci/check_macos_universal_dependencies.sh "$RUNNER_TEMP/uflipper-deps/universal"
+          bash build_mac.sh
       - name: Build Linux application
         if: runner.os == 'Linux'
         run: bash build_linux.sh
