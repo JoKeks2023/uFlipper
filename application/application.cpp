@@ -1,4 +1,5 @@
 #include "uireview.h"
+#include "mcp/localgateway.h"
 #include "backupreview.h"
 #include "nfcreview.h"
 #include "workbench/backupcontroller.h"
@@ -55,7 +56,7 @@ Application::Application(int &argc, char **argv):
     initGUI();
     if(!m_nfcReviewDirectory.isEmpty()) QTimer::singleShot(7000, this, [this] { runNfcReview(m_engine, m_backend, m_nfcReviewDirectory, m_nfcReviewCard, m_nfcReviewMode); });
     if(!m_backupReviewDirectory.isEmpty()) QTimer::singleShot(7000, this, [this] { runBackupReview(m_engine, m_backend, m_backupReviewDirectory, m_backupReviewCancel); });
-    if(!m_uiReviewDirectory.isEmpty()) QTimer::singleShot(7000, this, [this] { runUiReview(m_engine, m_uiReviewDirectory); });
+    if(!m_uiReviewDirectory.isEmpty()) QTimer::singleShot(7000, this, [this] { runUiReview(m_engine, m_backend, m_uiReviewDirectory); });
 
     qCInfo(LOG_APP).noquote() << APP_NAME << "version" << APP_VERSION << "commit"
                               << APP_COMMIT << QDateTime::fromSecsSinceEpoch(APP_TIMESTAMP).toString(Qt::ISODate);
@@ -230,6 +231,7 @@ void Application::initQmlTypes()
 
     qmlRegisterUncreatableType<BackendError>("QFlipper", 1, 0, "BackendError", QStringLiteral("This class is only a enum container"));
     qmlRegisterUncreatableType<InputEvent>("QFlipper", 1, 0, "InputEvent", QStringLiteral("This class is only a enum container"));
+    qmlRegisterUncreatableType<Mcp::LocalGateway>("QFlipper", 1, 0, "McpGateway", QStringLiteral("MCP access is owned by the backend"));
     qmlRegisterUncreatableType<BackupController>("QFlipper", 1, 0, "BackupController", QStringLiteral("Backups are owned by the backend"));
     qmlRegisterUncreatableType<NfcController>("QFlipper", 1, 0, "NfcController", QStringLiteral("NFC is owned by the backend"));
     qmlRegisterUncreatableType<WorkbenchData>("QFlipper", 1, 0, "WorkbenchData", QStringLiteral("Workbench data is owned by the backend"));

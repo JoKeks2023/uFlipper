@@ -168,6 +168,16 @@ jobs:
       - name: Build Linux application
         if: runner.os == 'Linux'
         run: bash build_linux.sh
+      - name: Bundled stdio mode remains denied without loading a GUI
+        shell: bash
+        run: |
+          python3 - <<'PYCODE'
+          import os, subprocess
+          binary = "build_mac/uFlipper.app/Contents/MacOS/uFlipper" if os.environ["RUNNER_OS"] == "macOS" else "build/uFlipper"
+          env = dict(os.environ, QT_QPA_PLATFORM="must-not-load-gui-in-mcp-mode")
+          result = subprocess.run([binary, "--mcp"], input=b"", capture_output=True, env=env, timeout=10)
+          assert result.returncode == 2 and not result.stdout and b"MCP is disabled" in result.stderr, (result.returncode, result.stdout, result.stderr)
+          PYCODE
       - name: App-RPC contract tests
         shell: bash
         run: |

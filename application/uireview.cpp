@@ -1,4 +1,6 @@
 #include "uireview.h"
+#include "applicationbackend.h"
+#include "mcp/localgateway.h"
 #include "preferences.h"
 #include <QCoreApplication>
 #include <QDebug>
@@ -14,6 +16,7 @@
 #include <QTest>
 #include <QTimer>
 #include <functional>
+#include <algorithm>
 #include <stdexcept>
 #include <vector>
 namespace {
@@ -27,8 +30,8 @@ QQuickItem *findItem(QQuickItem *parent, const QString &name) {
 }
 class Review : public QObject {
   public:
-    Review(QQmlApplicationEngine &engine, QString directory)
-        : QObject(&engine), directory_(std::move(directory)) {
+    Review(QQmlApplicationEngine &engine, ApplicationBackend &backend, QString directory)
+        : QObject(&engine), directory_(std::move(directory)), mcp_(backend.mcp()), originalMcpEnabled_(backend.mcp()->enabled()) {
         window_ = qobject_cast<QQuickWindow *>(engine.rootObjects().value(0));
         if (!window_ || !QDir().mkpath(directory_))
             throw std::runtime_error("UI review cannot initialize");
@@ -61,6 +64,13 @@ class Review : public QObject {
                   {"nav-library", "library", "08_files"},
                   {"nav-screen", "screen", "09_screen"},
                   {"nav-dashboard", "dashboard", "10_compact"}};
+        if (!originalMcpEnabled_) {
+            auto afterIntegrations = std::find_if(steps_.begin(), steps_.end(), [](const Step &step) {
+                return QString::fromLatin1(step.button) == "settings-tab-3";
+            });
+            steps_.insert(afterIntegrations + 1, {{"mcp-permission", "settings", "16_mcp_confirmation"},
+                                                {"mcp-reject", "settings", ""}});
+        }
         QTimer::singleShot(0, this, [this] { next(); });
     }
     ~Review() override {
@@ -74,6 +84,13 @@ class Review : public QObject {
         const char *image;
     };
     void click(const QString &name) {
+        if (name == "mcp-reject") {
+            auto *dialog = window_->findChild<QObject *>("mcp-permission-dialog");
+            if (!dialog || !dialog->property("visible").toBool() || dialog->property("suggestedRole").toInt() != 1)
+                throw std::runtime_error("MCP confirmation did not default to rejection");
+            QTest::keyClick(window_, Qt::Key_Return);
+            return;
+        }
         auto *button = findItem(window_->contentItem(), name);
         if (!button || !button->isVisible() || !button->isEnabled())
             throw std::runtime_error(("UI button unavailable: " + name).toStdString());
@@ -126,6 +143,11 @@ class Review : public QObject {
                 if (globalPrefs->easyMode() != expected)
                     throw std::runtime_error("Settings dropdown did not persist expected Easy Mode value");
             }
+            if (buttonName == "mcp-permission" || buttonName == "mcp-reject") {
+                auto *dialog = window_->findChild<QObject *>("mcp-permission-dialog");
+                if (!dialog || dialog->property("visible").toBool() != (buttonName == "mcp-permission") || mcp_->enabled())
+                    throw std::runtime_error("MCP confirmation/rejection changed access unexpectedly");
+            }
             if (buttonName.startsWith("tool-tab-")) {
                 auto *tool = findItem(window_->contentItem(), "toolPage");
                 if (!tool || tool->property("currentTab").toInt() != buttonName.mid(9).toInt())
@@ -148,6 +170,7 @@ class Review : public QObject {
         }
     }
     void complete() {
+        if (mcp_->enabled() != originalMcpEnabled_) { fail("UI review changed MCP access"); return; }
         for (const auto &text : parent()->property("uiReviewErrors").toStringList()) {
             if (text.contains("TypeError") || text.contains("ReferenceError") ||
                 text.contains("Binding loop") || text.contains("Cannot assign") ||
@@ -198,12 +221,14 @@ class Review : public QObject {
     size_t index_ = 0;
     int dropdownChanges_ = 0;
     bool originalEasyMode_ = true;
+    Mcp::LocalGateway *mcp_;
+    bool originalMcpEnabled_;
     QStringList errors_;
 };
 } // namespace
-void runUiReview(QQmlApplicationEngine &engine, const QString &directory) {
+void runUiReview(QQmlApplicationEngine &engine, ApplicationBackend &backend, const QString &directory) {
     try {
-        new Review(engine, directory);
+        new Review(engine, backend, directory);
     } catch (const std::exception &error) {
         qCritical() << error.what();
         QCoreApplication::exit(2);

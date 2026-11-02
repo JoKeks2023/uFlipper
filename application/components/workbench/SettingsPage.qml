@@ -128,7 +128,7 @@ WorkbenchSplit {
         WorkbenchHint { text: qsTr("Lokaler stdio-Zugang. Gerätestatus, NFC-Lesesitzungen und gespeicherte Aufnahmen sind angeschlossen; weitere Gerätebereiche folgen. Beim Widerruf werden MCP-Aufträge gestoppt und alle MCP-Verbindungen geschlossen. Ein bestätigter Geräte-Stop bleibt im Werkzeug sichtbar.") }
         WorkbenchButton { text: qsTr("Client-Konfiguration anzeigen"); onClicked: mcpConfiguration.visible = !mcpConfiguration.visible }
         TextArea { id: mcpConfiguration; visible: false; Layout.fillWidth: true; readOnly: true; selectByMouse: true; wrapMode: TextEdit.WrapAnywhere; text: Backend.mcp.command; font.family: "Share Tech"; font.pixelSize: 14; Accessible.name: qsTr("MCP-Client-Konfiguration") }
-        ConfirmationDialog { id: mcpConfirmation; parent: settings }
+        ConfirmationDialog { id: mcpConfirmation; objectName: "mcp-permission-dialog"; parent: settings }
         WorkbenchRule {}
         WorkbenchLabel { text: qsTr("NFC-Systemreader"); font.pixelSize: 21 }
         WorkbenchFact { label: qsTr("macOS"); value: qsTr("Integration und unabhängiger Kartentest noch offen") }

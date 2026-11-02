@@ -92,6 +92,10 @@ QJsonObject Protocol::receive(const QByteArray &line) {
         if (!meta.value("io.modelcontextprotocol/clientCapabilities").isObject())
             return error(id, -32602, "Per-request clientCapabilities are required");
         const auto client = meta.value("io.modelcontextprotocol/clientInfo").toObject();
+        if (meta.contains("io.modelcontextprotocol/clientInfo") &&
+            (!meta.value("io.modelcontextprotocol/clientInfo").isObject() ||
+             !client.value("name").isString() || !client.value("version").isString()))
+            return error(id, -32602, "Invalid per-request clientInfo");
         client_ = client.value("name").toString("Unnamed MCP client").left(128);
     } else if (method != "ping" && !ready_) {
         return error(id, -32002, "Initialize the legacy client or include modern per-request metadata");

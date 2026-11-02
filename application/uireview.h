@@ -1,4 +1,5 @@
 #pragma once
 #include <QString>
 class QQmlApplicationEngine;
-void runUiReview(QQmlApplicationEngine &engine, const QString &directory);
+class ApplicationBackend;
+void runUiReview(QQmlApplicationEngine &engine, ApplicationBackend &backend, const QString &directory);
