@@ -9,5 +9,5 @@ for uflipper_module in libusb-1.0 libsodium; do
     fi
 done
 for uflipper_archive in libusb-1.0.a libsodium.a; do
-    lipo -verify_arch x86_64 arm64 "$uflipper_expected_prefix/lib/$uflipper_archive"
+    lipo "$uflipper_expected_prefix/lib/$uflipper_archive" -verify_arch x86_64 arm64
 done
