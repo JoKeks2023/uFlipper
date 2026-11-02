@@ -3,7 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import Theme 1.0
 import QFlipper 1.0
-import ".."
+import "WorkbenchGeometry.js" as Geometry
 WorkbenchSplit {
     id: settings
     objectName: "settingsPage"
@@ -115,11 +115,7 @@ WorkbenchSplit {
                 text: Backend.mcp.enabled ? qsTr("Freigabe widerrufen") : qsTr("MCP freigeben …")
                 onClicked: {
                     if (Backend.mcp.enabled) Backend.mcp.revoke()
-                    else mcpConfirmation.openWithMessage(function() { Backend.mcp.grant() }, {
-                        title: qsTr("MCP auf diesem Computer freigeben?"),
-                        message: qsTr("Lokale MCP-Programme erhalten vollen Zugriff auf die verfügbaren Geräteaktionen und gespeicherten Aufnahmen. Diese Freigabe bleibt auf diesem Computer gespeichert und ist jederzeit widerrufbar. Helferinstallationen und Hardwarekonflikte brauchen weiterhin eine eigene Entscheidung."),
-                        customText: qsTr("Vollzugriff freigeben"), suggestedRole: ConfirmationDialog.RejectRole
-                    })
+                    else mcpConfirmation.open()
                 }
             }
         }
@@ -127,8 +123,32 @@ WorkbenchSplit {
         WorkbenchFact { label: qsTr("Verbundene MCP-Programme"); value: Backend.mcp.clients.length ? Backend.mcp.clients.join(", ") : qsTr("Keine") }
         WorkbenchHint { text: qsTr("Lokaler stdio-Zugang. Gerätestatus, NFC-Lesesitzungen und gespeicherte Aufnahmen sind angeschlossen; weitere Gerätebereiche folgen. Beim Widerruf werden MCP-Aufträge gestoppt und alle MCP-Verbindungen geschlossen. Ein bestätigter Geräte-Stop bleibt im Werkzeug sichtbar.") }
         WorkbenchButton { text: qsTr("Client-Konfiguration anzeigen"); onClicked: mcpConfiguration.visible = !mcpConfiguration.visible }
-        TextArea { id: mcpConfiguration; visible: false; Layout.fillWidth: true; readOnly: true; selectByMouse: true; wrapMode: TextEdit.WrapAnywhere; text: Backend.mcp.command; font.family: "Share Tech"; font.pixelSize: 14; Accessible.name: qsTr("MCP-Client-Konfiguration") }
-        ConfirmationDialog { id: mcpConfirmation; objectName: "mcp-permission-dialog"; parent: settings }
+        TextArea { id: mcpConfiguration; visible: false; Layout.fillWidth: true; readOnly: true; selectByMouse: true; wrapMode: TextEdit.WrapAnywhere; text: Backend.mcp.command; implicitHeight: Geometry.snapUp(contentHeight + topPadding + bottomPadding); topPadding: 8; bottomPadding: 8; font.family: "Share Tech"; font.pixelSize: 14; Accessible.name: qsTr("MCP-Client-Konfiguration") }
+        Dialog {
+            id: mcpConfirmation
+            objectName: "mcp-permission-dialog"
+            parent: settings
+            anchors.centerIn: parent
+            width: Geometry.snapDown(Math.min(560, settings.width - 48))
+            modal: true
+            title: qsTr("MCP freigeben?")
+            onOpened: mcpReject.forceActiveFocus()
+            onAccepted: Backend.mcp.grant()
+            contentItem: ColumnLayout {
+                spacing: 16
+                WorkbenchLabel {
+                    Layout.fillWidth: true; wrapMode: Text.Wrap; elide: Text.ElideNone
+                    text: qsTr("Lokale MCP-Programme erhalten auf diesem Computer vollen Zugriff auf verfügbare Geräteaktionen und gespeicherte Aufnahmen. Die Freigabe bleibt gespeichert und ist jederzeit widerrufbar.")
+                }
+                WorkbenchHint { text: qsTr("Hardwarekonflikte und die Installation jeder Helferversion brauchen weiterhin eine eigene Entscheidung.") }
+                RowLayout {
+                    spacing: 16; Layout.fillWidth: true
+                    WorkbenchButton { text: qsTr("Vollzugriff freigeben"); onClicked: mcpConfirmation.accept() }
+                    Item { Layout.fillWidth: true }
+                    WorkbenchButton { id: mcpReject; objectName: "mcp-confirm-cancel"; text: qsTr("Abbrechen"); onClicked: mcpConfirmation.reject() }
+                }
+            }
+        }
         WorkbenchRule {}
         WorkbenchLabel { text: qsTr("NFC-Systemreader"); font.pixelSize: 21 }
         WorkbenchFact { label: qsTr("macOS"); value: qsTr("Integration und unabhängiger Kartentest noch offen") }

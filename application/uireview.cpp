@@ -86,9 +86,10 @@ class Review : public QObject {
     void click(const QString &name) {
         if (name == "mcp-reject") {
             auto *dialog = window_->findChild<QObject *>("mcp-permission-dialog");
-            if (!dialog || !dialog->property("visible").toBool() || dialog->property("suggestedRole").toInt() != 1)
-                throw std::runtime_error("MCP confirmation did not default to rejection");
-            QTest::keyClick(window_, Qt::Key_Return);
+            auto *cancel = findItem(window_->contentItem(), "mcp-confirm-cancel");
+            if (!dialog || !dialog->property("visible").toBool() || !cancel || !cancel->hasActiveFocus())
+                throw std::runtime_error("MCP confirmation did not focus rejection");
+            QTest::keyClick(window_, Qt::Key_Space);
             return;
         }
         auto *button = findItem(window_->contentItem(), name);
