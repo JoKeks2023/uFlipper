@@ -1,0 +1,8 @@
+{
+  "ready": true,
+  "firmware": "mntm-012",
+  "commit": "e1784e74",
+  "target": "f7",
+  "fullBackupCanStart": false,
+  "scope": "existing b010f9e backend; read-only preflight, no NFC activation or MCP grant"
+}
